@@ -1,0 +1,916 @@
+% \documentclass[9pt,aspectratio=169]{beamer}
+\documentclass[9pt,xcolor={dvipsnames}]{beamer}
+\input{preambule}
+
+\makeatother
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+\metroset{block=fill}
+\newcommand{\light}[1]{\textcolor{Gray}{#1}}
+
+
+
+\begin{frame}{Outline}
+%   \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents
+\end{frame}
+
+
+\section{Introduction}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
+\begin{frame}{Optimal transport}{Motivation}
+    \label{slide:fig-transport-1}
+        \begin{figure}
+            \centering
+            \includegraphics[width=\textwidth]{figures/transport.tex}
+        \end{figure}
+    \textbf{Setup :}
+    \begin{itemize}
+        \item $\Xx,\Yy$ Polish spaces
+        \item probability measures $\mu\in\Pp(\Xx)$ and $\nu\in\Pp(\Yy)$
+        \item cost function $c:\Xx\times\Yy\to\RR$
+    \end{itemize}
+\end{frame}
+\begin{frame}{Optimal transport}{Monge problem}
+    \label{slide:fig-transport-2}
+    \only<1>{
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{figures/transport.tex}
+            \end{figure}
+        }
+        \begin{block}{Monge problem \cite{monge1781memoire}}
+            We consider the following minimization problem:
+            \begin{equation*}
+                \label{monge}
+                \min_{T\push\mu=\nu} \int_\Xx c(x,T(x))\dd\mu(x)\,.
+            \end{equation*}
+            \only<1>{where $T\push\mu(B)=\mu(T^{-1}(B))$ for all Borel $B\subset\Yy$.}
+        \end{block}
+        \only<1>{
+            \begin{itemize}
+                \item solutions $T$ are called \emph{Monge maps} or \emph{optimal maps}
+            \end{itemize}
+        }
+    \only<2>{
+        \begin{columns}
+            \begin{column}{.7\textwidth}
+                \begin{itemize}
+                    \item problems:
+                        \begin{enumerate}
+                            \item constraints are not linear!
+                            \item minimum not reached
+                            \item no maps {s.t.}~$T\push\mu=\nu$
+                        \end{enumerate}
+                \end{itemize}
+            \end{column}
+            \begin{column}{.3\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{figures/diracs.tex}
+                    \caption{We need to ``split'' $\delta_x$: no map can do this.}
+                \end{figure}
+            \end{column}
+        \end{columns}
+        }
+\end{frame}
+\begin{frame}{Optimal transport}{Kantorovich problem}
+    \label{slide:fig-plans}
+    \begin{block}{Transport plan \cite{kantorovich1942translocation}}
+        A \emph{transport plan} between $\mu$ and $\nu$ is a (probability) measure $\pi \in\mathcal{P}(\mathcal{X}\times \mathcal{Y})$ of marginals $\mu$ and $\nu$:
+        $$\Pi(\mu,\nu)\defeq \set{\pi\in\Pp(\Xx\times\Yy)\mid P^1\push\pi=\mu, P^2\push\pi=\nu}\,.$$
+    \end{block}
+    \vspace{-5mm}
+    \begin{columns}
+        \begin{column}[b]{.5\textwidth}
+            \begin{center}
+                \includegraphics[width=.9\textwidth]{figures/plan_map.tex}\\
+                \small{$\pi$ is induced by a map $T$: $\pi=(\id, T)\push\mu$.}
+            \end{center}
+        \end{column}
+        \begin{column}[b]{.5\textwidth}
+            \begin{center}
+                \includegraphics[width=.9\textwidth]{figures/plan_plan.tex}\\
+                \small{$\pi$ is the product plan $\pi=\mu\otimes\nu$.}
+            \end{center}
+        \end{column}
+    \end{columns}
+    \begin{figure}
+        \caption{Deterministic or non-deterministic transport plans.}
+    \end{figure}
+\end{frame}
+\begin{frame}{Optimal transport}{Kantorovich problem}
+        \begin{block}{Kantorovich problem}
+            We consider the following minimization problem:
+            \begin{equation*}
+                \tag{KP}
+                \label{eq:OT}
+                \min_{\pi\in\Pi(\mu,\nu)} \int_{\Xx\times\Yy} c(x,y)\dd\pi(x,y)\,.
+            \end{equation*}
+        \end{block}
+
+        \begin{itemize}
+            \item always non-empty (contains $\mu\otimes\nu$), existence of a minimizer
+            \item \emph{linear program in $\pi$!}
+            \item if $c(x,y)=|x-y|_p^p$, $p$-Wasserstein distance $\operatorname{W}_p(\mu,\nu)^p$
+        \end{itemize}
+        \begin{block}{Question}
+            Is the relaxation \emph{tight}? \textbf{under some assumptions, yes!}
+    \end{block}
+\end{frame}
+
+\subsection{Map solutions of OT}
+    \begin{frame}{Map solutions of OT}{Brenier's theorem}
+            \begin{block}{Brenier's theorem \cite{brenier1987decomposition}}
+                Let $\mu,\nu \in\mathcal{P}(\mathbb{R}^n)$ and \emph{$c(x,y)=|x-y|^{2}$}. If \emph{$\mu\ll \mathcal{L}^n$}, then there exists a unique solution to \cref{eq:OT} and it is induced by a \textbf{map} $T=\nabla f$, with $f$ convex.
+            \end{block}
+            \vfill
+            \begin{itemize}
+                \item generalize for manifolds $\Xx$ and $\Yy$ and for other cost functions $c$
+            \end{itemize}
+\end{frame}
+\begin{frame}{Map solutions of OT}{Twist condition}
+    \begin{block}{Twist condition \light{\cite{villani2009optimal,mccann2011five}}}
+        We say that $c$ satisfies the \textbf{twist condition} if
+        \begin{equation}
+            \tag{Twist}
+            \text{for all }x_0\in\mathcal X,\quad  y\mapsto \nabla_x c(x_0,y)\in T_{x_0}\Xx \text{ is injective.}
+            \label{eq:twist}
+        \end{equation}
+        Suppose that $c$ satisfies \cref{eq:twist} and assume that \emph{any $c$-concave function is differentiable $\mu$-a.e.~on its domain}. If $\mu$ and $\nu$ have \emph{finite transport cost}, then \cref{eq:OT} admits a unique optimal transport plan $\pi\opt$ and it is induced by a \textbf{map} which is the gradient of a $c$-convex function $f:\Xx\to\mathbb{R}$:
+        $$\pi\opt=(\id,c\text{-}\exp_x(\nabla f))\push\mu\,.$$
+            \vspace{-5mm}
+    \end{block}
+    \begin{columns}
+        \begin{column}{.7\textwidth}
+            \only<1>{\begin{itemize}
+                \item $c$-$\exp_x(p)$ is the unique $y$ such that $\nabla_xc(x,y)+p=0$: $$c\text{-}\exp_x(p)=(\nabla_x c)^{-1}(x,-p)\,.$$
+                \item usual Riemannian exp when $c(x,y)=d(x,y)^2/2$
+            \end{itemize}}
+            \only<2>{\begin{itemize}
+                \item examples:\vspace{-5mm}
+                \begin{table}[h]
+                    \raggedright
+                    \begin{tabular}{ll|c}
+                                           &                &  twist          \\\hline
+                    $|x-y|^2$              & in $\RR^n$     &  $\checkmark$          \\
+                    $\langle x,\,y\rangle$ & in $\RR^n$     &  $\checkmark$          \\
+                    $\langle x,\,y\rangle$ & on $\SS^{n-1}$ &  $\cdot$
+                    \end{tabular}
+                \end{table}
+                \item other formulation:
+                \begin{equation*}
+                    \forall y_1\neq y_2,\quad x\mapsto c(x,y_1)-c(x,y_2) \text{ has no critical point.}
+                \end{equation*}
+            \end{itemize}}
+        \end{column}
+        \begin{column}{.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{figures/twist-map.tex}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Map solutions of OT}{Subtwist condition}
+    \begin{block}{Subtwist condition \light{\cite{ahmad2011optimal,chiappori2010hedonic}}}
+        We say that $c$ satisfies the \textbf{subtwist condition} if
+    \begin{equation}
+        \tag{Subtwist}
+        \forall y_1\neq y_2,\quad x\mapsto c(x,y_1)-c(x,y_2)\quad \text{has at most 2 critical points.}
+        \label{eq:subtwist}
+    \end{equation}
+    Suppose that $c$ satisfies \cref{eq:subtwist}. Under the \emph{same assumptions than before}, \cref{eq:OT} admits a unique optimal transport plan $\pi\opt$ and it is induced by the \textbf{union of a map and an anti-map}:
+    \begin{equation*}
+        \pi\opt=(\id , G)\push \bar\mu+(H, \id)\push(\nu-G\push \bar\mu)
+    \end{equation*}
+    for $G:\Xx\to\Yy$, $H: \Yy\to\Xx$ and $0\leq\bar\mu \leq \mu$ s.t.~$\nu-G\push \bar\mu$ vanishes on the range of $G$.
+    \end{block}
+    \begin{columns}
+        \begin{column}{.7\textwidth}
+                \begin{table}[h]
+                    \raggedright
+                    \begin{tabular}{ll|cc}
+                                           &                &  twist        & subtwist  \\\hline
+                    $\langle x,\,y\rangle$ & on $\SS^{n-1}$ &  $\cdot$      & $\checkmark$
+                    \end{tabular}
+                \end{table}
+        \end{column}
+        \begin{column}{.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{figures/twist-antimap.tex}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Map solutions of OT}{$m$-twist condition}
+    \begin{block}{m-twist condition \light{\cite{moameni2016characterization}}}
+        We say that $c$ satisfies a \textbf{$m$-twist condition} if
+    \begin{equation}
+        \tag{$m$-twist}
+        \forall x_{0} \in \Xx,y_{0} \in \Yy, \quad \card\left\{y \mid \nabla_x c(x_{0}, y)=\nabla_x c\left(x_{0}, y_{0}\right)\right\}\leq m\,.
+        \label{eq:mtwist}
+    \end{equation}
+    Suppose that $c$ satisfies \cref{eq:mtwist} and is \emph{bounded}. Under the \emph{same assumptions than before}, each optimal plan $\pi\opt$ of \cref{eq:OT} is supported on the \textbf{graphs of $k\leq m$ measurable maps} $T_i:\Xx\to\Yy$:
+    $$\pi\opt=\sum_{i=1}^{k} \alpha_{i}\left(\id, T_i\right)\push \mu\,,$$
+    in the sense $\pi\opt(S)=\sum_{i=1}^k\int_\Xx\alpha_i(x)\mathbbm{1}_S(x,T_i(x))\dd\mu$ for any Borel $S\subset \Xx\times\Yy$.
+    \end{block}
+    \begin{columns}
+        \begin{column}{.7\textwidth}
+                \begin{table}[h]
+                    \raggedright
+                    \begin{tabular}{ll|ccc}
+                                           &                &  twist        & subtwist   & 2-twist \\\hline
+                    $1-\cos(x-y)$          & on $[0,2\pi)$  &  $\cdot$      & $\checkmark$      & $\checkmark$\\
+                    our cost!          & in $\RR^n$  &  $\cdot$      & $\cdot$      & $\checkmark$
+                    \end{tabular}
+                \end{table}
+        \end{column}
+        \begin{column}{.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{figures/twist-bimap.tex}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+\begin{frame}[fragile]{Map solutions of OT}{Recap}
+    \begin{columns}
+        \begin{column}{0.33\textwidth}
+            \begin{center}
+                \emph{Twist}\\ $\big\Downarrow$\\map
+                    \begin{figure}
+                        \includegraphics[width=\textwidth]{figures/twist-map.tex}
+                    \end{figure}
+            \end{center}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{center}
+                \emph{Subwist}\\ $\big\Downarrow$\\map/anti-map
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{figures/twist-antimap.tex}
+                \end{figure}
+            \end{center}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{center}
+                \emph{2-twist}\\ $\big\Downarrow$\\bimap
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{figures/twist-bimap.tex}
+                \end{figure}
+            \end{center}
+        \end{column}
+    \end{columns}
+    \vfill
+    \begin{itemize}
+        \item all assumptions needed to apply them are satisfied when \emph{$\mu$ and $\nu$ have compact support} and \emph{$\mu$ has a density}
+    \end{itemize}
+\end{frame}
+
+\subsection{Gromov--Wasserstein}
+\begin{frame}{Gromov--Wasserstein \cite{memoli2011gromov}}
+    \begin{columns}
+        \begin{column}[t]{.48\textwidth}
+            \onslide<1->{\begin{center}\textbf{$\sup$ formulation}\end{center}}
+        \end{column}
+        \begin{column}[t]{.52\textwidth}
+            \onslide<1->{\begin{center}\textbf{$L^p$ formulation}\end{center}}
+        \end{column}
+    \end{columns}
+    \vspace{0.8em}\onslide<1->{\hrule}
+    \begin{columns}
+        \begin{column}[t]{.48\textwidth}
+            \onslide<1->{\begin{center}Set couplings $\Rr(A,B)$\end{center}
+            \vspace{-5mm}\light{$$\left\{R\subset A\times B\mid  P^1(R)=A,P^{2}(R)=B \right\}$$}}
+        \end{column}
+        \begin{column}[t]{.52\textwidth}
+            \onslide<1->{\begin{center}Transport plans $\Pi(\mu,\nu)$\end{center}
+            \vspace{-5mm}\light{$$\set{\pi\in\Pp(\Xx\times\Yy)\mid P^1\push\pi=\mu, P^2\push\pi=\nu}$$}}
+        \end{column}
+    \end{columns}
+    \onslide<1->{\hrule}
+    \begin{columns}
+        \begin{column}[t]{.48\textwidth}
+            \onslide<1->{\begin{center}\textbf{Hausdorff} distance $\operatorname{H}_\Zz$\\between \emph{sets} $A, B$\end{center}
+            \vspace{-5mm}\light{$$\inf_{R\in\Rr(A,B)}\left(\sup_{(a,b)\in R} d_\Zz(a,b)\right)$$}}
+        \end{column}
+        \begin{column}[t]{.52\textwidth}
+            \onslide<1->{\begin{center}\textbf{Wasserstein} distance $\operatorname{W}_{p}$\\between \emph{measures} $\mu,\nu$\end{center}
+            \vspace{-5mm}\light{$$\inf_{\pi \in \Pi(\mu,\nu)}\left( \int |x-y|^p\, \mathrm d\pi \right)^{1/p}$$}}
+        \end{column}
+    \end{columns}
+    \onslide<2->{\hrule}
+    \begin{columns}
+        \begin{column}[t]{.48\textwidth}
+            \onslide<2->{\begin{center}\textbf{Gromov--Hausdorff} distance $\operatorname{GH}$\\between \emph{metric spaces} $\Xx,\Yy$\end{center}
+            \vspace{-5mm}\light{$$\frac12 \inf_{R\in\Rr}\left(\sup_{(x,y),(x',y')\in R} |d_\Xx(x,x')-d_\Yy(y,y')|\right)$$}}
+        \end{column}
+        \begin{column}[t]{.52\textwidth}
+            \onslide<3->{\begin{center}\textbf{Gromov--Wasserstein} distance $\operatorname{GW}_p$\\between \emph{measure metric spaces} $\XX,\YY$\end{center}
+            \vspace{-5mm}\light{$$\inf_{\pi \in \Pi} \left( \int |d_{\mathcal{X}}(x,x')-d_{\mathcal{Y}}(y,y')|^p \dd\pi\otimes\pi\right)^{1/p}$$}}
+        \end{column}
+    \end{columns}
+
+
+\end{frame}
+\begin{frame}{Gromov--Wasserstein}
+    \label{slide:gw}
+    \only<1>{
+    \begin{itemize}
+        \item match measure metric spaces ($\Xx,d,\mu)$ (\textit{e.g.}~point clouds) up to isometry: no notion of transport here, but rather of \emph{correspondence}
+        \item applications in vision, biology...
+    \end{itemize}}
+    \begin{block}{Gromov--Wasserstein problem}
+        We consider the following quadratic minimization problem:
+        \begin{equation}
+            \tag{GW}
+            \label{eq:gw}
+            \inf_{\pi \in \Pi(\mu,\nu)} \iint _{\mathcal{X}\times \mathcal{Y}}|c_{\mathcal{X}}(x,x')-c_{\mathcal{Y}}(y,y')|^p\, \mathrm d\pi(x,y)\, \mathrm d\pi(x',y')\,.
+        \end{equation}
+    \end{block}
+    \only<1>{
+    \begin{columns}
+        \begin{column}{.6\textwidth}
+            \begin{figure}
+                \centering
+                \input{figures/gw-cont}
+            \end{figure}
+        \end{column}
+        \begin{column}{.4\textwidth}
+            \begin{itemize}
+                \item distance between mm-spaces up to isometry, \textit{i.e.}~$\GW(\XX,\YY)=0$ iff $\XX=(\Xx,d_\Xx^q,\mu)$ and $\YY=(\Yy,d_\Yy^q,\nu)$ are \emph{strongly isomorphic} \light{\cite{memoli2011gromov}}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    }
+    \only<2>{\begin{itemize}
+        \item quadratic in $\pi$ + non-convex $\implies$ much harder than OT
+        \item for $p=2$, discrete formulation: with $D^\Xx$, $D^\Yy$ two similarity matrices on $\Xx$ and $\Yy$,
+        \begin{equation*}
+            \min_{P\in U(a,b)} \sum_{i,j,i',j'}|D^\Xx_{i,i'}-D^\Yy_{j,j'}|^pP_{i,j}P_{i',j'}\,.
+        \end{equation*}
+        particular case of the \emph{quadratic assignment problem} (QAP), NP-hard
+        \item bonus: compare measures living in incomparable spaces
+    \end{itemize}}
+\end{frame}
+
+\begin{frame}{Statement and relaxation}
+
+    \begin{block}{Question}
+        What can be said on the existence of Monge maps for the Gromov--Wasserstein distance?
+    \end{block}
+
+    \begin{itemize}
+        \item quadratic...
+    \end{itemize}
+
+    \end{frame}
+
+\subsection{Existing results and contributions}
+\begin{frame}{Context}
+    Let $n\geq d$. We consider the GW problem for $\mu,\nu\in\RR^n\times\RR^d$ in 2 different settings:
+    \begin{enumerate}
+        \item the \emph{inner product case}, where $c_\Xx=c_\Yy=\langle\cdot,\,\cdot\rangle$:
+            \begin{equation}
+                \tag{GW inner prod}
+                \min _{\pi \in \Pi(\mu, \nu)} \iint_{\Xx\times\Yy}\left|\langle x,\, x'\rangle-\langle y,\, y'\rangle\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+                \label{eqn:GW-inner-prod}
+            \end{equation}
+            \begin{itemize}
+                \item \textit{e.g.} on a $d$-dimensional sphere $\SS^{d-1}$
+            \end{itemize}
+            \item the \emph{quadratic case}, where $c_\Xx=c_\Yy=|\cdot|^2$:
+            \begin{equation}
+                \tag{GW quadratic}
+                \min _{\pi \in \Pi(\mu, \nu)} \iint_{\Xx\times\Yy}\left||x-x'|^2-|y-y'|^2\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+                \label{eqn:GW-quadratic}
+            \end{equation}
+            \begin{itemize}
+                \item standard choice for $c_{\mathcal{X}}$ and $c_{\mathcal{Y}}$
+            \end{itemize}
+            \item[$\to$] both studied in the literature \cite{alvarez2019towards,vayer2020contribution}
+        \end{enumerate}
+        In the following, $n=d$.
+\end{frame}
+\begin{frame}{Existing results}
+    \begin{enumerate}
+        \item the \emph{inner product case}, where $c_\Xx=c_\Yy=\langle\cdot,\,\cdot\rangle$:
+            \begin{block}{\cite{vayer2020contribution}}
+                    \light{Let $\mu, \nu\in \Pp(\RR^n)$ of finite second order moment with $\mu\ll\Ll^n$. {Suppose that} there exists a solution $\pi\opt$ such that \emph{$M\opt$}$=\int y\otimes x \dd\pi\opt(x, y)$} is of \emph{full rank}. Then there exists an optimal map $T=\nabla f\circ M\opt$ with $f: \RR^n \to \RR$ convex.
+            \end{block}
+            \item the \emph{quadratic case}, where $c_\Xx=c_\Yy=|\cdot|^2$:
+            \begin{block}{\cite{sturm2012space}}
+                \light{Let $\mu, \nu\in \Pp(\RR^n)$ with} \emph{density}, \emph{rotationally invariant} around their barycenter. Then optimal transport plans are \emph{induced by a map} \light{which is the monotone increasing rearrangement between the radial distributions of $\mu$ and $\nu$}.
+            \end{block}
+            \begin{block}{\cite{vayer2020contribution}}
+                \light{Let $\mu, \nu\in \Pp(\RR^n)$ with compact support.
+                Assume that $\mu\ll\Ll^n$ and that both $\mu$ and $\nu$ are centered. Suppose that there exists $\pi\opt$ such that $M\opt=\int y\otimes x \dd\pi\opt(x, y)$ is of} \emph{full rank} \light{and that there exists a differentiable convex $F:\RR\to\RR$ such that} \emph{$|T(x)|_2^2=F'(|x|^2_2)$}, then there exists an optimal map $T=\nabla f \circ M\opt$ with $f$ convex.
+            \end{block}
+        \end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Contributions}
+    Let $\mu, \nu\in \Pp(\RR^n)$ of \emph{compact support}. Suppose $\mu\ll\Ll^n$.
+    \begin{enumerate}
+        \item \textbf{Theorem:} The \cref{eqn:GW-inner-prod} problem admits a \emph{map} as a solution.
+        \item \textbf{Theorem:} The \cref{eqn:GW-quadratic} problem either admits a \emph{map}, a \emph{bimap} or a \emph{map/anti-map} as a solution.
+        \item \textbf{Conjecture:} The second claim is \emph{tight}: there exists cases where optimal solutions of \cref{eqn:GW-quadratic} are \emph{not maps}.
+    \end{enumerate}
+    Optimality of the monotone rearrangements $\pimon$ and $\piantimon$ in 1D for \cref{eqn:GW-quadratic}:
+    \vspace{-5mm}
+    \begin{enumerate}\addtocounter{enumi}{3}
+        \item \textbf{Algorithm:} There exists measures $\mu$ and $\nu$ for which the $\pimon$ and $\piantimon$ are \emph{not optimal};\\
+        and having $\pimon$ or $\piantimon$ as optimal is \emph{not stable} by perturbations of $\mu$ and $\nu$.
+        \item (\textbf{Theorem:} When measures $\mu$ and $\nu$ are composed of two distant parts, $\pimon$ or $\piantimon$ is \emph{optimal}.)
+    \end{enumerate}
+\end{frame}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\section{Monge maps for GW}
+
+\begin{frame}{A reduction}
+    \textbf{Trick:} relaxation of GW into OT problem
+    \begin{itemize}
+            \item $\cref{eq:gw}=\min_\pi F(\pi,\pi)$ with $F$ symmetric bilinear
+            \item \emph{first-order condition}: $\pi\opt$ minimizes \cref{eq:gw} $\implies$ minimizes $\pi \mapsto 2 F(\pi, \pi\opt)$:
+            \begin{equation*}
+                \min_{\pi \in \Pi(\mu,\nu)} \int C_{\pi\opt}(x,y) \dd \pi(x,y),\quad\text{ with } C_{\pi\opt}(x,y) = \int |c_{\mathcal{X}}(x,x')-c_{\mathcal{Y}}(y,y')|^p \dd \pi\opt(x', y')
+            \end{equation*}
+            \item converse implication? \cite{sejourne2021unbalanced}:
+        \begin{block}{Tightness}
+            If $\iint |c_{\mathcal{X}}(x,x')-c_{\mathcal{Y}}(y,y')|^p\dd\alpha\otimes\alpha\leq0$ for all (signed) measures $\alpha\in\Mm(\Xx \times \Yy)$ with \textbf{null marginals}, then the relaxation of $\operatorname{GW}_2^2$ \emph{is tight}.
+        \end{block}
+        \item twist conditions for our linearized costs?...
+    \end{itemize}
+
+\end{frame}
+
+\subsection{A key lemma}
+\begin{frame}{A key lemma}{Intuition}
+    \begin{center}
+        ``Let $\mu,\nu\in \Pp(E)$. \onslide<2->{If we can send $\mu$ and $\nu$ in a space $B$ by a function $\varphi$,}\onslide<3->{ \textit{s.t.}
+        $$c(x,y)=\tilde c(\varphi(x),\varphi(y))\quad \text{ for all } x,y\in E$$ with $\tilde c$ a \emph{twisted} cost on $B$,}
+        \onslide<4->{then \emph{we can construct an optimal map between $\mu$ and $\nu$}.''}
+    \end{center}
+    \begin{figure}[!h]
+        \centering
+        \input{figures/visu_fibers}
+    \end{figure}
+\end{frame}
+\begin{frame}{A key lemma}{Statement}
+    \begin{block}{Theorem: existence of a Monge map, inner product cost}
+        Let $E_0$ be a measurable space and $B_0$ and $F$ be complete Riemannian manifolds.
+    Let $\mu,\nu \in \Pp(E_0)$ with \emph{compact support}.
+    \light{Assume that there exists a set $E\subset E_0$ s.t.~$\mu(E) = 1$ and that there exists a measurable map $\Phi : E \to B_0 \times F$ that is injective and whose inverse on its image is measurable as well.
+    Let $\varphi\defeq p_ B \circ \Phi: E\to B_0$.}
+    Let $c: E_0 \times E_0 \to \mathbb{R}$ and suppose that there exists a \emph{twisted} $\tilde c: B_0 \times B_0 \to \mathbb{R}$ s.t.
+    \emph{\[ c(x,y)=\tilde c(\varphi(x),\varphi(y))\quad \text{ for all } x,y\in E_0\,.\]}
+    \light{Assume that} \emph{$\varphi\push\mu\ll\Ll_{B_0}$} \light{and let thus $t_B$ denote the unique Monge map between $\varphi\push\mu$ and $\varphi\push\nu$ for this cost.
+    Suppose that there exists a disintegration $((\Phi\push\mu)_u)_{u}$ of $\Phi\push\mu$ by $p_B$ s.t.~for $\varphi\push\mu$-a.e.~$u$,} \emph{$(\Phi\push\mu)_{u}\ll\operatorname{vol}_F$}.
+
+    Then \emph{there exists an optimal map} $T$ between $\mu$ and $\nu$ for the cost $c$ that can be decomposed as
+    \begin{equation*}
+    \Phi \circ T\circ \Phi^{-1}(u,v)=(t_ B (u),t_ F (u,v))=\Big(\underbrace{\tilde c\text{-}\exp_u(\nabla f(u))}_{\in\ B}, \underbrace{\exp_v(\nabla g_u(v))}_{\in\ \text{fiber}}\Big)\,,
+    \end{equation*}
+    \light{with $f: B_0 \to\RR$ $\tilde c$-convex and $g_u: F \to\RR$ $d_ F ^2/2$-convex for $\varphi\push\mu$-a.e.~$u$.}
+    \end{block}
+\end{frame}
+\begin{frame}{A key lemma}{The proof}
+    \begin{figure}[!h]
+        \centering
+        \input{figures/visu_fibers_bis}
+    \end{figure}
+    \begin{enumerate}
+        \item \emph{transport in $B$:} $\tilde c$ satisfies \cref{eq:twist} on $B$;
+        \item \emph{transport the fibers:} choose a map for each couple of fibers $(\mu_u,\nu_{t_B(u)})$
+        \item is $T(u,x)=T_{u}(x)$ \emph{measurable}? need theorem! adaptation of \cite{fontbona2010measurability} to the manifold setting
+    \end{enumerate}
+    \textbf{Take-home message:} $c(x,y)=\tilde c(\varphi(x),\varphi(y))$ with $\tilde c$ twisted $\implies$ map
+\end{frame}
+\subsection{Application: inner product cost}
+\begin{frame}{Inner product cost}{Proof}
+    Let's work on \cref{eqn:GW-inner-prod}:
+    \begin{align*}
+        &\min _{\pi \in \Pi(\mu, \nu)} \iint\left|\langle x,\, x'\rangle-\langle y,\, y'\rangle\right|^{2} \dd\pi(x, y) \dd\pi(x', y') && \text{\cref{eqn:GW-inner-prod}}\\
+        \iff&\min _{\pi \in \Pi(\mu, \nu)} \iint-\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi(x, y) \dd\pi(x', y')
+    \end{align*}
+    $\implies$ OT problem with \emph{$c(x,y)=$}$-\int\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi\opt(x', y')=\dots=$\emph{$-\langle M\opt x,\,y\rangle$} $$\text{where }M\opt\defeq\int y' x'^\top \dd\pi\opt(x', y')\in \RR^{n\times n}$$
+    \begin{table}[h]
+        \centering
+        \label{tab:twist-inner}
+        \begin{tabular}{lcc}
+        $\rk M\opt$ & $= n$          & $\leq n-1$        \\\hline
+        twist         & $\checkmark$   &  $\cdot$          \\
+        subtwist      & $\checkmark$   &  $\cdot$          \\
+        $m$-twist, $m\geq2$     & $\checkmark$   &  $\cdot$
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Inner product cost}{Proof}
+    \begin{enumerate}
+        \item \emph{a simplification:} up to SVD, suppose $M\opt$ is a diagonal matrix of singular values:
+        $$M\opt=\left(\begin{smallmatrix}
+            \sigma_1 & & & & &\\
+            & \cdot & & & &\\
+            &  & \sigma_h & & &\\
+            &  &  & 0 & &\\
+            &  &  & & \cdot & \\
+            &  &  & &  & 0 \\
+        \end{smallmatrix}\right)$$
+        \item \emph{rephrase the cost:}
+            \begin{align*}
+                c(x, y)&=-\langle M\opt x,\,y\rangle\\
+                &=-\sum_{i=1}^h \si_i x_i y_i\\
+                &\defeq \tilde c(p( x), p( y)) && \text{with } p\text{ the orthogonal projection on }\RR^h\,.
+            \end{align*}
+        \item \emph{apply key lemma!}
+            \begin{itemize}
+                \item $B$ is $\RR^h$
+                \item fibers are $\RR^{n-h}$
+                \item $\tilde c$ is {twisted} on $\RR^h$
+            \end{itemize}
+            \vfill
+        \item[$\Rightarrow$] optimal map + structure!
+            $$\text{for }x=(u,v)\in\RR^h\times\RR^{n-h},\quad T(u,v)=(\nabla f\circ M\opt(u), \nabla g_{u}(v)).$$
+            \hfill\square
+    \end{enumerate}
+    \end{frame}
+\subsection{Application: quadratic cost}
+\begin{frame}{Quadratic cost}{Proof}
+    Similarly, we work on \cref{eqn:GW-quadratic} and relax to a classical OT problem with $$c(x,y)=-|x|^2|y|^2-4\langle M\opt x,\,y\rangle\,.$$
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{lccc}
+        $\rk M\opt$ & $= n$ & $= n-1$    & $\leq n-2$ \\ \hline
+        twist         & $\cdot$      & $\cdot$           & $\cdot$           \\
+        subtwist      & $\checkmark$   & $\cdot$           &   $\cdot$         \\
+        2-twist       & $\cdot$      & $\checkmark$        &  $\cdot$         \\
+        $m$-twist, $m\geq3$ & $\cdot$      & $\cdot$        &  $\cdot$\\\pause
+                            & $\big\Downarrow$ & $\big\Downarrow$ &  $\big\Downarrow$\\
+                            & map/anti-map & bimap &  ...
+        \end{tabular}
+    \end{table}
+\end{frame}
+\begin{frame}{Quadratic cost}{Theorem}
+    \begin{block}{Theorem: quadratic cost}
+    Let $\mu, \nu\in \Pp(\RR^n)$ \light{of compact support. Suppose that $\mu$ has a density.} Let $\pi\opt$ be an optimal plan and $M\opt\defeq\int y' x'^\top \dd\pi\opt(x', y')$. Then:
+    \begin{itemize}
+        \item[$\checkmark$] if $\rk M\opt=n$, there is an optimal \emph{map/anti-map},
+        \item[$\checkmark$] if $\rk M\opt=n-1$, there is an optimal \emph{bimap},
+        \item[(!!)] if $\rk M\opt\leq n-2$, \emph{there is an optimal map}!
+    \end{itemize}
+    \end{block}
+\end{frame}
+\begin{frame}{Quadratic cost}{Proof (rank $\leq n-2$)}
+    \begin{center}
+        \begin{enumerate}
+            \item \emph{a simplification:} up to SVD, $M\opt$ is diagonal:
+                $$M\opt=\left(\begin{smallmatrix}
+                    \sigma_1 & & & & &\\
+                    & \cdot & & & &\\
+                    &  & \sigma_h & & &\\
+                    &  &  & 0 & &\\
+                    &  &  & & \cdot & \\
+                    &  &  & &  & 0 \\
+                \end{smallmatrix}\right).\quad\text{ We note } x=(\underbrace{x_1,\dots,x_h}_{x_H},\underbrace{x_{h+1},\dots,x_n}_{x_\perp}).$$
+            \item \emph{rephrase the cost:}
+                \begin{align*}
+                    -c(x,y) & =|x|^{2}|y|^{2}+4\langle M\opt x,\,y\rangle \\
+                    & =|x_{H}|^{2}|y_{H}|^{2}+|x_{H}|^{2}|y_{\perp}|^{2}+|x_{\perp}|^{2}|y_{H}|^{2}+|x_{\perp}|^{2}|y_{\perp}|^{2}+4\langle \tilde Mx_{H},\, y_{H}\rangle\\
+                    & =|x_{H}|^{2}|y_{H}|^{2}+|x_{H}|^{2}n(y)+n(x)|y_{H}|^{2}+n(x)n(y)+4\langle \tilde Mx_{H},\, y_{H}\rangle\\
+                    & \defeq -\tilde c(\phi(x),\phi(y))\,,
+                \end{align*}
+                with $n: x\mapsto |x_{\perp}|^2$ and $\phi: x\mapsto (x_{H},|x_{\perp}|^2)$.
+            \item \emph{apply key lemma!} \begin{itemize}
+                \item $B$ is $\RR^h\times\RR^+$
+                \item the fibers are spheres $\SS^{n-h-1}$
+                \item $\tilde c$ is {twisted} on $\RR^h\times\RR^+$
+            \end{itemize}
+            \vfill
+        \item[$\Rightarrow$] optimal map + structure!
+        $$\text{for } x\approx (u,v) \in \RR^h\times\RR^+\times\SS^{n-h-1},\quad T(u,v)=\left(\tilde c\text{-}\exp_{u}(\nabla f(u)), \exp_{v}(\nabla g_{u}(v))\right).$$
+        \hfill\square
+        \end{enumerate}
+    \end{center}
+\end{frame}
+
+\section{Complementary study of the quadratic cost in 1D}
+
+\begin{frame}{Preliminary remarks in 1D}
+    \begin{itemize}
+        {\item $\mu$, $\nu$ centered}
+        \item linearized problem:
+        \begin{equation*}
+            \min_{\pi\in\Pi(\mu,\nu)} \int (-x^2y^2-4mxy)\dd\pi(x,y)\,,\quad\text{where }m=\int x'y'\dd\pi\opt(x',y')=\langle C_{xy},\,\pi\opt\rangle\,,
+        \end{equation*}
+        {and $m\in[m_\text{min},m_\text{max}]$ with $m_{\text{min}}= \min_{\pi}\langle C_{xy},\,\pi\rangle$ and $m_{\text{max}}= \max_{\pi}\langle C_{xy},\,\pi\rangle$}
+        \item in 1D, \emph{submodularity} \light{\cite{carlier2008remarks,santambrogio2015optimal}}
+    \end{itemize}
+{\begin{block}{Submodular cost}
+    \label{prop:submod}
+    Let $\Xx,\Yy\subset\RR$. We say that $c\in C^2:\Xx\times\Yy\to\mathbb{R}$ is \textbf{submodular} if
+    \begin{equation}
+        \tag{Submod}
+        \text{for all } x,y\in\Xx\times\Yy,\quad \partial_{xy}c(x,y)\leq0\,.
+        \label{eq:submod}
+    \end{equation}
+    Let $\mu,\nu \in\mathcal{P}(\Xx)\times\Pp(\Yy)$ of finite transport cost. If $c$ satisfies \cref{eq:submod}, then \emph{$\pimon$ is an optimal plan for \cref{eq:OT}}.
+\end{block}
+}
+\end{frame}
+\begin{frame}{Preliminary remarks in 1D}
+    \begin{columns}
+        \begin{column}[t]{.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{figures/submod.png}
+                \label{fig:submod}
+            \end{figure}
+        \end{column}
+        \begin{column}[t]{.5\textwidth}
+            \begin{itemize}
+                \item $c(x,y)=-x^2y^2-4mxy$ is submodular on the region $S=\{(x,y)\mid xy\geq -m \}$ if $m\geq0$
+                \vspace{1cm}
+                \item expect increasing on $S$ and decreasing elsewhere?
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+\subsection{Computation of non-monotone optimal plans}
+\begin{frame}{Sub-optimality of the monotone rearrangements}
+    \begin{block}{Theorem \cite{vayer2020contribution}}
+        In the discrete case in dimension 1 with $N=M$ and $a=b=\mathbbm{1}_N$, \emph{either $\pimon$} (eq.~identity $\sigma(i)=i$) \emph{or $\piantimon$} (eq.~anti-identity $\sigma(i)=N+1-i$) \emph{is optimal} for \cref{eqn:GW-quadratic}.
+    \end{block}
+\begin{itemize}
+    \item \textbf{empirically:} very often true when generating points at random
+    \item \textbf{literature:} \emph{counter-example} by \cite{beinert2022assignment} for $N\geq 7$ points
+    \item \textbf{here:} procedure to \emph{automatically} obtain additional \emph{counter-examples}
+\end{itemize}
+\pause
+\begin{columns}
+    \begin{column}[b]{.3\linewidth}
+        \include{figures/GD-initial}
+        \vspace{-8mm}
+    \end{column}
+    \begin{column}[b]{.3\linewidth}
+        \include{figures/GD-final}
+        \vspace{-8mm}
+    \end{column}
+    \begin{column}[b]{.3\linewidth}
+        \centering
+        \include{figures/GD-obj}
+        \vspace{-8mm}
+    \end{column}
+\end{columns}
+
+\end{frame}
+\begin{frame}{Sub-optimality of the monotone rearrangements}
+    \begin{columns}
+        \begin{column}[b]{.3\linewidth}
+            \include{figures/GD-initial}
+            \vspace{-8mm}
+        \end{column}
+        \begin{column}[b]{.3\linewidth}
+            \include{figures/GD-final}
+            \vspace{-8mm}
+        \end{column}
+        \begin{column}[b]{.3\linewidth}
+            \centering
+            \include{figures/GD-obj}
+            \vspace{-8mm}
+        \end{column}
+    \end{columns}
+    \begin{center}
+        {\small\capleft Objective function $\Ff$. \capcenter Initial plan $\pi_0$, generated at random. \capright Final plan $\pi_f$.}
+    \end{center}
+    \textbf{Procedure:}
+    \begin{itemize}
+        \item ${\pi=\frac{1}{N}\sum_{i=1}^{N}\delta_{(x_{i},y_{i})}}$
+        \item move away from measures of optimal plans $\pimon$ and $\piantimon$ by gradient descent:
+        $$\mathcal{F}(\pi)\defeq \underbrace{c_{\gw}(\pi)}_{\substack{\text{performance}\\\text{of }\pi}}-\underbrace{\min \left\{ c_{\gw}(\pimon),\, c_{\gw}(\piantimon)\right\}}_{\substack{\text{performance of the monotone}\\\text{rearrangements of the marginals of }\pi}}$$
+        \item results similar to \cite{beinert2022assignment}! \light{\faPencil*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{What happens? + computation of optimal bimaps}
+    \begin{itemize}
+        \item still, $\pimon$ and $\piantimon$ are very often optimal in practice: \emph{what happens?}
+        \item generate measures with $N$ points at random and look at the optimal plan for GW! \textbf{how to find it?}\begin{enumerate}
+            \item $\pi\opt$ optimal for GW \item $\implies$ optimal for \emph{linearized} $\GW(m(\pi\opt))$
+            \item consider all linearized $\GW(m)$ for $m \in [m_\text{min},m_\text{max}]$ and take all optimal plans $\pi\opt_m$ \light{(easy, linear programs!)}
+            \item $\pi\opt$ is the one that performs best on GW
+        \end{enumerate}
+        \pause
+        \onslide<2>{
+            \vspace{-8mm}
+            \begin{figure}
+                \centering
+                \include{figures/stab_1bis}
+                \vspace{-8mm}
+                \caption{Graph of $m\mapsto \GW(\pi\opt_m)$.}
+            \end{figure}}
+    \end{itemize}
+\end{frame}
+\begin{frame}{What happens? + computation of optimal bimaps}
+    \begin{itemize}
+        \item \textbf{Note:} sum of Diracs $\mu=(X,\mathbbm{1}_N)$ $\to$ density $\mu=(\hat X,a)$ by convolution with small Gaussian $\sigma$
+        \item evolution of $\pi\opt_m$ as a function of $m$
+        \begin{itemize}
+            \item with $N$ random points: \href{./figures/gif_random_full.gif}{\emph{[all]}}, \href{./figures/gif_random_zoom.gif}{\emph{[zoom]}}
+            \pause
+            \item with counter-examples of before: \href{./figures/gif_full.gif}{\emph{[all]}}, \href{./figures/gif_zoom.gif}{\emph{[zoom]}}
+        \end{itemize}
+        \item \textbf{Note:} \textit{a priori} no reason to work, and indeed it does not work most of the time
+    \end{itemize}
+\end{frame}
+\begin{frame}{Computation of optimal bimaps}
+            \begin{algorithm}[H]
+                \caption{Generating bimaps from adversarial examples.}
+                \label{algorithm:bimap}
+            \vspace{-2mm}
+            \textbf{Input:} an adversarial plan $\pi_f=\id(X_f,Y_f)$\\
+            \noindent\textbf{Parameters:} $\sigma$, $N_{\Delta x}$, $N_{\Delta m}$\\
+            \textbf{Algorithm:}
+            \begin{algorithmic}[1]
+                \State $a\gets \texttt{convolution}(X_f,\sigma,N_{\Delta x})$
+                \State $b\gets \texttt{convolution}(Y_f,\sigma,N_{\Delta x})$ \Comment{(optional)}
+                \State $m_{\text{min}}\gets \min_{\pi\in U(a,b)}\ \langle C_{xy},\,\pi\rangle$ \Comment{solve linear programs}
+                \State $m_{\text{max}}\gets \max_{\pi\in U(a,b)}\ \langle C_{xy},\,\pi\rangle$
+                \State \light{\texttt{GW\_scores} $\gets \texttt{[]}$}
+                \For{$m\in\{m_\text{min},\dots,m_\text{max}\}$} \Comment{with $N_{\Delta m}$ points}
+                    \State $\pi\opt_m\gets \argmin_{\pi\in U(a,b)}\ \langle C_{\GW(m)},\,\pi\rangle$ \Comment{solve linear program}
+                    \State \light{append $\GW(\pi\opt_m)$ to \texttt{GW\_scores}}
+                \EndFor
+                \State $\pi\opt\gets\argmax_\pi$ \texttt{GW\_scores} \Comment{take best plan for GW}
+                \State return $\pi\opt$
+                \end{algorithmic}
+            \textbf{Outputs:} $\pi\opt$ optimal for GW
+          \end{algorithm}
+\end{frame}
+\begin{frame}{Computation of optimal bimaps}
+    \begin{columns}
+        \centering
+        \begin{column}[b]{.4\linewidth}
+            \centering
+            \include{figures/bimap_plan_double}
+            \vspace{-8mm}
+        \end{column}
+        \hfill
+        \begin{column}[b]{.49\linewidth}
+            \centering
+            \include{figures/bimap_plan_bis}
+            \vspace{-8mm}
+        \end{column}
+    \end{columns}
+    \begin{figure}[h]
+            \caption{Optimal correspondence plan $\pi\opt$ (in log scale), \capleft starting from a plan with both marginals convolved or \capright with only $\mu$ convolved. Parameters: $\sigma=\smash{5.10^{-3}}$, $N_{\Delta x}=150$, $N_{\Delta m}=2000$.
+            }
+    \end{figure}
+    \vspace{-1cm}
+    \begin{itemize}
+        \item small bimap region for \capright?
+        \item ``but it's a map from $\Yy$ to $\Xx$!'' no, in both cases, no map neither $\mu\to\nu$ nor $\nu\to\mu$
+    \end{itemize}
+\end{frame}
+
+\subsection{Instability of the optimality of monotone optimal plans}
+\begin{frame}{Instability of the optimality of monotone rearrangements}
+    \begin{block}{Question}
+        Is having $\pimon$ or $\piantimon$ as optimal \emph{stable}?
+    \end{block}
+    \begin{itemize}
+        \item minimum are optimal correspondence plans \only<2>{\begin{itemize}
+            \item small $\sigma$: optimal plan not monotone by construction;
+            \item large $\sigma$: monotone are optimal again.
+            \item \emph{phase transition:} landscape of $m\mapsto \GW(\pi\opt_m)$ while increasing $\sigma$
+        \end{itemize}}
+    \end{itemize}
+    \only<1>{
+        \vspace{-7mm}
+        \begin{figure}
+            \centering
+            \include{figures/stab_1bis}
+            \vspace{-8mm}
+            \caption{Graph of $m\mapsto \GW(\pi\opt_m)$.}
+        \end{figure}}
+    \only<2>{\begin{columns}
+        \begin{column}[b]{.24\linewidth}
+            \centering
+            \include{figures/stab_1}
+            \vspace{-8mm}
+            \begin{center}{\scriptsize $\sigma_1=8.10^{-3}$}\end{center}
+        \end{column}
+        \begin{column}[b]{.24\linewidth}
+            \centering
+            \include{figures/stab_25}
+            \vspace{-8mm}
+            \begin{center}{\scriptsize $\sigma_2=8.8.10^{-3}$}\end{center}
+        \end{column}
+        \begin{column}[b]{.24\linewidth}
+            \centering
+            \include{figures/stab_4}
+            \vspace{-8mm}
+            \begin{center}{\scriptsize $\sigma_3=10^{-2}$}\end{center}
+        \end{column}
+        \begin{column}[b]{.24\linewidth}
+            \centering
+            \include{figures/stab_5}
+            \vspace{-8mm}
+            \begin{center}{\scriptsize $\sigma_4=3.10^{-2}$}\end{center}
+        \end{column}
+    \end{columns}
+    \begin{figure}[h]
+        \caption{Graphs of $m\mapsto \GW(\pi\opt_m)$ with \cite{beinert2022assignment}, $N=7$ points.}
+    \end{figure}}
+\end{frame}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+
+\subsection{(A positive result for measures with two components)}
+    \begin{frame}{(A positive result for measures with two components)}
+        Let $\mu_1$, $\mu_2$, $\nu_1$, $\nu_2$ probability measures on $A \subset \RR$ compact. Fix $t \in (0,1)$ and $K > \operatorname{diam}(A)$. Let $\tau_K : x \mapsto x + K$. Introduce measures
+    \begin{equation*}
+    \mu = (1-t) \mu_1 + t \tau_{K\pushonly} \mu_2 \quad \text{and}  \quad \nu = (1-t) \nu_1 + t \tau_{K\pushonly} \nu_2\,.
+    \end{equation*}
+
+    \begin{figure}[h]
+        \centering
+        \input{figures/illu_gw_separated}
+    \end{figure}
+
+    \begin{block}{Theorem}
+        For \emph{$K$ large enough}, the unique optimal plan for the quadratic cost between  $\mu$ and $\nu$ is given by \emph{one of the two monotone maps} (increasing or decreasing).
+    \end{block}
+
+
+\end{frame}
+
+
+\section{Summary \& discussion}
+\begin{frame}{Summary \& discussion}
+    \textbf{Contributions}
+    \begin{enumerate}
+        \item \textbf{Thm:} always a \emph{map} for \cref{eqn:GW-inner-prod}
+        \item \textbf{Thm:} a \emph{map}, \emph{bimap} or \emph{map/anti-map} for \cref{eqn:GW-quadratic}
+        \item \textbf{Conj:} this second claim is \emph{tight}
+        \item \textbf{Algo:} \emph{non-optimality} of monotone + \emph{instability} for \cref{eqn:GW-quadratic}
+        \item (\textbf{Thm:} monotone rearrangement optimal for \cref{eqn:GW-quadratic} between measures composed of \emph{two distant parts})
+    \end{enumerate}
+\vfill
+\textbf{Very soon:}
+\begin{itemize}
+    \item remove assumption of compact support
+    \item try to show decomposition $\pimon+\piantimon$ for \cref{eqn:GW-quadratic}
+\end{itemize}
+\vfill
+\textbf{Future work:}
+\begin{itemize}
+    \item quadratic cost: \begin{itemize}
+        \item better understanding of the 1d case (maybe simpler)
+    \end{itemize}
+    \item inner product cost: \begin{itemize}
+        \item is \cref{eqn:GW-inner-prod} computationally tractable?
+    \end{itemize}
+    \item other cost functions \begin{itemize}
+        \item apply key lemma to other costs $c_\Xx$ and $c_\Yy$?
+    \end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}{Links}
+    \begin{itemize}
+        \item \emph{preprint} on HAL and arxiv: ``\textit{On the existence of Monge maps for the Gromov--Wasserstein distance}'' \light{\href{https://hal.archives-ouvertes.fr/hal-03818500}{https://hal.archives-ouvertes.fr/hal-03818500}}
+        \item (soon) \emph{code} on GitHub at \light{\href{https://github.com/theodumont/monge-gromov-wasserstein}{https://github.com/theodumont/monge-gromov-wasserstein}}
+    \end{itemize}
+\end{frame}
+\begin{frame}[standout]
+    Thank you!
+\end{frame}
+
+\appendix
+
+
+\begin{frame}[allowframebreaks]{References}
+
+    \bibliography{biblio}
+    \bibliographystyle{apalike}
+
+  \end{frame}
+
+\begin{frame}{Inspiration for figures}
+    \begin{itemize}
+        \item the figure on slides~\ref{slide:fig-transport-1} and~\ref{slide:fig-transport-2}, as well as the ones on slide~\ref{slide:fig-plans} are adapted from \href{https://lchizat.github.io/files/presentations/chizat2019IFCAM_OT.pdf}{\underline{a talk by Lénaïc Chizat}};
+        \item the GW figure on slide~\ref{slide:gw} is adapted from \cite{peyre2019computational};
+        \item all other figures are my own.
+    \end{itemize}
+\end{frame}
+
+\end{document}

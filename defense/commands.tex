@@ -1,0 +1,200 @@
+% symbols =======================
+% mathbb
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\renewcommand{\SS}{\mathbb{S}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\KK}{\mathbb{K}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\WW}{\mathbb{W}}
+\newcommand{\XX}{\mathbb{X}}
+\newcommand{\YY}{\mathbb{Y}}
+% mathcal
+\newcommand{\Bb}{\mathcal{B}}
+\newcommand{\Cc}{\mathcal{C}}
+\newcommand{\Dd}{\mathcal{D}}
+\newcommand{\Ee}{\mathcal{E}}
+\newcommand{\Hh}{\mathcal{H}}
+\newcommand{\Ff}{\mathcal{F}}
+\newcommand{\Gg}{\mathcal{G}}
+\newcommand{\Ii}{\mathcal{I}}
+\newcommand{\Ll}{\mathcal{L}}
+\newcommand{\Nn}{\mathcal{N}}
+\newcommand{\Mm}{\mathcal{M}}
+\newcommand{\Oo}{\mathcal{O}}
+\newcommand{\Pp}{\mathcal{P}}
+\newcommand{\Rr}{\mathcal{R}}
+\newcommand{\Ss}{\mathcal{S}}
+\newcommand{\Tt}{\mathcal{T}}
+\newcommand{\Vv}{\mathcal{V}}
+\newcommand{\Ww}{\mathcal{W}}
+\newcommand{\Xx}{\mathcal{X}}
+\newcommand{\Yy}{\mathcal{Y}}
+\newcommand{\Zz}{\mathcal{Z}}
+% letters
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\ga}{\gamma}
+\newcommand{\de}{\delta}
+\newcommand{\eps}{\varepsilon}
+\renewcommand{\th}{\theta}
+\newcommand{\la}{\lambda}
+\newcommand{\si}{\sigma}
+\newcommand{\om}{\omega}
+\newcommand{\Ga}{\Gamma}
+\newcommand{\De}{\Delta}
+\newcommand{\La}{\Lambda}
+\newcommand{\Si}{\Sigma}
+\newcommand{\Om}{\Omega}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\epsilon}{\varepsilon}
+
+% operators ==========
+\renewcommand{\ker}{\operatorname{Ker}}
+\DeclareMathOperator*{\rk}{rk}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\card}{card}
+\DeclareMathOperator*{\sgn}{sgn}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\scal}[2]{\left\langle #1,\, #2 \right\rangle}
+\newcommand{\enscond}[2]{\left\lbrace #1,\quad #2 \right\rbrace}
+\newcommand{\pd}[2]{ \frac{ \partial #1}{\partial #2} }
+\newcommand{\umin}[1]{\underset{#1}{\min}\;}
+\newcommand{\umax}[1]{\underset{#1}{\max}\;}
+\newcommand{\uargmin}[1]{\underset{#1}{\argmin}\;}
+\newcommand{\uargmax}[1]{\underset{#1}{\argmax}\;}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\pa}[1]{\left(#1\right)}
+\newcommand{\bra}[1]{\left[#1\right]}
+\newcommand{\cro}[1]{\left\{#1\right\}}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\DeclareMathOperator{\KL}{KL}
+\newcommand{\KLdiv}[2]{\KL\pa{#1 | #2}}
+\newcommand{\KLproj}{\text{Proj}^{\tiny\KL}}
+\newcommand{\choice}[1]{ \left\{ \begin{array}{l} #1 \end{array} \right. }
+\def\ones{\mathbbm{1}}
+\def\id{\operatorname{id}}
+% \newcommand{\support}{\mathrm{spt}}
+\newcommand{\graph}{\mathrm{gph}}
+% text
+\newcommand{\qandq}{\quad\text{and}\quad}
+\newcommand{\qwhereq}{\quad\text{where}\quad}
+\newcommand{\qifq}{\quad\text{if}\quad}
+\newcommand{\qarrq}{\quad\Longrightarrow\quad}
+\newcommand{\as}{\text{as }}
+\newcommand{\qas}{\quad\text{as }}
+\newcommand{\where}{\text{where }}
+\newcommand{\tmin}{\text{min}}
+\newcommand{\tmax}{\text{max}}
+
+% mathrm
+\newcommand{\dd}{\,\mathrm d}
+
+% Mark sections of captions for referring to divisions of figures
+\newcommand{\figleft}{{(Left)}}
+\newcommand{\figcenter}{{(Center)}}
+\newcommand{\figright}{{(Right)}}
+\newcommand{\figtop}{{(Top)}}
+\newcommand{\figbottom}{{(Bottom)}}
+\newcommand{\captiona}{{(a)}}
+\newcommand{\captionb}{{(b)}}
+\newcommand{\captionc}{{(c)}}
+\newcommand{\captiond}{{(d)}}
+
+% \newcommand{\defeq}{\stackrel{\text{def}}{=}}
+\newcommand{\defeq}{\triangleq}
+% % figures
+% \def\figref#1{figure~\ref{#1}}
+% \def\Figref#1{Figure~\ref{#1}}
+% \def\twofigref#1#2{figures \ref{#1} and \ref{#2}}
+% \def\quadfigref#1#2#3#4{figures \ref{#1}, \ref{#2}, \ref{#3} and \ref{#4}}
+% % sections
+% \def\secref#1{section~\ref{#1}}
+% \def\Secref#1{Section~\ref{#1}}
+% \def\twosecrefs#1#2{sections \ref{#1} and \ref{#2}}
+% \def\secrefs#1#2#3{sections \ref{#1}, \ref{#2} and \ref{#3}}
+% % chapters
+% \def\rangechapref#1#2{chapters\ref{#1}--\ref{#2}}
+% % parts
+% \def\partref#1{part~\ref{#1}}
+% \def\Partref#1{Part~\ref{#1}}
+% \def\twopartref#1#2{parts \ref{#1} and \ref{#2}}
+% % equations
+% \def\eqref#1{equation~\ref{#1}}
+% \def\Eqref#1{Equation~\ref{#1}}
+% \def\plaineqref#1{\ref{#1}}
+% \def\chapref#1{chapter~\ref{#1}}
+% \def\Chapref#1{Chapter~\ref{#1}}
+% % algorithms
+% \def\algref#1{algorithm~\ref{#1}}
+% \def\Algref#1{Algorithm~\ref{#1}}
+% \def\twoalgref#1#2{algorithms \ref{#1} and \ref{#2}}
+% \def\Twoalgref#1#2{Algorithms \ref{#1} and \ref{#2}}
+
+
+\usepackage[capitalize]{cleveref}
+\crefname{section}{Sec.}{Sec.}
+\Crefname{section}{Section}{Sections}
+% \crefname{section}{§}{§§}
+% \Crefname{section}{§}{§§}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{Tab.}{Tabs.}
+\crefname{equation}{}{}
+\Crefname{equation}{Eq.}{}
+
+\definecolor{tabblue}{rgb}{0.12156862745098039, 0.4666666666666667, 0.7058823529411765}
+\definecolor{tabblue}{rgb}{0.12156862745098039, 0.4666666666666667, 0.7058823529411765}
+\definecolor{taborange}{rgb}{1.0, 0.4980392156862745, 0.054901960784313725}
+\definecolor{tabgreen}{rgb}{0.17254901960784313, 0.6274509803921569, 0.17254901960784313}
+\definecolor{tabred}{rgb}{0.8392156862745098, 0.15294117647058825, 0.1568627450980392}
+\definecolor{tabpurple}{rgb}{0.5803921568627451, 0.403921568627451, 0.7411764705882353}
+\definecolor{tabbrown}{rgb}{0.5490196078431373, 0.33725490196078434, 0.29411764705882354}
+\definecolor{tabpink}{rgb}{0.8901960784313725, 0.4666666666666667, 0.7607843137254902}
+\definecolor{tabgray}{rgb}{0.4980392156862745, 0.4980392156862745, 0.4980392156862745}
+\definecolor{tabolive}{rgb}{0.7372549019607844, 0.7411764705882353, 0.13333333333333333}
+\definecolor{tabcyan}{rgb}{0.09019607843137255, 0.7450980392156863, 0.8117647058823529}
+% \newcommand\myshade{85}
+% % % \colorlet{mylinkcolor}{YellowOrange}
+% \definecolor{mylinkcolor}{rgb}{.71,0.21,0.01}
+% % % \colorlet{mycitecolor}{green}
+% \colorlet{myurlcolor}{tabblue}
+% \hypersetup{
+%   breaklinks=true,
+%   colorlinks=true,
+%   linkcolor=mylinkcolor,
+% %   citecolor=mycitecolor!\myshade!black,
+%   urlcolor=myurlcolor!\myshade!black,
+% %   linkcolor=linkcolor,
+%   citecolor=tabgreen,
+% %   urlcolor=urlcolor,
+%   }
+
+% project specific ============
+\newcommand{\gw}{\operatorname{GW}}
+\newcommand{\GW}{\operatorname{GW}}
+\newcommand{\W}{\operatorname{W}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\pimon}{\pi_\text{mon}^\oplus}
+\newcommand{\piantimon}{\pi_\text{mon}^\ominus}
+\newcommand{\Tmon}{T_\text{mon}^\oplus}
+\newcommand{\Tantimon}{T_\text{mon}^\ominus}
+\newcommand{\push}{_\#}
+\newcommand{\pushonly}{\#}
+\newcommand{\opt}{^\star}
+
+
+% \newlist{abbrv}{itemize}{1}
+% \setlist[abbrv,1]{label=,labelwidth=1.2in,align=parleft,itemsep=0.0\baselineskip,leftmargin=!}
+% \def\symbolentry#1#2{\item[#1] #2}
+
+\newcommand{\capcenter}{\textbf{(Center)\ }}
+\newcommand{\capright}{\textbf{(Right)\ }}
+\newcommand{\capleft}{\textbf{(Left)\ }}
+\newcommand{\Pac}{\Pp_{\text{ac}}}
+\newcommand{\Pactwo}{\Pp_{2,\text{ac}}}

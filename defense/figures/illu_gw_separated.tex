@@ -1,0 +1,67 @@
+
+\begin{tikzpicture}[line cap=round,line join=round,scale=.6]
+    \def\margin{.5}
+    \def\K{7}
+    \def\diam{4}
+    \def\height{1.5}
+    \def\vertical{2.5}
+    \def\spacearrow{.45}
+    \def\borellength{.75}
+    \def\shade{15}
+    % mu
+    \draw[tabred,fill=tabred!\shade]
+        (0,0)..controls +(70:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/5,0.5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (2*\diam/5,0.5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.2)..
+        (3*\diam/4,1*\height)..controls +(0:\diam*0.2) and +(110:\diam*0.1)..
+        (\diam,0);
+    \draw[tabred,fill=tabred!\shade,xshift=\K cm]
+        (0,0)..controls +(70:\diam*0.1) and +(180:\diam*0.3)..
+        % (\diam/4,2/3*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/3,.75*\height)..controls +(0:\diam*0.3) and +(140:\diam*0.3)..
+        % (3*\diam/4,1*\height)..controls +(0:\diam*0.1) and +(110:\diam*0.1)..
+        (\diam,0);
+    \draw node[tabred,above] at (-\margin,0) {$\mu$};
+    \draw node[tabred,above right] at (.2,0) {$\mu_1$};
+    \draw node[tabred,above right] at (.2+\K,0) {$\tau_{K\pushonly}\mu_2$};
+    % nu
+    \draw[tabblue,fill=tabblue!\shade,yshift=-\vertical cm]
+        (0,0)..controls +(70:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/4,1*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/2,0.5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (3*\diam/4,2/3*\height)..controls +(0:\diam*0.1) and +(110:\diam*0.1)..
+        (\diam,0);
+    \draw[tabblue,fill=tabblue!\shade,xshift=\K cm,yshift=-\vertical cm]
+        (0,0)..controls +(70:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/4,4/5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/2,0.4*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (3*\diam/4,4/5*\height)..controls +(0:\diam*0.1) and +(110:\diam*0.1)..
+        (\diam,0);
+    \draw node[tabblue,above] at (-\margin,-\vertical) {$\nu_{\vphantom{1}}$};
+    \draw node[tabblue,above right] at (.2,-\vertical) {$\nu_1$};
+    \draw node[tabblue,above right] at (.2+\K,-\vertical) {$\tau_{K\pushonly}\nu_2$};
+    % axis
+    \draw[->] (0-\margin,0) -- (\K+\diam+\margin,0);
+    \draw node[above right] at (\K +\diam+\margin,0) {$\mathcal{X}$};
+    \draw[->,yshift=-\vertical cm] (0-\margin,0) -- (\K +\diam+\margin,0);
+    \draw node[above right] at (\K +\diam+\margin,-\vertical) {$\mathcal{Y}$};
+    % constants
+    \draw[<->,opacity=1,dashed] (0,-\vertical-\spacearrow) -- (\diam,-\vertical-\spacearrow) node[midway,below] {$\operatorname{diam}(A)$};
+    % \draw[<->,opacity=1,dashed] (0,-\height-\vertical-\spacearrow) -- (\diam,-\height-\vertical-\spacearrow) node[midway,below] {$\Delta=\operatorname{diam}(A)$};
+    % \draw[<->,opacity=1,dashed] (\diam/2,-\height-\vertical+0.1) -- (\K+\diam/2,-\height-\vertical+0.1) node[midway,below] {$K$};
+    \draw[<->,opacity=1,dashed] (\diam/2,-\vertical-3*\spacearrow) -- (\K+\diam/2,-\vertical-3*\spacearrow) node[midway,below] {$K$};
+    % borel sets
+    % \draw[line width=2pt,tabred] (1.25,0) -- (1.25+\borellength,0) node[midway,below] (X) {$X$};
+    % \draw[line width=2pt,tabred] (2.75,0) -- (2.75+\borellength,0) node[midway,below] (X') {$X'$};
+    % \draw[line width=2pt,tabred] (1.75+\K,0) -- (1.75+\borellength+\K,0) node[midway,below] (X'') {$X''$};
+    % \draw[line width=2pt,tabblue] (1.25,-\vertical) -- (1.25+\borellength,-\vertical) node[midway,above] (Y) {$Y$};
+    % \draw[line width=2pt,tabblue] (2.75,-\vertical) -- (2.75+\borellength,-\vertical) node[midway,above] (Y') {$Y'$};
+    % \draw[line width=2pt,tabblue] (1.75+\K,-\vertical) -- (1.75+\borellength+\K,-\vertical) node[midway,above] (Y'') {$Y''$};
+    % \draw[->] (X) -- (Y);
+    % \draw[->] (X') -- (Y'') node[near start,left] {$\pi_1\ $};
+    % \draw[->] (X'') -- (Y') node[near start,right] {$\ \pi_2$};
+    % \draw[->,dashed] (X') -- (Y') node[midway,left] {$\tilde\pi_1$};
+    % \draw[->,dashed] (X'') -- (Y'') node[midway,left] {$\tilde\pi_2$};
+\end{tikzpicture}
+
+

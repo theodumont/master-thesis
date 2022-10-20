@@ -1,0 +1,9 @@
+
+\begin{tikzpicture}
+    \begin{axis}[axis lines=left,xmin=0,xmax=2,ymin=0,ymax=2,ticks=none,xlabel=$\Xx$,ylabel=$\Yy$]
+        \addplot+[no marks,ultra thick,domain=0.2:1.8,samples=20,tabblue] {0.6 + .9*(x-.5)^3 - 0.3*x} ;
+        % \addplot+[no marks,thick,domain=0.2:1.8,samples=20,transform canvas={rotate around={-90:(0,0)}}] {0.5 + .7*x^2  } ;
+        % \addplot[domain=-10:10, color=blue,samples=20,transform canvas={rotate around={90:(0,0)}}]{x^2};
+        \draw[color=tabred,ultra thick] (axis cs:1.2,1.7) arc[start angle=120, end angle=260,x radius=2cm, y radius =2cm];
+    \end{axis}
+\end{tikzpicture}

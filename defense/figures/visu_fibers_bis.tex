@@ -1,0 +1,67 @@
+\def\munushiftx{6}
+\def\munushifty{0.7}
+\def\Hlength{\munushiftx+2*\marginLR+0.4}
+\def\marginLR{2}
+\def\Hangle{1}
+\def\Hheight{2.5}
+\def\compXslant{0.3}
+% \def\colorDistrib{tabgreen!30}
+\def\colormu{tabred!30}
+\def\colornu{tabblue!30}
+\def\colorFibermu{tabred}
+\def\colorFibernu{tabblue}
+\def\colorT{tabpurple}
+\begin{tikzpicture}[line cap=round,line join=round,scale=.75]
+\tikzset{
+    point/.style={
+        thick,
+        draw=gray,
+        cross out,
+        inner sep=0pt,
+        minimum width=4pt,
+        minimum height=4pt,
+    },
+}
+\def\mushiftx{\marginLR cm}
+\def\mushifty{4 cm}
+\def\nushiftx{\marginLR cm +\munushiftx cm}
+\def\nushifty{\munushifty cm + 4 cm}
+\def\decalmu{0.5 cm}
+% H
+\draw [closed, xshift=\compXslant cm-\Hheight*0.5 cm, fill=gray!10, draw=none] (0,0) -- (\Hlength,0) -- (\Hlength+\Hangle*\Hheight,\Hheight) -- (\Hangle*\Hheight,\Hheight) -- cycle;
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm] (\Hangle*\Hheight,\Hheight) -- (0,0);                                % left
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm]        (0,0) -- (\Hlength,0);                                               % down
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm] (\Hangle*\Hheight,\Hheight) -- (\Hlength+\Hangle*\Hheight,\Hheight); % up
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm]        (\Hlength+\Hangle*\Hheight,\Hheight) -- (\Hlength,0);                % right
+\draw [xslant=0.707, fill=\colormu, xshift=\compXslant cm+\decalmu,draw=\colorFibermu] (\marginLR,1) ellipse (1 and 0.5);
+\draw [xslant=0.707, fill=\colornu, xshift=\compXslant cm,draw=\colorFibernu] (\marginLR+\munushiftx-1,1+\munushifty) ellipse (0.6 and 0.5);
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm,->] (\Hangle*\Hheight,\Hheight) -- (\Hangle*\Hheight,\Hheight+4) node[above,left] {};
+\draw [xshift=\compXslant cm-\Hheight*0.5 cm,opacity=.2] (\Hangle*\Hheight,\Hheight) -- (\Hangle*\Hheight,0.5);
+\node at (0,.7) [below right] {$B$};
+\node at (-.5,5) [below right] {$E$};
+% mu and nu
+\draw[use Hobby shortcut,closed=true,fill=\colormu,xshift=\mushiftx+\decalmu,yshift=\mushifty,draw=\colorFibermu] (0,0.4) .. (0.6,0.2) .. (1.4,0.6) .. (2.1,0.7) .. (2.2,1) .. (1.6,1.4) .. (0.9,1.2) .. (0.2,1);
+\draw[use Hobby shortcut,closed=true,fill=\colornu,xshift=\nushiftx-0.2cm,yshift=\nushifty,draw=\colorFibernu] (0.4,0) .. (0.2,0.6) .. (0.6, 1.3) .. (1,1.6) .. (1.4,1.6) .. (1.2,0.9) .. (1,0.2);
+\node at (\marginLR,0.4)                           [below left, yshift=4cm, xshift=\decalmu] {$\mu$};
+\node at (\marginLR+\munushiftx+1,0.4cm+\nushifty) [below right]            {$\nu$};
+
+% circle perspective for mu
+\draw[xshift=\mushiftx+14mm+\decalmu,yshift=\mushifty+6mm,draw=\colorFibermu]        (0,0) arc (-90:90:0.15 and 0.38);
+\draw[xshift=\mushiftx+14mm+\decalmu,yshift=\mushifty+6mm,dotted,draw=\colorFibermu] (0,0.38*2) arc (90:270:0.15 and 0.38);
+\draw[xshift=\nushiftx,yshift=\nushifty+6mm,draw=\colorFibernu]        (0,0) arc (-180:0:0.455 and 0.15);
+\draw[xshift=\nushiftx,yshift=\nushifty+6mm,draw=\colorFibernu,dotted]        (0,0) arc (180:0:0.455 and 0.15);
+
+\draw[\colorFibermu,line width=1.5,xshift=\mushiftx+5mm+\decalmu,yshift=\mushifty+2mm] (0,0) -- (0,0.9) node[above, \colorFibermu]      {$\mu_u$};
+\draw[\colorFibernu,line width=1.5,xshift=\nushiftx+3mm,yshift=\nushifty]     (0,-0.02) -- (0,1.16) node[above left, \colorFibernu] {$\nu_{t_B(u)}$};
+% \draw[\colorFibermu,dashed] (2.5,4.2) -- (2.5,0.9) ;
+% \draw[\colorFibernu,dashed] (8.3,5.8) -- (8.3,1.6) ;
+% p
+\draw [->] (\mushiftx+1cm+\decalmu,  \mushifty+0.4cm) -- (\mushiftx+1cm+\decalmu,  \mushifty-3cm) node[midway,right] {$\varphi$};
+\draw [->] (\nushiftx+0.5cm,\nushifty-0.05cm) -- (\nushiftx+0.5cm,\nushifty-3cm) node[midway,right] {$\varphi$};
+% nabla h
+\draw [thick,->] (\mushiftx+2.05cm+\decalmu,\mushifty-2.9cm) to[bend left=-10] node[midway,below] {$t_B$}          (\nushiftx-0.2cm,\nushifty-3.2cm) ;
+\draw [thick,->] (\mushiftx+5mm+\decalmu, \mushifty+6.5mm) to[bend left=-10] node[midway,below] {$T_u$} (\nushiftx+3mm,\nushifty+4mm) ;
+\draw [circle, inner sep=0pt, minimum size=1.5pt,xshift=\decalmu]  (2.5,0.9) node[fill, label={below:$u$}] {};
+\draw [circle, inner sep=0pt, minimum size=1.5pt]  (8.3,1.6) node[fill, label={below:$t_B(u)$}] {};
+
+\end{tikzpicture}

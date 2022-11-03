@@ -1,0 +1,30 @@
+
+\def\scalefont{0.5}
+\begin{tikzpicture}[
+    declare function={mu1=1.45;},
+    declare function={mu2=1.7;},
+    declare function={sigma1=.15;},
+    declare function={sigma2=0.07;},
+    declare function={normal(\m,\s,\x)=1/(2*\s*sqrt(pi))*exp(-(\x-\m)^2/(2*\s^2));},
+    scale=\scalefont,
+    ]
+    \begin{axis}[
+        grid = major,
+        axis lines=left,
+        domain=1:2,
+        y domain=0:1,
+        % ticks=none,
+        samples=100,
+        axis line style = ultra thick,
+        ]
+        \addplot[tabred,no marks,ultra thick] (x,{normal(mu1,sigma1,x)}) node[midway, above,scale=1/\scalefont] {$\mu$};
+        \addplot[tabblue,no marks,ultra thick] (x,{normal(mu2,sigma2,x)}) node[midway, left,scale=1/\scalefont] {$\nu$};
+
+        \def\x{1.421}
+        \def\y{1.688}
+        \def\eps{0.007}
+        \draw[dashed, thick] (\x,{normal(mu1,sigma1,\x)}) -- (\x,0) node[above right] {$x$};
+        \draw[dashed, thick] (\y,{normal(mu2,sigma2,\y)}) -- (\y,0) node[above right] {$y$};
+        % \draw[<->, thick] (\x,\fx+\eps) -- (\y,\fx+\eps);
+    \end{axis}
+\end{tikzpicture}

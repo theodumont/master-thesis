@@ -1,0 +1,152 @@
+% packages
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mdframed}
+\usepackage{subcaption}
+\usepackage{cite}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{tikz-cd}
+\usepackage{dashbox}
+\usepackage[normalem]{ulem}
+\usepackage{bbm}
+\usepackage{fancyhdr}
+\newcommand\graphnode[1]{\begin{tabular}{@{}c@{}}#1\end{tabular}}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{fillbetween}
+\usepackage{environ}
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+\usetikzlibrary{hobby}
+\usetikzlibrary{shapes.misc}
+\usepackage[backref=page]{hyperref}
+\hypersetup{
+    breaklinks=true,
+    colorlinks=true,
+    urlcolor=urlcolor,
+    linkcolor=linkcolor,
+    citecolor=citecolor,
+    }
+
+\usepackage{booktabs}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
+\setlist[enumerate]{noitemsep}
+
+
+% commands
+\input{tex/commands.tex}
+
+\pgfplotsset{colormap={whitered}{color(0cm)=(white); color(1cm)=(tabpurple!80)}}
+
+% environments ====================
+% theorems
+\def\newtheoremlines{\newmdtheoremenv[
+    backgroundcolor=white,linecolor=black!40,
+    linewidth=2pt,topline=false,rightline=false,leftline=true,bottomline=false,
+    innertopmargin=-8pt,innerbottommargin=0pt,leftmargin=-12pt,rightmargin=-10pt,
+    skipabove=0,skipbelow=0,
+    % skipabove=\baselineskip,skipbelow=\baselineskip,
+    usetwoside=false]}
+\theoremstyle{plain}
+\newtheoremlines{defi}{Definition}[chapter]
+\theoremstyle{definition}
+\newtheoremlines{proposition}{Proposition}[chapter]
+\newtheoremlines{theorem}[proposition]{Theorem}
+\newtheoremlines{coro}[proposition]{Corollary}
+\newtheoremlines{lemma}[proposition]{Lemma}
+\newtheoremlines{conjecture}[proposition]{Conjecture}
+\newtheorem{example}{Example}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+
+
+% todo ================
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny,textwidth=2.7cm,disable]{todonotes}
+\newcommand{\formva}[1]{\todo[linecolor=tabred,backgroundcolor=tabred!25,bordercolor=tabred]{\textcolor{tabred}{\textbf{For MVA:}} #1}}
+\newcommand{\todoo}[1]{\todo[linecolor=tabred,backgroundcolor=tabred!25,bordercolor=tabred]{\textcolor{tabred}{\textbf{For MVA:}} #1}}
+\newcommand{\forpaper}[1]{\todo[linecolor=taborange,backgroundcolor=taborange!25,bordercolor=taborange]{\textcolor{taborange}{\textbf{For paper:}} #1}}
+\newcommand{\optional}[1]{\todo[linecolor=tabpurple,backgroundcolor=tabpurple!25,bordercolor=tabpurple]{\textcolor{tabpurple}{\textbf{Optional:}} #1}}
+\newcommand{\info}[1]{\todo[linecolor=tabblue,backgroundcolor=tabblue!25,bordercolor=tabblue]{\textcolor{tabblue}{\textbf{Remark:}} #1}}
+\newcommand{\question}[1]{\todo[linecolor=tabgreen,backgroundcolor=tabgreen!25,bordercolor=tabgreen]{\textcolor{tabgreen}{\textbf{Question:}} #1}}
+\newcommand{\fx}[1]{\todo[linecolor=tabblue,backgroundcolor=tabblue!25,bordercolor=tabblue]{\textcolor{tabblue}{\textbf{Comment (FX):}} #1}}
+\newcommand{\tl}[1]{\todo[linecolor=tabblue,backgroundcolor=tabblue!25,bordercolor=tabblue]{\textcolor{tabblue}{\textbf{Comment (TL):}} #1}}
+\newcommand{\td}[1]{\todo[linecolor=tabblue,backgroundcolor=tabblue!25,bordercolor=tabblue]{\textcolor{tabblue}{\textbf{Comment (TD):}} #1}}
+
+\usepackage{import}
+\newcommand{\incfig}[3]{%
+\begin{figure}[!h]
+    \centering
+    \def\svgwidth{#3\linewidth}
+    \import{./img/}{#1.pdf_tex}
+    \caption{#2}
+\end{figure}
+}
+
+\usepackage{titlesec}
+
+\usepackage{minitoc}
+\usepackage{algorithm}
+
+
+\title{
+    \vspace{-4cm}
+    \includegraphics[width=.3\linewidth]{img/logo-ens.jpg}
+    \hspace{1cm}
+    \includegraphics[width=.25\linewidth]{img/logo_mines.png}
+    \\
+    \vspace{1cm}
+    \large \textsc{ENS Paris Saclay (MVA) \& Mines Paris}\\
+    \large \textsc{Rapport de stage de fin d'études}\\
+    \vspace{1cm}
+    \par\noindent\rule{.8\textwidth}{0.4pt}\\
+    \vspace{1mm}
+    \huge \textbf{Existence of Monge maps for the Gromov--Wasserstein distance}\\
+    \vspace{-4mm}
+    \par\noindent\rule{.8\textwidth}{0.4pt}\\
+    \vspace{1cm}
+    \Large Théo \textsc{Dumont}\\
+    \vspace{2cm}
+    \includegraphics[width=.15\linewidth]{img/logo-ligm.png}\\
+    \large \textsc{Laboratoire d'Informatique Gaspard Monge (\textsc{ligm})}\\
+    \vspace{1cm}
+    \begin{flushleft}
+        \large \textit{Supervisor 1:} François-Xavier \textsc{Vialard}, \textsc{ligm}\\
+        \large \textit{Supervisor 2:} Théo \textsc{Lacombe}, \textsc{ligm}\\
+        \large \textit{Referent at MVA:} Gabriel \textsc{Peyré}, \textsc{cnrs, dma, ens}\\
+        \large \textit{Referent at Mines:} Olivier \textsc{Hermant}, {Mines Paris}
+    \end{flushleft}
+    \vfill
+    \large April 15\textsuperscript{th} 2022 -- September 30\textsuperscript{th} 2022
+    % \vfill
+}
+\author{}
+\date{}
+
+\fancyhf{}
+\fancyhead[L]{\thepage}
+\fancyhead[R]{\leftmark}
+\newcommand{\Chapter}[1]{\chapter{#1}{\hypersetup{linkcolor=black}\minitoc\vspace{5mm}}}
+\dominitoc
+
+
+\usepackage{titlesec}
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-40pt}{40pt}
+\usepackage{algpseudocode}
+\usepackage{multirow}
+\usepackage{mathdots}
+\usepackage{sidecap}
+\usepackage{mathtools}

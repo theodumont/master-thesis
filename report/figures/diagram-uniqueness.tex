@@ -1,0 +1,45 @@
+\begin{tikzcd}[
+        row sep=large,
+        column sep=large,
+        arrows=Rightarrow,
+        ]
+    &
+    |[alias=submod]| \graphnode{(strict)\\submodularity\\$\partial^2_{xy}c<0$}
+        \ar[d, Rightarrow, "\text{in 1D}"]
+        \ar[r, "\text{\cite{santambrogio2015optimal,mccann2012glimpse}}"]
+    &
+    \fbox{\graphnode{monotonicity\\$\pi\opt=\pimon$}}
+    \\
+    &
+    |[alias=degen]| \graphnode{non-degeneracy\\$\det \nabla^2_{xy}c\neq0$}
+        \ar[d, "\substack{\text{\cite{mccann2012rectifiability}}\\ \text{locally}}", "\substack{\text{\cite{mccann2011five}}\\ \text{in 1D}}"']
+        \ar[gray, to=generalized, bend right=60, "\substack{\text{\cite{moameni2020uniquely}}\\n=d\\ c\in\Cc^2}"']
+        \ar[r, "\text{\cite{mccann2012rectifiability}}"]
+    &
+    \graphnode{$\supp \pi\opt\subset n$-dim\\submanifold}
+    \\
+    &
+    |[alias=twist]| \graphnode{twist\\$\nabla_xc(x,\cdot)$ injective\\$\card\{x\mid\dots\}=0$}
+        \ar[dr]
+        \ar[r, "\text{\cite{levin1999abstract}}"]
+        \ar[d, "\text{\cite{moameni2016characterization}}"]
+    &
+    \fbox{\graphnode{map\\$\pi\opt=(\id , G)\push \mu$}}
+    \\
+    \dbox{\graphnode{$m$--map\\$\pi\opt=\sum_{i=1}^{m} \alpha_{i}(\id , G_{i})\push \mu$}}
+    &
+    \graphnode{$m$--twist\\$\card\{y\mid \dots\}\leq m$}
+        \ar[d]
+        \ar[l, "\text{\cite{moameni2016characterization}}"']
+    &
+    \graphnode{subtwist\\$\card\{x\mid \dots\}\leq 2$}
+        \ar[d]
+        \ar[d, "\text{\cite{mccann2012glimpse}}"]
+    \\
+    \dbox{\graphnode{$\NN$--map\\$\pi\opt=\sum_{i=1}^{\infty} \alpha_{i}(\id , G_{i})\push \mu$}}
+    &
+    |[alias=generalized]| \graphnode{generalized twist\\$\card\{y\mid \dots\}< \infty$}
+        \ar[l, "\text{\cite{moameni2016characterization}}"']
+    &
+    \fbox{\graphnode{map/anti-map\\$\pi\opt=(\id , G)\push \bar\mu$\\$+(H , \id)\push(\nu-G\push \bar\mu)$}}
+\end{tikzcd}

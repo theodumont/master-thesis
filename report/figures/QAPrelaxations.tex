@@ -1,0 +1,7 @@
+\begin{tikzcd}[
+        row sep=large,
+        % column sep=large,
+        ]
+\text{Optimizing on } \Pi_N:& \text{discrete GW }\cref{eq:GW-disc}\ar[d,leftsquigarrow,"\text{ relaxation }"']\ar[r, phantom, "\equiv"] & \text{problem } \cref{eq:intermed-pb}\ar[r, phantom, "\subset"] & \text{QAP on }\Pi_N\ar[d,leftsquigarrow,"\text{ relaxation }"']\\
+\text{Optimizing on } \mathfrak S_N:& \text{discrete GW on }\mathfrak S_N \ar[leftrightarrow, to=QAP, bend right=20, "\text{abuse of notation}"']&  & |[alias=QAP]|\text{QAP }\cref{eq:true-QAP}
+\end{tikzcd}

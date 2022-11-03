@@ -1,0 +1,69 @@
+\begin{tikzpicture}[line cap=round,line join=round,scale=0.8]
+    \def\margin{.5}
+    \def\K{7}
+    \def\diam{4}
+    \def\height{1.5}
+    \def\vertical{4}
+    \def\spacearrow{.4}
+    \def\borellength{.75}
+    \def\shade{15}
+    \def\ellip{1}
+    \def\spacesq{1.2}
+
+    \filldraw [fill=black!5, draw=none] (0,0) rectangle (\diam,\diam);
+    \filldraw [fill=black!5, draw=none] (\K,\K) rectangle (\K+\diam,\K+\diam);
+    % mu
+    \draw[tabred,fill=tabred!\shade]
+        (0,0)..controls +(-70:\diam*0.1) and +(180:\diam*0.1)..
+        (\diam/5,-0.5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.1)..
+        (2*\diam/5,-0.5*\height)..controls +(0:\diam*0.1) and +(180:\diam*0.2)..
+        (3*\diam/4,-1*\height)..controls +(0:\diam*0.2) and +(-110:\diam*0.1)..
+        (\diam,0);
+    \draw[tabred,fill=tabred!\shade,xshift=\K cm]
+        (0,0)..controls +(-70:\diam*0.1) and +(180:\diam*0.3)..
+        (\diam/3,-.75*\height)..controls +(0:\diam*0.3) and +(-140:\diam*0.3)..
+        (\diam,0);
+    \draw node[tabred,below] at (\K/2+\diam/2,0) {$\mu$};
+    \draw node[tabred,below right] at (.2,0) {$\mu_1$};
+    \draw node[tabred,below right] at (.2+\K,0) {$\tau_{K\pushonly}\mu_2$};
+    % nu
+    \draw[tabblue,fill=tabblue!\shade]
+        (0,0)..controls +(160:\diam*0.1) and +(-90:\diam*0.1)..
+        (-1*\height,\diam/4)..controls +(90:\diam*0.1) and +(-90:\diam*0.1)..
+        (-0.5*\height,\diam/2)..controls +(90:\diam*0.1) and +(-90:\diam*0.1)..
+        (-2/3*\height,3*\diam/4)..controls +(90:\diam*0.1) and +(200:\diam*0.1)..
+        (0,\diam);
+    \draw[tabblue,fill=tabblue!\shade,yshift=\K cm]
+        (0,0)..controls +(160:\diam*0.1) and +(-90:\diam*0.1)..
+        (-4/5*\height,\diam/4)..controls +(90:\diam*0.1) and +(-90:\diam*0.1)..
+        (-0.4*\height,\diam/2)..controls +(90:\diam*0.1) and +(-90:\diam*0.1)..
+        (-4/5*\height,3*\diam/4)..controls +(90:\diam*0.1) and +(200:\diam*0.1)..
+        (0,\diam);
+    \draw node[tabblue,left] at (0,\K/2+\diam/2) {$\nu$};
+    \draw node[tabblue,above right,rotate=90] at (0,0.2) {$\nu_1$};
+    \draw node[tabblue,above right,rotate=90] at (0,0.2+\K) {$\tau_{K\pushonly}\nu_2$};
+    % axis
+    \draw (0,0-\margin) -- (0,\K/2+\diam/2-\ellip);
+    \draw[dashed] (0,\K/2+\diam/2-\ellip) -- (0,\K/2+\diam/2+\ellip);
+    \draw[->] (0,\K/2+\diam/2+\ellip) -- (0,\K+\diam+\margin);
+    \draw node[above right] at (0,\K+\diam+\margin) {$\mathcal{Y}$};
+    \draw (0-\margin,0) -- (\K/2+\diam/2-\ellip,0);
+    \draw[dashed] (\K/2+\diam/2-\ellip,0) -- (\K/2+\diam/2+\ellip,0);
+    \draw[->] (\K/2+\diam/2+\ellip,0) -- (\K+\diam+\margin,0);
+    \draw node[above right] at (\K +\diam+\margin,0) {$\mathcal{X}$};
+    % constants
+    \draw[<->,opacity=1,dashed] (-\height-\spacearrow,0) -- (-\height-\spacearrow,\diam) node[midway,above,rotate=90] {$\Delta=\operatorname{diam}(A)$};
+    \draw[<->,opacity=1,dashed] (-\height-3*\spacearrow,\diam/2) -- (-\height-3*\spacearrow,\K+\diam/2) node[midway,above,rotate=90] {$K$};
+    \draw[opacity=1,dotted] (\diam,0) -- (\diam,\K+\diam);
+    \draw[opacity=1,dotted] (\K,0) -- (\K,\K+\diam);
+    \draw[opacity=1,dotted] (0,\diam) -- (\K+\diam,\diam);
+    \draw[opacity=1,dotted] (0,\K) -- (\K+\diam,\K);
+    \draw (\diam/2,\diam/2) node (pi11) {$\pi_{11}$};
+    \draw (\diam/2+\K,\diam/2) node (pi21) {$\pi_{21}$};
+    \draw (\diam/2,\diam/2+\K) node (pi12) {$\pi_{12}$};
+    \draw (\diam/2+\K,\diam/2+\K) node (pi22) {$\pi_{22}$};
+    \draw[->] (\K+\diam/2-\spacesq,\diam/2) -- (\diam/2+\spacesq,\diam/2) node[midway,above] {$\tilde\pi_{11}$};
+    \draw[->] (\diam/2,\K+\diam/2-\spacesq) -- (\diam/2,\diam/2+\spacesq) node[midway,right] {$\tilde\pi_{11}$};
+    \draw[->] (\diam/2+\K,\diam/2+\spacesq) -- (\diam/2+\K,\K+\diam/2-\spacesq) node[midway,left] {$\tilde\pi_{22}$};
+    \draw[->] (\diam/2+\spacesq,\K+\diam/2) -- (\K+\diam/2-\spacesq,\K+\diam/2) node[midway,above] {$\tilde\pi_{22}$};
+\end{tikzpicture}

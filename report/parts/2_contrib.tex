@@ -1,0 +1,948 @@
+\Chapter{Optimal maps for Gromov--Wasserstein}
+\label{chap:stage}
+
+A challenge in the field of optimal transport is to characterize the situations in which the optimal plan is a Monge map. It can have fruitful consequences on the computational and algorithmic side: reduction of the optimization problem from plans to mappings and characterization of this mapping by optimality conditions. However, conditions on the cost function that guarantee the existence of Monge maps (see \cref{sec:optimal-maps}) are very specific to the \emph{linearity} of the OT problem, and there is no straightforward extension of them to the \emph{quadratic} GW problem. Proving the existence of Monge maps for the Gromov--Wasserstein problem is therefore \textit{a priori} much more complicated than for the linear OT problem.
+This challenge has been proposed by Sturm in \cite{sturm2012space} and has been little studied since then. Results in the literature exist for two cost functions in Euclidean spaces, the squared distance cost (a standard choice for GW) and the inner product cost (that finds application on the sphere for instance). We study both and improve on the current state-of-the-art.
+
+
+\section{Optimal maps for Gromov--Wasserstein}
+\subsection{State-of-the-art}
+Let $n\geq d$. We consider the GW problem in $\RR^n$ and $\RR^d$ in two different settings:
+\begin{enumerate}[label=(\roman*),noitemsep]
+    \item the \emph{inner product case}, where $c_\Xx$ and $c_\Yy$ are the inner products on $\RR^n$ and $\RR^d$ respectively (both denoted by $\langle \cdot, \cdot \rangle$):
+        \begin{equation}
+            \tag{GW-IP}
+            \min _{\pi \in \Pi(\mu, \nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left|\langle x,\, x'\rangle-\langle y,\, y'\rangle\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+            \label{eqn:GW-inner-prod}
+        \end{equation}
+        which essentially compares distribution of angles in $(\Xx,\mu)$ and $(\Yy,\nu)$;
+        \item the \emph{quadratic case}, where $c_\Xx$ and $c_{\Yy}$ are the squared Euclidean distance on $\RR^n$ and $\RR^d$ respectively:
+        \begin{equation}
+            \tag{GW-Q}
+            \min _{\pi \in \Pi(\mu, \nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left||x-x'|^2-|y-y'|^2\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+            \label{eqn:GW-quadratic}
+        \end{equation}
+        which is a standard choice for $c_{\mathcal{X}}$ and $c_{\mathcal{Y}}$ and makes GW a distance between strong isometry classes of mm-spaces (see \cref{rem:arbitrary-costs}).
+    \end{enumerate}
+In the inner product case, \cite[Thm.~4.2.3]{vayer2020contribution} gives a result on the existence of a Monge map under some assumptions:
+\begin{proposition}[Inner product cost: optimal map under condition]
+    \label{prop:sota-titouan}
+    Let $n\geq d$, $\mu, \nu\in \Pp(\RR^n)\times \Pp(\RR^d)$ two measures of finite second order moment with $\mu\ll\Ll^n$. Suppose that there exists $\pi\opt$ solution of \cref{eqn:GW-inner-prod} such that $M\opt=\int y\otimes x \dd\pi\opt(x, y)$ is of full rank. Then there exists an optimal map between $\mu$ and $\nu$ that can be written as
+    $T=\nabla f\circ M\opt$ with $f: \RR^d \to \RR$ convex.
+\end{proposition}
+
+For the quadratic case, there are only very few results. In \cite{vayer2020contribution} is claimed that in the discrete case in dimension 1 with uniform mass and same number of points $N$, the optimal solution of \cref{eq:QAP} would either be the identity $\sigma(i)=i$ or the anti-identity $\sigma(i)=N+1-i$ (Thm.~4.1.1). However, a counter-example to this claim has been recently provided by \cite{beinert2022assignment}.
+
+\noindent To the best of our knowledge, the only positive results on the existence of Monge maps for the quadratic cost are the following.
+\begin{proposition}[\hspace{1sp}{\cite[Thm.~9.21]{sturm2012space}}]
+    Let $\mu,\nu\in\Pp(\RR^n)$. Assume that $\mu,\nu\ll\Ll^n$ and that both measures are rotationally invariant around their barycenter. Then every $\pi \in \Pi(\mu, \nu)$ which minimizes \cref{eqn:GW-quadratic} is induced by a transport map $T$, unique up to composition with rotations. The transport map is constructed as follows: let $s_\mu$ be the radial distribution of $\mu$ around its barycenter $z_\mu$, and let $F_\mu$ be the corresponding distribution function, \textit{i.e.} $$F_\mu(r)\defeq s_\mu([0, r])\defeq \mu(\bar{B}_r(z_\mu))\,,$$ and similarly for $\nu$. Then the monotone rearrangement $F_\nu \circ F_\mu^{-1}: \mathbb{R}_{+} \to \mathbb{R}_{+}$ pushes forward $\mu$ to $\nu$.
+\end{proposition}
+\begin{proposition}[\hspace{1sp}{\cite[Prop.~4.2.4]{vayer2020contribution}}]
+    Let $\mu, \nu\in \Pp(\RR^n)\times \Pp(\RR^d)$ with compact support, with $n\geq d$.
+    Assume that $\mu\ll\Ll^n$ and that both $\mu$ and $\nu$ are centered. Suppose that there exists $\pi\opt$ solution of \cref{eqn:GW-quadratic} such that $M\opt=\int y\otimes x \dd\pi\opt(x, y)$ is of full rank. Then there exists $f:\RR^d\to\RR$ convex such that $T=\nabla f \circ M\opt$ pushes $\mu$ to $\nu$. Moreover, if there exists a differentiable convex $F:\RR\to\RR$ such that $|T(x)|_2^2=F'(|x|^2_2)$ $\mu$-a.e., then $T$ is optimal for \cref{eqn:GW-quadratic}.
+\end{proposition}
+
+
+\subsection{Contributions}
+\label{sec:contributions}
+
+\paragraph{Contributions.}
+Let $\mu, \nu\in \Pp(\RR^n)\times\Pp(\RR^d)$ two measures of compact support. Suppose $\mu\ll\Ll^n$. The main contributions of this work are the two following theorems:
+\begin{enumerate}[label=(\roman*)]
+    \item The \cref{eqn:GW-inner-prod} problem admits a map as a solution.\hfill(Th.~\ref{theorem:inner-main})
+    \item The \cref{eqn:GW-quadratic} problem either admits a map, a bimap or a map/anti-map as a solution.\hfill(Th.~\ref{theorem:quad-main})
+\end{enumerate}
+Both follow from a general theorem defined for costs that are invariant on the fibers a a certain function $\phi$ that we will state and prove first.
+We also ask if the second claim is tight, in the sense that there are cases where the optimal solution of \cref{eqn:GW-quadratic} is not a map. Supported by numerical results, we believe that the following conjecture holds:
+\begin{enumerate}[label=(\roman*),start=3]
+    \item There exists measures $\mu$ and $\nu$ for which no map is an optimal solution of \cref{eqn:GW-quadratic}.\hfill(Conj.~\ref{conj:tight})
+\end{enumerate}
+On a different note, Theorem 4.1.1 in \cite{vayer2020contribution} states that in the discrete case, \cref{eqn:GW-quadratic} is solved either by the monotone non-decreasing or monotone non-increasing plan, but \cite{beinert2022assignment} provided a counter-example to this claim recently. We show numerically that:
+\begin{enumerate}[label=(\roman*),start=4]
+    \item There indeed exists measures $\mu$ and $\nu$ for which neither of the monotone non-decreasing or non-increasing plans is optimal for \cref{eqn:GW-quadratic}.\hfill(Alg.~\ref{algorithm:gd})\\
+    Additionally, having a monotone plan as optimal is not stable by small perturbations of $\mu$ and $\nu$, even in the symmetric case.\hfill(Prop.\ref{theo:no-stab})
+\end{enumerate}
+Yet, we state a new positive result for the existence of a Monge map for the quadratic cost:
+\begin{enumerate}[label=(\roman*),start=5]
+    \item When measures $\mu$ and $\nu$ are composed of two distant parts, the monotone non-decreasing or non-increasing plan is optimal for \cref{eqn:GW-quadratic}.\hfill(Prop.~\ref{prop:measure_separation})
+\end{enumerate}
+This last claim has been proved by my supervisors during my internship. I still chose to include it in this report since it is the only positive result about the optimality of $\pimon$ or $\piantimon$ other than the symmetric case given by \cite{sturm2012space}, and since it gives some insight on the fact that a monotone map is often optimal
+\paragraph{Outline.}
+The outline of this chapter is the following:
+\begin{itemize}
+    \item \Cref{sec:general-theo} is focused on the statement and proof of our general theorem for the existence of Monge maps;
+    \item In \Cref{subsec:applications}, we apply it to both GW problems: \begin{itemize}[nolistsep]
+        \item to the inner product cost in \Cref{subsec:applications_innerProduct};
+        \item to the quadratic cost in \Cref{subsec:applications_quadratic}.
+    \end{itemize}
+    \item \Cref{subsec:quadra1D} includes all additional results on the quadratic cost: \begin{itemize}[nolistsep]
+        \item \Cref{subsec:quadra1D_adversarial} details the non-optimality of the monotone plans and describes a procedure for finding bimaps and map/anti-maps, supporting our tightness conjecture;
+        \item \Cref{subsec:quadra1D_instability} details our no-stability result;
+        \item \Cref{subsec:quadra_1D_positive} states our positive result on the existence of Monge maps in the context of two-components measures.
+    \end{itemize}
+\end{itemize}
+
+    \section{A general existence theorem}
+    \label{sec:general-theo}
+
+\subsection{Statement of the results}
+    An intuitive statement of the main theorem of this section is the following:
+    \begin{center}
+        ``Let $\mu,\nu\in \Pp(E)$. If one can send $\mu$ and $\nu$ in a space $B$ by a function $\varphi$, such that $c(x,y)=\tilde c(\varphi(x),\varphi(y))$ for all $x,y\in E$ with $\tilde c$ a \emph{twisted} cost on $B$,
+        then \emph{we can construct an optimal map between $\mu$ and $\nu$}.''
+    \end{center}
+    More precisely, let $\mu,\nu$ be two probability measures supported on a measurable space $(E,\Sigma_E)$ and consider a measurable map $\varphi : E \to B$, for some measurable space $(B,\Sigma_B)$. We shall omit to mention the $\sigma$-algebra afterwards. We use the name \emph{base space} for the space $B$.
+Let $(\mu_u)_{u \in B}$ (resp.~$(\nu_u)_{u \in B}$) denote a disintegration of $\mu$ (resp.~$\nu$) with respect to $\varphi$ (see \cref{sec:disintegration} for a definition).
+Consider a cost $c : E \times E \to \RR$ that is invariant on the fibers of $\varphi$ (that are simply the pre-images of points in the base $B$ by $\varphi$), that is $c(x,y) = \tilde{c}(\varphi(x), \varphi(y))$ for all $x,y \in E$ and some cost function $\tilde{c}$ on $B \times B$.
+Solving the OT problem between $\mu$ and $\nu$ for $c$ boils down to the OT problem between $\varphi\push \mu$ and $\varphi\push \nu$ on $B \times B$ for $\tilde{c}$.
+If we can ensure that there exists a Monge map $t_B$ between $\varphi\push\mu$ and $\varphi\push\nu$ (for instance, if we can use \Cref{theorem:brenier}),
+we may try to build a Monge map $T$ between $\mu$ and $\nu$ by (i) transporting each fiber $\mu_u$ onto $\nu_{t_B(u)}$ \emph{using a map} $T_u$, and (ii) gluing the $(T_u)_{u \in B}$ together to define a \emph{measurable} map $T$ satisfying $T \push \mu = \nu$ that will be optimal as it coincides with $t_B$ on $B$ and the cost $c$ does not depend on the fibers $(\varphi^{-1}(u))_{u \in B}$.
+We stress that ensuring the measurability of the map $T$ is non-trivial and crucial from a theoretical standpoint.
+    \begin{figure}[!h]
+        \centering
+        \input{figures/visu_fibers}
+        \caption{Illustration of the construction of a Monge map between $\mu$ and $\nu$: we optimally transport the projections of the measures in $B$ and then ``lift'' the resulting map $t_B$ to $E$ by sending each fiber $\mu_u$ onto the fiber $\nu_{t_B(u)}$, resulting respectively from the disintegrations of $\mu$ and $\nu$ by $\varphi$.}
+        \label{fig:visu-fibers}
+    \end{figure}
+
+    We formalize this idea by the mean of two theorems: the first one guarantees in a fairly general setting the existence of a Monge map for the \eqref{eq:gw} problem, but its construction is quite convoluted and there is little to no hope that it can be leveraged in practice, either from a theoretical or computational perspective.
+Assuming more structure, in particular on the fibers of $\varphi$, enables the construction of a Monge map for \eqref{eq:gw} with a structure akin to \Cref{prop:quad-cost-manifold-villani}.
+As detailed in \Cref{subsec:applications}, both \eqref{eqn:GW-quadratic} and \eqref{eqn:GW-inner-prod} fall in the latter setting.
+
+\begin{theorem}\label{theo:fibers-nonsense}
+    Let $\Xx$ and $\Yy$ be two measurable spaces for which there exists two measurable maps $\Phi_\Xx : \Xx \to \RR^d$ and $\Phi_\Yy : \Yy \to \RR^d$
+    that are injective, and whose inverses are measurable.
+    Let $\mu \in \Pp(\Xx)$ and $\nu \in \Pp(\Yy)$ be two probability measures.
+    Let $c : \Xx \times \Yy \to \RR$ be a cost function, and $B_+,B_-$ be two measurable spaces along with measurable maps $\varphi : \Xx \to B_+$ and $\psi : \Yy \to B_-$.
+    Assume that there exists a cost $\tilde{c} : B_+ \times B_- \to \RR$ such that
+        \[ c(x,y)=\tilde c(\varphi(x),\psi(y))\quad \text{ for all } x,y\in \Xx \times \Yy.\]
+    and that there exists a Monge map $t_B : B_+ \to B_-$ that transports $\varphi \push \mu$ onto $\psi \push \nu$ for the cost $\tilde{c}$.
+    Assume that there exists a disintegration $(\mu_u)_{u \in B_+}$ of $\mu$ with respect to $\varphi$ such that $\varphi\push\mu$-a.e., $\mu_u$ is atomless.
+
+    Then there exists a Monge map between $\mu$ and $\nu$ for the cost $c$. Furthermore, it projects onto $t_B$ through $(\varphi,\psi)$, in the sense that $(\varphi,\psi)\push(\id,T)\push \mu = (\id, t_B) \push(\varphi \push \mu)$.
+\end{theorem}
+The proof of this theorem is provided in \Cref{subsec:proof-nonsense}.
+
+\begin{remark}
+The atomless assumption on the disintegration $(\mu_u)_u$ is a natural minimal requirement to expect the existence of a map (without specific assumption on the target measure $\nu$) and implies in particular that the fibers $(\varphi^{-1}(u))_{u \in B_+}$ should not be discrete (at least $\varphi\push\mu$-a.e.).
+Indeed, if for instance $\Xx = \Yy = B_+ = B_- = \RR$ and $\varphi : x \mapsto |x|$, the fibers of $\varphi$ are of the form $\{-u, u\}$ (for $u \geq 0$), hence the disintegrations $(\mu_u)_{u \geq 0}$ and $(\nu_u)_{u \geq 0}$ are discrete and given by $\mu_u(u) \delta_u + (1-\mu_u(u)) \delta_{-u}$ and $\nu_u(u) \delta_u + (1-\nu_u(u)) \delta_{-u}$, and there is in general no map $T_u$ between two such discrete measures, unless we assume that $\mu_u(u) = \nu_u(u)$ or $1-\nu_u(u)$, $\varphi\push\mu$-a.e.
+
+Observe also that $\varphi\push\mu$ may have atoms: as we assume the existence of the Monge map $t_B$, it would imply in that case that $\psi\push\nu$ also has atoms.
+\end{remark}
+
+\begin{remark}
+The ``projection'' property $(\varphi,\psi)\push(\id,T)\push \mu = (\id, t_B) \push(\varphi \push \mu)$ can also be written $\psi \circ T(x) = t_B \circ \varphi(x)$, for $\mu$-a.e.~$x$.
+A converse implication, that is ``every Monge map between $\mu$ and $\nu$ projects onto a Monge map between $\varphi\push\mu$ and $\varphi\push\nu$'' may not hold in general.
+This is however true if we can guarantee that there is a unique optimal transport plan between $\varphi\push\mu$ and $\psi\push\nu$ and that it is of the form $(\id,t_B)\push\mu$ (\textit{e.g.}~if we can apply \cref{theorem:brenier})---in that case, $T$ necessary projects onto $t_B$ in the aforementioned sense.
+\end{remark}
+
+Under additional assumptions, we can build a more structured Monge map.
+Namely, as our goal is to apply \Cref{prop:quad-cost-manifold-villani}, we will assume that the (common) basis $B = B_+ = B_-$ is a manifold, that \emph{almost all} the fibers of $\varphi : E \to B$ are homeomorphic to the \emph{same} manifold $F$, and that every source measure of interest ($\mu$, $\mu_u$, $\varphi\push\mu$) has a density.
+We also introduce the following convention: if $\mu \in \Pp(E)$ for some measurable space $E$, $E' \subset E$, and $\varphi : E' \to B$, we let $\varphi\push\mu$ be the (non-negative) measure supported on $B$ defined by $\varphi\push\mu(A) = \mu(\varphi^{-1}(A))$ for $A \subset B$ measurable.
+If $\mu(E') = 1$, note that $\varphi\push\mu$ defines a probability measure on $B$ (\textit{i.e.}~it has mass one).
+This formalism allows us to state our theorem even when some assumptions only hold $\lambda$-a.e.
+
+\begin{theorem}
+    \label{theo:fibers-main}
+    Let $E_0$ be a measurable space and $B_0$ and $F$ be complete Riemannian manifolds.
+    Let $\mu,\nu \in \Pp(E_0)$ be two probability measures with compact support.
+    Assume that there exists a set $E\subset E_0$ such that $\mu(E) = 1$ and that there exists a measurable map $\Phi : E \to B_0 \times F$ that is injective and whose inverse on its image is measurable as well.
+    Let $p_B, p_F$ denote the projections of $B_0 \times F$ on $B_0$ and $F$ respectively, and
+    let $\varphi\defeq p_ B \circ \Phi: E\to B_0$.
+    Let $c: E_0 \times E_0 \to \mathbb{R}$ and suppose that there exists a twisted $\tilde c: B_0 \times B_0 \to \mathbb{R}$ such that
+    \[ c(x,y)=\tilde c(\varphi(x),\varphi(y))\quad \text{ for all } x,y\in E_0\,.\]
+    Assume that $\varphi\push\mu$ is absolutely continuous w.r.t.~the Lebesgue measure on $B_0$ and let thus $t_B$ denote the unique Monge map between $\varphi\push\mu$ and $\varphi\push\nu$ for this cost.
+    Suppose that there exists a disintegration $((\Phi\push\mu)_u)_{u\in B_0}$ of $\Phi\push\mu$ by $p_B$ such that for $\varphi\push\mu$-a.e.~$u$, $(\Phi\push\mu)_{u}$ is absolutely continuous w.r.t.~the volume measure on $F$.
+
+    \noindent Then there exists an optimal map $T$ between $\mu$ and $\nu$ for the cost $c$ that can be decomposed as
+    \begin{equation}\label{eq:structureMongeMap}
+    \Phi \circ T\circ \Phi^{-1}(u,v)=(t_ B (u),t_ F (u,v))=(\tilde c\text{-}\exp_u(\nabla f(u)), \exp_v(\nabla g_u(v)))\,,
+    \end{equation}
+    with $f: B_0 \to\RR$ $\tilde c$-convex and $g_u: F \to\RR$ $d_ F ^2/2$-convex for $\varphi\push\mu$-a.e.~$u$.
+    Note that $t_ F$ could actually be any measurable function that sends each fiber $(\Phi\push\mu)_u$ onto $(\Phi\push\nu)_{t_ B (u)}$.
+\end{theorem}
+The proof of this theorem is provided in \Cref{subsec:proof-fibers-main}.
+Let us give a simple example that illustrates the role played by our assumptions.
+This example has connections with \eqref{eqn:GW-quadratic} as detailed in \Cref{subsec:applications_quadratic}.
+
+\begin{example}\label{example:fiber-main}
+Let $E_0 = \RR^d$ and $E = E_0\backslash \{0\}$, let $B_0 = \RR$ and $F = S^{d-1} = \{x \in E_0\mid |x|=1\}$. For convenience, we also introduce the space $B = \RR_+^*$.
+Consider the cost function $c(x,y) = (|x| - |y|)^2$, so that $c$ only depends on the norm of its entries.
+The fibers of the map $x \mapsto |x|$ are spheres, with the exception of $x=0$, which invites us to consider the diffeomorphism
+\begin{align*}
+\Phi : E &\to \RR_+^* \times S^{d-1} = B \times F \subset B_0 \times F \\
+x &\mapsto \left(|x|, \frac{x}{|x|}\right)\,.
+\end{align*}
+From this, we can write $c(x,y) = \tilde{c}(\varphi(x),\varphi(y))$ where $\varphi(x) = |x|$ and $\tilde{c}(u,u') = (u - u')^2$ (which is twisted).
+
+Now, if $\mu$ has a density on $\RR^d$, so does $\Phi\push \mu$ on $B_0 \times F$ as $\Phi$ is a diffeomorphism.
+The coarea formula gives the existence of a disintegration $(\mu_u)_{u \in B}$ of $\Phi\push\mu$ by $p_B : (u,v) \mapsto u$ (note that $p_{B\pushonly}(\Phi\push\mu) = \varphi\push\mu$ also has a density) such that all the $\mu_u$ admit a density on $S^{d-1}$.
+
+Our theorem thus applies, ensuring the existence of a structured Monge map between $\mu$ and (any) $\nu$ for the cost $c$: it decomposes for almost all $x \in \RR^d$ as a Monge map on the basis $B_0 = \RR$ (although it is actually only characterized on the image of $\varphi$, that is $B = \RR_+^*$) obtained as the gradient of a convex function $f$ (there is no need for the exponential map here and $\nabla f$ is the non-decreasing mapping between the quantiles of $\varphi\push\mu$ and $\varphi\push\nu$) and a Monge map on each fiber $F = S^{d-1}$, also built from gradients of convex functions (via the exponential map on the sphere).
+
+Note that our theorem only requires assumptions to hold almost everywhere on $E_0 = \RR^d$, which is important since it allows to ignore the singularity of $\varphi$ at $x = 0$.
+\end{example}
+
+\subsection{Proof of \Cref{theo:fibers-nonsense}}
+\label{subsec:proof-nonsense}
+
+The proof decomposes in three steps.
+\paragraph{Step 1: Existence and optimality of lifts.} We know by assumption that there exists a Monge map $t_B$ that is optimal between the pushforward measures $\varphi\push\mu$ and $\psi \push\nu$.
+
+As our goal is to build a Monge map between the initial measures $\mu$ and $\nu$, we first show that (i) there exists a transport plan $\pi \in \Pi(\mu,\nu)$ such that $(\varphi,\psi)\push\pi = (\id, t_B)\push\mu$ and (ii) any such $\pi$ is an optimal transport plan between $\mu$ and $\nu$ for the cost $c$.
+This is formalized by the following lemmas.
+
+\begin{lemma}[Existence of a lift]
+    \label{lemma:pullback-manifold}
+    For any transport plan $\tilde\pi \in \Pi(\varphi\push\mu,\psi\push\nu)$, there exists a transport plan $\pi \in \Pi(\mu,\nu)$ such that $(\varphi,\psi)\push\pi=\tilde\pi$.
+\end{lemma}
+
+\begin{proof}
+Let $(\mu_u)_{u\in B_+}$ and $(\nu_v)_{v\in B_-}$ be disintegrations of $\mu$ and $\nu$ by $\varphi$ and $\psi$ respectively.
+Given $\tilde\pi \in \Pi(\varphi\push\mu,\psi\push\nu)$, we define $$\pi\defeq \iint _{ B_+\times B_-}(\mu_{u}\otimes \nu_{v})\, \mathrm d \tilde\pi(u,v)\,,$$
+\textit{i.e.}~trivially sending every fiber $\mu_{u}$ onto every fiber $\nu_{v}$, while weighting by $\tilde\pi$. See \cite[Sec.~5.3]{ambrosio2005gradient} for the notation. Then, for any Borel set $A\subset \mathcal{X}$,
+\begin{align*}
+\pi(A\times \mathcal{Y}) & =\iint _{ B_+\times B_-}\mu_{u}(A)\nu_{v}(\mathcal{Y})\, \mathrm d\tilde\pi(u,v) \\
+& =\iint _{ B_+\times B_-}\mu_{u}(A)\, \mathrm d\tilde\pi(u,v) \\
+& =\int _{ B_+}\mu_{u}(A)\, \mathrm d(\varphi\push\mu)(u)  &  & \text{since the first marginal of }\tilde\pi \text{ is } \varphi\push\mu\\
+    & = \mu(A) &  & \text{by the disintegration theorem,}
+\end{align*}
+and similarly for $\nu$; hence $\pi \in \Pi(\mu,\nu)$. Now, let us show that $(\varphi,\psi)\push\pi=\tilde\pi$. For $U$ and $V$ Borel sets of $B_+$ and $B_-$ respectively,
+\begin{align*}
+((\varphi,\psi)\push\pi)(U\times V) & =\iint _{U\times V}\mathrm d((\varphi,\psi)\push\pi)(u,v) \\
+    & =\iint _{\varphi ^{-1}(U)\times \psi ^{-1}(V)}\mathrm d\pi(x,y) \\
+    & =\iint _{\varphi ^{-1}(U)\times \psi ^{-1}(V)}\iint _{ B_+\times B_-}\mathrm d(\mu_{u}\otimes \nu_{v})(x,y)\, \mathrm d\tilde\pi(u,v) \\
+    & =\iint_{ B_+\times B_-}\left(\int _{\varphi ^{-1}(U)}\mathrm d\mu_{u}(x)\int _{ \psi ^{-1}(V)}\mathrm d \nu_{v}(y)\right)\, \mathrm d\tilde\pi(u,v)  &  & \text{by Fubini's theorem}\\
+    & =\iint_{ B_+\times B_-}\mu_u(\varphi ^{-1}(U))\nu_v(\psi ^{-1}(V))\, \mathrm d\tilde\pi(u,v)\\
+    & =\iint_{ B_+\times B_-}\delta_{U}(u)\delta_{V}(v)\, \mathrm d\tilde\pi(u,v)\\
+    & =\iint_{U\times V}\mathrm d\tilde\pi(u,v)\\
+    & =\tilde\pi(U\times V)\,. && \qedhere
+\end{align*}
+\end{proof}
+
+\begin{lemma}[Decomposition of optimal plans for the base space cost]
+    \label{lemma:decomp-manifold}
+    Let $c: \Xx \times \Yy \to \mathbb{R}$ and $\tilde c: B_+ \times B_-\to \mathbb{R}$ such that $$c(x,y)=\tilde c(\varphi(x),\psi(y))\quad \text{ for all } x,y\in \Xx \times \Yy.$$
+    Then $$\Pi\opt_{\tilde c}(\varphi\push\mu,\psi\push\nu)=(\varphi,\psi)\push\Pi\opt_{c}(\mu,\nu)\,,$$
+    where $\Pi\opt_{c}(\mu,\nu)$ denotes the set of optimal transport plan between $\mu$ and $\nu$ for the cost $c$, and similarly for $\Pi\opt_{\tilde c}(\varphi\push\mu,\psi\push\nu)$.
+\end{lemma}
+
+\begin{proof}
+Let us first remark that for every $\tilde\pi\in\Pi(\varphi\push\mu,\psi\push\nu)$ and $\pi\in\Pi(\mu,\nu)$,
+\begin{equation}
+    \label{eq:equality-proj-manifold}
+    \text{if } \tilde\pi=(\varphi,\psi)\push\pi, \text{ then } \langle c,\,\pi\rangle=\langle \tilde c,\,\tilde\pi\rangle.
+\end{equation}
+Indeed, for such a $\tilde\pi$
+\begin{align*}
+    \iint_{ B_+\times B_-}\tilde c(u,v)\dd \tilde\pi(u,v)&=\iint_{\Xx \times \Yy}\tilde c(\varphi(x),\psi(y))\dd \pi(x,y)&&\text{by definition of the pushforward}\\
+    &=\iint_{\Xx \times \Yy}c(x,y)\dd \pi(x,y)\,.
+\end{align*}
+$\subset$.
+Let $\tilde\pi\opt \in \Pi \opt _{\tilde c}(\varphi\push\mu,\psi\push\nu)$. By \Cref{lemma:pullback-manifold}, there exists a $\pi \in \Pi(\mu,\nu)$ such that $(\varphi,\psi)\push\pi=\tilde\pi\opt$. Then for any $\gamma \in \Pi(\mu,\nu)$, $$\langle c,\,\pi\rangle \stackrel{ \cref{eq:equality-proj-manifold} }{ = } \langle \tilde c,\,\tilde\pi\opt \rangle \stackrel{ (*) }{ \leq } \langle \tilde c,\,(\varphi,\psi)\push\gamma\rangle \stackrel{ \cref{eq:equality-proj-manifold} }{ = } \langle c,\,\gamma\rangle\,,$$ where $(*)$ follows from the optimality of $\tilde\pi\opt$. Hence the optimality of $\pi$.\\
+$\supset$.
+Let $\pi \opt \in \Pi \opt _{c}(\mu,\nu)$. By \Cref{lemma:pullback-manifold}, for any $\tilde\gamma  \in \Pi  (\varphi\push\mu,\psi\push\nu)$ there exists a $\gamma \in \Pi(\mu,\nu)$ such that $(\varphi,\psi)\push\gamma=\tilde\gamma$. We then have $$\langle \tilde c,\,(\varphi,\psi)\push\pi \opt \rangle\stackrel{ \cref{eq:equality-proj-manifold} }{ = }\langle c,\,\pi \opt \rangle \stackrel{ (*) }{ \leq } \langle c,\,\gamma\rangle\stackrel{ \cref{eq:equality-proj-manifold} }{ = }\langle \tilde c,\,\tilde\gamma\rangle\,,$$ where $(*)$ follows from the optimality of $\pi\opt$. Hence the optimality of $(\varphi,\psi)\push\pi \opt$.
+\end{proof}
+
+\paragraph{Step 2: Existence of Monge maps between the fibers.} Using \Cref{lemma:pullback-manifold} with $\tilde{\pi} = (\id,t_B)\push(\varphi\push\mu)$, we know that we can build an optimal transportation plan $\pi \in \Pi(\mu,\nu)$ that essentially coincides with $t_B$ on $B_+ \times B_-$ and transports each fiber $\mu_u$ onto $\nu_{t_B(u)}$ for $\mu$-a.e.~$u \in B_+$.
+In order to build a Monge map between $\mu$ and $\nu$, we must show that one can actually transport almost all $\mu_u$ onto $\nu_{t_B(u)}$ using a map rather than a plan.
+For this, we use the following result, see \cite[Rem.~1.23, Lemma~1.28, Cor.~1.29]{santambrogio2015optimal}.
+
+\begin{proposition}\label{prop:fact_nonsense}
+    Let $\alpha,\beta$ be two measures supported on $\RR^d$ with $\alpha$ atomless. Then:
+    \begin{enumerate}[label=(\roman*),nolistsep]
+        \item if $d=1$, there exists a transport map $\tilde{T}$ that pushes $\alpha$ onto $\beta$. Furthermore, it is the \emph{unique} optimal map between these measures for the quadratic cost $(x,y) \mapsto |x - y|^2$;
+        \item \label{item:sigma_d} there exists a map $\sigma_d : \RR^d \to \RR$ (that does not depend on $\alpha,\beta$) that is (Borel) measurable, injective, and its inverse is measurable as well.
+    \end{enumerate}
+\end{proposition}
+
+As we assumed that the ground spaces $\Xx$ and $\Yy$ can be embedded in $\RR^d$ using the injective, measurable maps $\Phi_\Xx$ and $\Phi_\Yy$, we can apply \Cref{prop:fact_nonsense} using $\sigma_\Xx = \sigma_d \circ \Phi_\Xx$ and $\sigma_\Yy = \sigma_d \circ \Phi_\Yy$.
+As $\sigma_\Xx$ is injective, $\sigma_{\Xx\pushonly} \mu_u$ is atomless on $\RR$, and we can thus consider the \emph{unique} Monge map $\tilde{T}_u$ between $\sigma_{\Xx\pushonly}\mu_u$ and $\sigma_{\Yy\pushonly} \nu_{t_B(u)}$ for the quadratic cost on $\RR$.
+
+From this, as the maps $\sigma_\Xx$ and $\sigma_\Yy$ are measurable and injective (thus invertible on their image) we can define $T_u = \sigma_\Yy^{-1} \circ \tilde{T}_u \circ \sigma_\Xx : \Xx \to \Yy$, that defines a (measurable) transport map between $\mu_u$ and $\nu_{t_B(u)}$.
+
+\paragraph{Step 3: building a measurable global map.} Now that we have maps $(T_u)_u$ between each $\mu_u$ and $\nu_{t_B(u)}$, it may be tempting to simply define a map $T : \Xx \to \Yy$ by $T(x) = T_{\varphi(x)}(x)$ when $\mu_{\varphi(x)}$ is atomless (which, by assumption, holds $\mu$-a.e.).
+Intuitively, this map induces a transport plan $(\id, T)\push\mu$ that satisfes $(\varphi,\psi)\push(\id,T)\push\mu = (\id, t_B)\push(\varphi \push \mu)$ on $B_+ \times B_-$ and thus must be optimal according to \Cref{lemma:decomp-manifold}.
+
+One remaining step, though, is to prove that this map $T$ can be defined in a measurable way.
+For this, we use the following \emph{measurable selection theorem} due to \cite[Thm.~1.1]{fontbona2010measurability}, that reads:
+\begin{proposition}\label{prop:fontbonaRd}
+    Let $(B,\Sigma,m)$ be a $\sigma$-finite measure space and consider a measurable function
+    $B \ni u \mapsto (\mu_u,\nu_u) \in \Pp(\RR^d)^2$.
+    Let $c : \RR^d \times \RR^d \to \RR$ be a cost function, and
+    assume that for $m$-a.e.~$u \in B$,
+    there is a (unique) Monge map  $T_u$ between $\mu_u$ and $\nu_u$ for the cost $c$.
+
+    \noindent Then there exists a measurable function $(u,x) \mapsto T(u,x)$ such that $m$-a.e., $T(u,x) = T_u(x)$, $\mu_u$-a.e.
+\end{proposition}
+
+We can apply this result in the case $d=1$ to the family of measures $(\sigma_{\Xx\pushonly} \mu_u, \sigma_{\Yy\pushonly} \nu_{t_B(u)})_{u \in B_+}$, where the reference measure on $B_+$ is $\varphi\push\mu$.\footnote{Note that we cannot apply \cref{prop:fontbonaRd} to the measures $(\mu_u,\nu_{t_B(u)})_u$ and the maps $(T_u)_u$ directly, as $T_u$ may not be the unique Monge map between the measures, a required assumption of the proposition.}
+We first need to show the measurability of this family of measures.
+By definition of the disintegration of measures (see for instance \cite[Thm.~5.3.1]{ambrosio2005gradient}), the map $v \in B_- \mapsto \nu_{v}$ is measurable; and as the Monge map $t_B$ is measurable as well, so is the map $B_+ \ni u \mapsto \sigma_{\Yy\pushonly} v_{t_B(u)}$ by composition of measurable maps, and thus so is the map $u \mapsto (\mu_u, \nu_{t_B(u)})$.
+\cref{prop:fontbonaRd} therefore applies and guarantees the existence of a measurable map $\tilde{T} : B_+ \times \RR \to \RR$ such that $\tilde{T}(u,x) = \tilde{T}_u(x)$ for $\varphi\push\mu$ almost all $u$ and $\sigma_{\Xx\pushonly}\mu$ almost all $x$. Now, we can define
+\begin{align*}
+    T : \Xx &\to \Yy \\
+         x &\mapsto \sigma_\Yy^{-1} \circ \tilde{T}(\varphi(x), \sigma_\Xx(x))\,.
+\end{align*}
+This map is measurable as composition of measurable maps.
+Let us prove that this defines a transport map between $\mu$ and $\nu$.
+For any function $g : \Yy \to \RR$ continuous with compact support, we can write
+\begin{equation*}
+    \int_\Yy g(y) \dd T\push\mu(y) = \int_\Xx g(T(x)) \dd \mu(x)
+    = \int_{u \in B_+} \int_{x \in \varphi^{-1}(\{u\})} g\left(\sigma_\Yy^{-1}\left(\tilde{T}_u(\sigma_\Xx(x))\right)\right) \dd \mu_u(x) \dd \varphi \push \mu(u)\,,
+\end{equation*}
+where we use the disintegration of $\mu$ w.r.t.~$\varphi$ and the fact that the $\mu_u$ are supported on $\varphi^{-1}(\{u\})$, allowing us to write $\tilde{T}(\varphi(x),\sigma_\Xx(x)) = \tilde{T}_u(\sigma_\Xx(x))$ on that fiber ($\varphi\push\mu$-a.e.).
+
+Now, recall that $T_u : x \mapsto \sigma_\Yy^{-1}\left(\tilde{T}_u(\sigma_\Xx(x))\right)$ defines a transport map between $\mu_u$ and $\nu_{t_B(u)}$. In particular, the image of the fiber $\varphi^{-1}(\{u\})$ by this map is $\psi^{-1}(\{t_B(u)\}) \subset \Yy$.
+Therefore, we get
+\begin{align*}
+    \int_\Yy g(y) \dd T\push \mu(y) &= \int_{u \in B_+} \int_{y \in \psi^{-1}(\{t_B(u)\})} g(y) \dd \nu_{t_B(u)} \dd \varphi\push\mu(u) \\
+    &= \int_{u \in B_+} \int_{y \in \Yy} g(y) \dd \nu_{t_B(u)} \dd \varphi\push\mu(u) & & \text{as $\nu_{t_B(u)}$ is supported on $\psi^{-1}(\{t_B(u)\})$} \\
+    &= \int_{v \in B_-} \int_{y \in \Yy} g(y) \dd \nu_{v}(y) \dd t_{B\pushonly} (\varphi\push\mu)(v) & & \text{by change of variable $v = t_B(u)$} \\
+    &= \int_{v \in B_-} \int_{y \in \Yy} g(y) \dd \nu_{v}(y) \dd \psi\push\nu(v) & & \text{as $t_B$ pushes $\varphi\push\mu$ to $\psi\push\nu$}\\
+    &= \int_{y \in \Yy} g(y) \dd \nu(y) & & \text{as $(\nu_v)_v$ is a disintegration of $\nu$ by $\psi$}\,,
+\end{align*}
+proving that $T \push \mu = \nu$.
+
+By \cref{lemma:decomp-manifold}, this map is optimal if and only if it satisfies $(\varphi,\psi)\push(\id,T)\push \mu = (\id, t_B)\push(\varphi\push\mu)$, as  $t_B$ is an optimal transportation plan between $\varphi\push\mu$ and $\psi\push\nu$, making $(\id,T)\push\mu$ optimal between $\mu$ and $\nu$ (hence $T$ a Monge map).
+
+For this, let $g : \Xx \times \Yy \to \RR$ be a continuous function with compact support. We have
+\begin{align*}
+    \iint_{B_+ \times B_-} g(u,v) \dd (\varphi,\psi)\push(\id,T)\push \mu(u,v) &= \iint_{\Xx \times \Yy} g(\varphi(x),\psi(y)) \dd (\id,T)\push\mu(x,y) \\
+    &= \int_\Xx g(\varphi(x),\psi(T(x))) \dd \mu(x) \\
+    &= \int_{u \in B_+} \int_{x \in \varphi^{-1}(\{u\})} g(u, \psi(\sigma_\Yy^{-1}(T_u(\sigma_\Xx(x))))) \dd \mu_u(x) \dd \varphi \push \mu(u) \\
+    &= \int_{u \in B_+} \int_{y \in \psi^{-1}(\{t_B(u)\})} g(u, t_B(u)) \dd \nu_{t_B(u)}(y) \dd \varphi \push \mu(u) \\
+    &= \int_{u \in B_+} g(u, t_B(u)) \dd \varphi\push\mu(u) \\
+    &= \int_{B_+ \times B_-} g(u,v) \dd (\id,t_B)\push \varphi \push\mu(u,v)\,,
+\end{align*}
+proving the required equality and thus that $T$ is a Monge map between $\mu$ and $\nu$.
+
+\subsection{Proof of \Cref{theo:fibers-main}}
+\label{subsec:proof-fibers-main}
+
+To alleviate notations, we let $\mu' \defeq \Phi\push\mu$ and $\nu' \defeq \Phi\push\nu$ in the following.
+We also denote by $B$ the image of $\varphi = p_B \circ \Phi$, so that $\mu',\nu'$ are supported on $B \times F \subset B_0 \times F$.
+
+\paragraph{Step 1: Construction of the structured Monge map.} Given that  $\varphi\push\mu$ is absolutely continuous w.r.t.~the Lebesgue measure on the complete (separable) Riemannian manifold $B_0$, by \cref{theorem:brenier} there exists a unique optimal transport plan $\pi \opt_{ B }$ between $\varphi\push\mu$ and $\varphi \push \nu$ for the cost $\tilde c$ and it is induced by a map $t_{ B }: B_0 \to B_0$ of the form $t_{ B }=\exp_u(\nabla f)$, with $f$ $\tilde c$-convex.
+
+By \cref{lemma:decomp-manifold}, we know that any transport plan in $\pi \in \Pi(\mu,\nu)$ that satisfy $(\varphi,\varphi) \push \pi = (\id, t_B)\push\mu$ must be optimal.
+Therefore, if $\pi$ happens to be induced by a map $T$, that is $\pi = (\id, T)\push\mu$, we would obtain a Monge map between $\mu$ and $\nu$.
+To build such a $T$, we proceed as in \Cref{subsec:proof-nonsense}: we define a Monge map $T_u$ between $(\mu'_u)_u$ and $\smash{(\nu'_{t_B(u)})_u}$ for $\varphi\push\mu$-a.e.~$u$ (recall that those are the disintegration of $\Phi\push\mu = \mu'$ and $\Phi\push\nu=\nu'$ with respect to $p_B$) and build a global map between $\mu'$ and $\nu'$ by (roughly) setting $T(u,x) = T_u(x)$.
+As in \Cref{subsec:proof-nonsense}, proving the measurability of such $T$ requires care.
+
+\paragraph{Step 2: Transport between the fibers.} For $\varphi\push\mu$-a.e.~$u$, $\mu'_u$ has a density w.r.t.~the volume measure on $F$ and the optimal cost between $\mu'_u$ and $\smash{\nu'_{t_{ B }(u)}}$ is finite by assumption.
+Whenever $\mu'_u$ has a density, we can therefore apply \cref{prop:quad-cost-manifold-villani} between $\mu'_u$ and $\smash{\nu'_{t_{ B }(u)}}$ with the cost $d_{ F }^2$ to obtain that there exists a plan $\pi_u$ between these fibers that is induced by a map $T_u: F \to F$ that can be expressed as $T_u(v)=\exp_v(\tilde \nabla g_u(v))$ with $g_u$ being $d_ F ^2/2$-convex on $F$.
+
+\paragraph{Step 3: Measurability of the global map.} Now that we have built structured maps $T_u$ between corresponding fibers (through $t_B$), it remains to prove the existence of a measurable map $T : B_0 \times F \to B_0 \times F$ transporting $\mu'$ onto $\nu'$ satisfying $T(u,x) = (t_B(u),T_u(x))$ for $\varphi\push\mu$-almost every $u$ and $\mu'_u$-almost every $x$.
+
+For this, we need an adaptation of \cref{prop:fontbonaRd} to the manifold setting.
+Namely, we have the following:
+
+\begin{proposition}[Measurable selection of maps, manifold case]\label{prop:selection-manifold}
+    Let $M$ be a complete Riemannian manifold and $(B, \Sigma, m)$ a measure space.
+    Consider a measurable function $B\ni u \mapsto (\mu_u, \nu_u) \in \mathcal{P}(M)^2$. Assume that for $m$-almost every $u\in B$, $\mu_u\ll\operatorname{vol}_M$ and $\mu_u$ and $\nu_u$ have a finite transport cost. Let $T_u$ denote the (unique by \cref{prop:quad-cost-manifold-villani}) optimal transport map induced by the quadratic cost $d_M^2$ on $M$ between $\mu_u$ and $\nu_u$.\\
+    Then there exists a function $(u,x)\mapsto T(u,x)$, measurable w.r.t.~$\Sigma \otimes \mathcal{B}(\mathbb{R}^d)$, such that $m$-a.e., $$T(u,x)=T_{u}(x)\quad \mu_{u}\text{-a.e.}$$
+\end{proposition}
+
+This proposition can essentially be proved by adapting the proof of \cite{fontbona2010measurability} to the manifold setting, and most steps adapt seamlessly.
+A complete proof, where we stress the points that need specific care in adaptation, is deferred to \Cref{sec:appendix-proof-fontbona-manifold}.
+
+We can apply this proposition with the manifold being the (common) fiber $F$ on which the $\mu'_u,\smash{\nu'_{t_B(u)}}$ are supported for $\varphi\push\mu$-a.e.~$u$, and for which we have access to the (unique) Monge map $T_u$.
+It gives the existence of a global map $t_F$ satisfying $t_F(u,v) = T_u(v)$ for $\varphi\push\mu$-a.e.~$u$, and $\mu'_u$-a.e.~$v$, and we can thus define the (measurable) map $T(u,x) = (t_B(u), t_F(u,x))$.
+
+One then has for any continuous function $z$ with compact support:
+\begin{align*}
+    \int_{ B_0 \times F } z(u',v')\, \mathrm d(T\push\Phi\push\mu)(u',v') & =\int_{ B_0 \times F }z(t_ B (u),T_u(v))\, \mathrm d(\Phi\push\mu)(u,v) &  & \text{(pushforward } T \text{ on }\Phi\push\mu \text{)} \\
+        & =\iint_{ B_0 \times F }z(t_ B (u),T_u(v))\, \mathrm d(\Phi\push\mu)_{u}(v)\, \mathrm d(\varphi\push\mu)(u) &  & \text{(disintegration theorem)} \\
+        & =\iint_{ B_0 \times F }z(t_ B (u),v')\, \mathrm d(g_{u\pushonly}(\Phi\push\mu)_{u})(v')\, \mathrm d(\varphi\push\mu)(u) &  & \text{(pushforward } T_u \text{ on }(\Phi\push\mu)_{u} \text{)} \\
+        & =\iint_{ B_0 \times F }z(t_ B (u),v')\, \mathrm d((\Phi\push\nu)_{t_ B (u)})(v')\, \mathrm d(\varphi\push\mu)(u) &  & (g_{u\pushonly}(\Phi\push\mu)_{u}=(\Phi\push\nu)_{t_ B (u)}) \\
+        & =\iint_{ B_0 \times F }z(u',v')\, \mathrm d((\Phi\push\nu)_{u'})(v')\, \mathrm d(t_ B \varphi\push\mu)(u') &  & \text{(pushforward } t_ B  \text{ on }\varphi\push(\Phi\push\mu)_{u} \text{)} \\
+        & =\iint_{ B_0 \times F }z(u',v')\, \mathrm d((\Phi\push\nu)_{u'})(v')\, \mathrm d(\varphi\push\nu)(u') &  & (t_{ B \pushonly}(\varphi\push\mu)=\varphi\push\nu) \\
+        & =\int_{ B_0 \times F }z(u',v')\, \mathrm d(\Phi\push\nu)(u',v')\,, &  & \text{(disintegration theorem)}
+    \end{align*}
+hence $T$ sends $\Phi\push\mu$ to $\Phi\push\nu$ and $T_E\defeq\Phi^{-1}\circ T\circ\Phi$ therefore sends $\mu$ to $\nu$; and since
+\[ (\varphi,\varphi)\push(\id,T_E)\push\mu=(\varphi,\varphi\circ T_E)\push\mu=(\varphi,t_{ B }\circ \varphi)\push\mu=(\id,t_{ B })\push\varphi\push\mu=\pi_{ B }\opt \,,\]
+we have that $T_E$ is an optimal map between $\mu$ and $\nu$.
+
+    \section{Applications to the quadratic and inner-product GW problems}
+    \label{subsec:applications}
+
+    \subsection{The inner-product cost}
+    \label{subsec:applications_innerProduct}
+        We recall the \cref{eqn:GW-inner-prod} problem:
+        \begin{equation}
+            \tag{GW-IP}
+            \min _{\pi \in \Pi(\mu,\nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left|\langle x,\, x'\rangle-\langle y,\, y'\rangle\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+            \label{eqn:GW-inner-prod-in-subsection}
+        \end{equation}
+        Expanding the integrand and using the fact that $\iint\langle x,\,x'\rangle^2 \, \mathrm d\pi\, \mathrm d\pi=\iint\langle x,\,x'\rangle^2 \, \mathrm d\mu\, \mathrm d\mu$ is constant (the same goes for the terms that depend on $\nu$), \cref{eqn:GW-inner-prod-in-subsection} is equivalent to
+        \begin{equation*}
+            \min _{\pi \in \Pi(\mu,\nu)} \iint-\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi(x, y) \dd\pi(x', y')\,.
+        \end{equation*}
+        This problem is not invariant to translations but it is to the action of $O_n(\RR) \times O_d(\RR)$. Assuming an optimal correspondence plan $\pi\opt$, this plan is also an optimal transport plan for the linearized problem \cref{eq:linearized} with cost
+        \begin{align*}
+            C_{\pi\opt}(x,y)=-\int\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi\opt(x', y')=\scal{-\int(y'\otimes x')x \dd\pi\opt(x', y')}{y}=-\langle M\opt x,\,y\rangle\,,
+        \end{align*}
+        where $M\opt\defeq\int y'\otimes x' \dd\pi\opt(x', y')\in \RR^{d\times n}$.
+
+        One can already check if this linearized cost satisfies the twist conditions for admitting an optimal transport map defined in \cref{sec:deterministic-plans}:
+        \begin{table}[h]
+            \centering
+            \caption{Twist conditions for the cost $c(x,y)=-\langle M\opt x,\,y\rangle$. See \cref{sec:proof-twist-our-costs} for a proof.}
+            \label{tab:twist-inner}
+            \begin{tabular}{lcc}
+            $\rk M\opt$ & $= d$          & $\leq d-1$        \\\hline
+            twist         & $\checkmark$   &  $\cdot$          \\
+            subtwist      & $\checkmark$   &  $\cdot$          \\
+            $m$-twist, $m\geq2$     & $\checkmark$   &  $\cdot$ \\
+            non-degeneracy & $\checkmark$ & $\cdot$
+            \end{tabular}
+        \end{table}
+
+        This linearized cost satisfies the \cref{eq:twist} condition if and only if $M\opt$ is of full rank, hence in this case the solution $\pi\opt$ of \cref{eqn:GW-inner-prod-in-subsection} is unique and induced by a map, and Theorem~4.2.3 from \cite{vayer2020contribution} gives a result on the structure of this map. We can actually generalize this to the case where $M\opt$ is arbitrary:
+        \begin{theorem}[Existence of an optimal map for the inner product cost]
+            \label{theorem:inner-main}
+            Let $n\geq d$, $\mu, \nu\in \Pp(\RR^n)\times\Pp(\RR^d)$ two measures with compact supports. Suppose that $\mu\ll\Ll^n$. Then there exists an optimal map for \cref{eqn:GW-inner-prod-in-subsection} that can be written as
+            \begin{equation}
+                T=O_\Yy^\top \circ (T_0\circ p_{\RR^d})\circ O_\Xx\,,
+                \label{eq:T0-form-1}
+            \end{equation}
+            where $O_\Xx$ and $O_\Yy$ are change-of-basis matrices of $\RR^n$ and $\RR^d$, $p_{\RR^d}: \RR^n \to \RR^d$ is defined by $p_{\RR^d}(x_1,\dots,x_n)=(x_1,\dots,x_d)$, and
+            \begin{equation}
+                T_0(x_1,\dots,x_d)=(\nabla f\circ\Si(x_1,\dots,x_h), \nabla g_{x_1,\dots,x_h}(x_{h+1},\dots,x_d))\,,
+                \label{eq:T0-form-2}
+            \end{equation}
+            with $h\leq d$, $\Si\in \RR^{h\times h}$ diagonal with positive entries, $f: \RR^h \to \RR$ convex and all $g_{x_1,\dots,x_h}: \RR^{d-h} \to \RR$ convex.
+        \end{theorem}
+        In order to show this, we will need two simple lemmas that we state now and prove in \cref{subsec:proof-scaled-brenier}, the second one being a simple corollary of the first:
+                \begin{lemma}
+                \label{lemma:reparam}
+                Let $\mu,\nu\in \Pp(E)$ and let $\psi_1,\psi_2:E\to F$ be homeomorphisms. Let $\tilde c:F\times F\to\RR$ and consider the cost $c(x,y)= c( \psi_1(x),\psi_2(y))$. Then a map is optimal for the cost $c$ between $\mu$ and $\nu$ if and only if it is of the form $\psi_2^{-1}\circ T\circ\psi_1$ with $T$ optimal for the cost $\tilde c$ between $\psi_{1\pushonly}\mu$ and $\psi_{2\pushonly}\nu$.
+            \end{lemma}
+            \begin{lemma}[Brenier with scaled inner product]
+                \label{lemma:scaled-Brenier}
+                Let $h\geq 1$ and $\mu,\nu\in \Pp(\RR^h)$ with $\mu\ll\Ll^h$ with compact supports. Consider the cost $c(x, y)= -\langle \psi_1(x),\,\psi_2(y)\rangle$ where $\psi_1,\psi_2:\RR^h\to \RR^h$ are diffeomorphisms.
+                Then, there exists a unique optimal transport plan between $\mu$ and $\nu$ for the cost $c$, and it is induced by a map $t:\RR^h\to \RR^h$ of the form $t=\psi_2^{-1}\circ\nabla f\circ\psi_1$, with $f$ convex.
+            \end{lemma}
+
+        \noindent We are now ready to prove \cref{theorem:inner-main}:
+        \begin{proof}[Proof of \cref{theorem:inner-main}]
+            Using a singular value decomposition, we have $M\opt=\smash{O_\Yy^\top} \Si O_\Xx\in\RR^{d\times n}$ with $O_\Xx,O_\Yy\in O_n(\RR)\times O_d(\RR)$ orthogonal matrices of each Euclidean space and $\Si\in\RR^{d\times n}$ diagonal with non-negative coefficients. The cost then becomes $C_{\pi\opt}(x, y)=-\langle \smash{O_\Yy^\top}\Si O_\Xx x,\,y\rangle =-\langle \Si (O_\Xx x),\, O_\Yy y\rangle$. Using \cref{lemma:reparam}, the problem transforms into an optimal transportation problem between $\mu'\defeq O_\Xx\mu$ and $\nu'\defeq O_\Yy\nu$; and choosing $O_\Yy$ and $O_\Xx$ that sort the singular values in decreasing order, \textit{i.e.}~assuming $\si_1 \geq \dots \geq \si_h>0$ with $h\defeq \rk(M\opt)\leq d$, the problem therefore transforms into $\min_{\tilde\pi} \langle c_\Si,\, \tilde\pi\rangle$ for $\tilde\pi \in \Pi(\mu', \nu')$, where $c_\Si(\tilde x,\tilde y)=-\sum_{i=1}^h \si_i \tilde x_i \tilde y_i\defeq \tilde c( p(\tilde x), p(\tilde y))$, $p$ being the orthogonal projection on $\RR^h$.
+            We reduce to the case where both measures live in the same space by noting that since $c_\Si(\tilde x,\tilde y)=c_\Si(p_{\RR^d}(\tilde x), \tilde y)$ for all $\tilde x$ and $\tilde y$, any map $T_0$ optimal between $\mu''\defeq p_{\RR^d\pushonly}\mu'$ and $\nu'$ will induce a map $T=T_0\circ p_{\RR^d}$ optimal between $\mu'$ and $\nu'$\footnote{by \cref{lemma:decomp-manifold} it suffices to check that $(p_{\RR^d},\id)\push(\id,T)\push\mu'$ is in $\Pi\opt(p_{\RR^d\pushonly}\mu',\nu')$:
+            $$(p_{\RR^d},\id)\push(\id,T)\push\mu'=(p_{\RR^d},T_0\circ p_{\RR^d})\push\mu'=(\id,T_0)p_{\RR^d\pushonly}\mu'\,.$$}.
+            One can then recover an optimal map between $\mu$ and $\nu$ by composing with $O_\Xx$ and $\smash{O_\Yy^\top}$ (\cref{lemma:reparam}), hence \Cref{eq:T0-form-1}.
+
+        The existence of such a map $T_0$ optimal between $\mu''$ and $\nu'$ satisfying \cref{eq:T0-form-2} follows from the application of \cref{theo:fibers-main} for $E=E_0=\RR^d=\RR^h\times\RR^{d-h}=B_0\times F$ and $\varphi=p$. Indeed, $B_0$ and $F$ are complete Riemannian manifolds; $\tilde c$ is twisted on $B_0\times B_0$; $p\push\mu''$ has a density on $B_0$ and every $(\mu'')_u$ has a density w.r.t.~the Lebesgue measure on $F$ as a conditional probability.
+        We then make $t_B$ explicit.
+        One has that $c_\Si(x,y)=-\langle \tilde\Si x,\,y\rangle$, where $\tilde\Si=\diag({\si_i})_{1\leq i\leq h}$. As $p\push\mu''$ has a density, we can apply \cref{lemma:scaled-Brenier} stated above with $(\psi_1,\psi_2)=(\tilde\Si,\id)$ to obtain that there exists a unique optimal transport plan $\pi_B\opt$ between $p\push\mu''$ and $p\push\nu'$ for the cost $c_\Si$ and that it is induced by a map $t_B:B\to B$ of the form $t_B=\nabla f\circ\tilde\Si$, with $f$ convex.
+        \end{proof}
+        \begin{remark}
+                A special case of our theorem is Theorem 4.2.3 from \cite{vayer2020contribution} (\cref{prop:sota-titouan} in this work): when $h=d$, the optimal map between $O_\Xx\mu$ and $O_\Yy\nu$ writes $T_0\circ p_{\RR^d}$ with $T_0=\nabla f\circ \tilde\Si$. The induced optimal map between $\mu$ and $\nu$ is then:
+                    \begin{align*}
+                        T&={O_\Yy^\top}\circ (\tilde T_0\circ p_{\RR^d})\circ O_\Xx \\
+                        &={O_\Yy^\top}\circ (\nabla f\circ \tilde\Si\circ p_{\RR^d})\circ O_\Xx \\
+                        &={O_\Yy^\top}\circ (\nabla f\circ \Si)\circ O_\Xx \\
+                        &= \nabla( f\circ O_\Yy)\circ {O_\Yy^\top}\circ \Si \circ O_\Xx & & \text{since } \nabla ( f\circ A)=A^\top \circ \nabla f \circ A\\
+                        & = \nabla\tilde f\circ M\opt\,,
+                    \end{align*}
+                where $\tilde f\defeq f\circ O_\Yy$ is convex.
+            \end{remark}
+
+
+    \subsection{The quadratic cost}
+    \label{subsec:applications_quadratic}
+            We recall the \cref{eqn:GW-quadratic} problem:
+            \begin{equation}
+                \tag{GW-Q}
+                \min _{\pi \in \Pi(\mu,\nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left||x-x'|^2-|y-y'|^2\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,,
+                \label{eqn:GW-quadratic-in-subsection}
+            \end{equation}
+     which is invariant by translation of $\mu$ and $\nu$. With no loss of generality, we suppose both measures centered. Expanding the integrand provides
+            $$\left||x-x'|^{2}-|y-y'|^{2}\right|^2=|x-x'|^4+|y-y'|^4-2|x-x'|^{2}|y-y'|^{2}\,,$$
+            and the two first terms only depend on $\mu$ and $\nu$, not on $\pi$. Expanding the remaining term yields nine terms. Two of them also lead to a constant contribution: $-|x|^2|y'|^2$ and $-|x'|^2|y|^2$; four lead to vanishing integrals since $\mu$ and $\nu$ are centered: $2|x|^{2}\langle y,\,y'\rangle$, $2|x'|^{2}\langle y,\,y'\rangle$, $2|y|^{2}\langle x,\,x'\rangle$ and $2|y'|^{2}\langle x,\,x'\rangle$. The remaining three terms then yield the following equivalent problem:
+            \begin{equation*}
+                \min _{\pi \in \Pi(\mu,\nu)} \int-|x|^2|y|^2\dd\pi(x, y)+2\iint-\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi(x, y) \dd\pi(x', y')\,.
+            \end{equation*}
+            Assuming an optimal correspondence plan $\pi\opt$, this plan is also an optimal transport plan for the linearized problem \cref{eq:linearized} with cost
+            \begin{align*}
+                C_{\pi\opt}(x,y)=-|x|^2|y|^2-4\int\langle x,\, x'\rangle\langle y,\, y'\rangle \dd\pi\opt(x', y') =-|x|^2|y|^2-4\langle M\opt x,\,y\rangle\,,
+            \end{align*}
+            where $M\opt\defeq\int y'\otimes x' \dd\pi\opt(x', y')\in \RR^{d\times n}$.
+
+            One can already check if this linearized cost satisfies the twist conditions for admitting an optimal transport map defined in \cref{sec:deterministic-plans}:
+            \begin{table}[h]
+                \centering
+                \caption{Twist conditions for the cost $c(x,y)=-|x|^2|y|^2-4\langle M\opt x,\,y\rangle$. See \cref{sec:proof-twist-our-costs} for a proof.}
+                \label{tab:twist-quadratic}
+                \begin{tabular}{lccc}
+                $\rk M\opt$ & $= d$ & $= d-1$    & $\leq d-2$ \\ \hline
+                twist         & $\cdot$      & $\cdot$           & $\cdot$           \\
+                subtwist      & $\checkmark$   & $\cdot$           &   $\cdot$         \\
+                2-twist       & $\cdot$      & $\checkmark$        &  $\cdot$         \\
+                $m$-twist, $m\geq3$ & $\cdot$      & $\cdot$        &  $\cdot$\\
+                non-degeneracy & $\sim$       & $\cdot$      & $\cdot$
+                \end{tabular}
+            \end{table}
+
+            In the cases where the rank of $M\opt$ is $d$ (resp.~$d-1$), this linearized cost satisfies the subtwist (resp.~2-twist) condition, yielding an optimal map/anti-map (resp.~bimap) structure by compactness of the support of $\mu$ and $\nu$ when $\mu$ has a density. In the case where $\rk M\opt\leq d-2$, nothing can be said and there is \textit{a priori} little hope for the existence of an optimal correspondence map; but quite not unsurprisingly, we can actually prove it.
+            \begin{theorem}[Existence of an optimal map, bimap or map/anti-map for the quadratic cost]
+                \label{theorem:quad-main}
+                Let $n\geq d$, $\mu, \nu\in \Pp(\RR^n)\times\Pp(\RR^d)$ two measures with compact supports. Suppose that $\mu\ll\Ll^n$. Let $\pi\opt$ be a solution of \cref{eqn:GW-quadratic-in-subsection} and $M\opt\defeq\int y'\otimes x' \dd\pi\opt(x', y')$. Then:
+                \begin{enumerate}[label=(\roman*)]
+                    \item if $\rk M\opt=d$, there exists an optimal plan that is induced by a map/anti-map;
+                    \item if $\rk M\opt=d-1$, there exists an optimal plan that is induced by a bimap;
+                    \item if $\rk M\opt\leq d-2$, there exists an optimal plan that is induced by a map that can be written as
+                        \begin{equation*}
+                            T=\smash{O_\Yy^\top} \circ T_0\circ O_\Xx\,,
+                        \end{equation*}
+                        where $O_\Xx$ and $O_\Yy$ are change-of-basis matrices of $\RR^n$ and, writing any $x\in\RR^n$ as $x=(x_H,x_\perp)\in\RR^h\times\RR^{n-h}$ and $\Phi(x)\defeq (x_B,x_F)\defeq ((x_H,|x_\perp|^2),x_\perp/|x_\perp|)$,
+                        \begin{equation*}
+                            \Phi\circ T_0(x)=\left(\tilde c\text{-}\exp_{x_B}(\nabla f(x_B)), \exp_{x_F}(\nabla g_{x_B}(x_F))\right)
+                        \end{equation*}
+                        with $h=\rk M\opt\leq d-2$, $f: \RR^{h+1} \to \RR$ being $\tilde c$-convex and all $g_{x_B}: \RR^{n-h} \to \RR$ being $d_{S^{n-h-1}}^2/2$-convex.
+                \end{enumerate}
+            \end{theorem}
+            \begin{proof}\
+            \begin{enumerate}[label=(\roman*)]
+                \item We show that in this case the subtwist condition is satisfied. Consider $y_1\neq y_2\in\Yy$. Any $x\in\Xx$ is a zero of $\nabla_x c(x,y_1)-\nabla_x c(x,y_2)$ if and only if
+                    \begin{equation}
+                        (|y_1|^2-|y_2|^2)x=-(M\opt)^\top(y_1-y_2)\,.
+                        \label{eqn:grad}
+                    \end{equation}
+                    Suppose that $M$ is of full rank. If $|y_1|=|y_2|$, then \cref{eqn:grad} has no solution since $y_1-y_2$ cannot be in $\ker(M\opt)^\top$, and if $|y_1|\neq|y_2|$, then \cref{eqn:grad} has a unique solution $x\opt=-(|y_1|^2-|y_2|^2)^{-1}(M\opt)^\top(y_1-y_2)$; hence the result.
+                \item We show that in this case the 2-twist condition is satisfied. Consider $x_0\in\Xx$ and $y_0\in\Yy$. Let $y\in\Yy$ such that $|y|^{2}x_{0}+(M\opt)^\top y=|y_{0}|^{2}x_{0}+(M\opt)^\top y_{0}$. Similarly to the inner product case, up to singular value decomposition suppose $M\opt$ rectangular diagonal in $\RR^{d\times n}$ with sorted singular values and write $\tilde \Si =\diag(\sigma_{1},\dots,\sigma_{h})$ with $h \defeq \rk(M\opt)$. Denote by $v\in\RR^d$ the right-hand side of the equation and decompose each vector $z$ of $\RR^n$ or $\RR^d$ as $z=(z_H,z_\perp)$, where $z_H\in\RR^h$ and $z_\perp$ contains the remaining coordinates. The equation becomes: $$\begin{cases}
+                |y|^{2}x_H+\tilde\Si y_H & \!\!\!\!=v_H \\
+                |y|^{2}x_{\perp} & \!\!\!\!=v_{\perp} \,.
+                \end{cases}$$
+                If $x_\perp$ and $v_\perp$ are not colinear then it is absurd and there is no such $y$; else, since $x_{\perp}$ and $v_{\perp}$ are fixed, this means that $|y|^{2}$ is fixed and $y$ lives on the $(d-1)$-dimensional sphere $S^{d-1}$. The first equation of the system above then gives $y_H=\tilde\Si^{-1}(v_H-|y|^{2}x_H)$; hence $y$ lives in the intersection of $S^{d-1}$ and of a $(d-r)$-dimensional affine subspace of vectors $z\in\RR^d$ with fixed $z_H$, and this intersection is either empty or a $(d-r-1)$-dimensional affine sphere. As $r=d-1$, $y$ belongs to a set of at most 2 points and the 2-twist condition is satisfied.
+            \item The case $\rk M\opt\leq d-2$ is a consequence of \cref{theo:fibers-main} and the proof is as follows.
+                We consider the measure $\nu$ as a measure of $\RR^n$ of $d$-dimensional support.
+                Similarly to the inner product cost, by SVD the cost becomes $c(x, y)=-|x|^2|y|^2-\langle \smash{O_\Yy^\top}\Si O_\Xx x,\,y\rangle =-|O_\Xx x|^2|O_\Yy y|^2-\langle \Si (O_\Xx x),\, O_\Yy y\rangle$,
+                and using \cref{lemma:reparam} the problem transforms into $\min_{\tilde\pi} \langle c_\Si,\, \tilde\pi\rangle$ for $\tilde\pi \in \Pi(O_\Xx\mu, O_\Yy\nu)$, where $c_\Si(x,y)\defeq -|x|^2|y|^2-\langle \Si x,\, y\rangle$.
+                Further assuming $\si_1 \geq \dots \geq \si_h>0$ and writing any $z\in\RR^n$ as $z=(z_u,z_v)\in\RR^h\times\RR^{n-h}$,
+                \begin{align*}
+                c_\Si(x,y) & =-|x_H|^{2}|y_H|^{2}-|x_H|^{2}|y_\perp|^{2}-|x_\perp|^{2}|y_H|^{2}-|x_\perp|^{2}|y_\perp|^{2}-\langle \tilde \Si x_H,\, y_H\rangle\\
+                     & =-|x_H|^{2}|y_H|^{2}-|x_H|^{2}n_y-n_x|y_H|^{2}-n_xn_y-\langle \tilde \Si x_H,\, y_H\rangle  \quad \text{with }n_x=|x_\perp|^2 \text{ and }n_y=|y_\perp|^2\\
+                     & \defeq \tilde c(\phi(x),\phi(y))\,,
+                \end{align*}
+                where $\phi: x\mapsto (x_H,|x_\perp|^2)$, and the cost $c_\Si(x,y)$ only depends of the values of $\phi(x)$ and $\phi(y)$. Let us now examine the injectivity of $\nabla_{x}\tilde c(\tilde x,\cdot)$ for a fixed $\tilde x=\big(\begin{smallmatrix}x_H\\n_x\end{smallmatrix}\big)$. For any $\tilde y=\big(\begin{smallmatrix}y_H\\n_y\end{smallmatrix}\big)$:
+                $$\nabla_{x}\tilde c(\tilde x,\tilde y)= (w,t)  \iff
+                \begin{cases}
+                    w=2(|y_H|^{2}+n_y)x_H+\tilde \Si y_H \\
+                    t=|y_H|^{2}+n_y
+                    \end{cases} \iff \begin{cases}
+                    y_H=\tilde \Si ^{-1}(w-2tx_H) \\
+                    n_y=t-|y_H|^{2}
+                    \end{cases}$$
+                hence $\tilde c$ satisfies the twist condition.
+
+                Now, the same as in \cref{example:fiber-main} applies, but this time with $E_0 = \RR^h\times\RR^{n-h}$, $E = E_0\backslash (\RR^h\times\{0\})$, $B_0 = \RR^h\times\RR$ and $F = S^{n-h-1} = \{x \in E_0\mid |x_\perp|=1\}$. Is then ensured the existence of a structured Monge map between $\mu$ and $\nu$ for the cost $c$: it decomposes for almost all $x \in \RR^n$ as a Monge map on the basis $B_0 = \RR^{h+1}$ obtained as the gradient of a $\tilde c$-convex function $f:\RR^{h+1}\to\RR$ (via the $\tilde c$-exponential map on $\RR^{h+1}$) and a Monge map on each fiber $F = S^{n-h-1}$, also built from gradients of convex functions $h_{(x_H,|x_\perp|^2)}:S^{n-h-1}\to\RR$ (via the exponential map on the sphere); hence the result.
+                Last, note that the case where $M\opt = 0$ has not been explictly treated. In this case, the cost is simply $c(x,y)=-|x|^2|y|^2=\tilde c(n_x,n_y)$ and the strategy above directly applies.\qedhere
+            \end{enumerate}
+            \end{proof}
+
+
+            \section{Complementary study of the quadratic cost in dimension 1}
+            \label{subsec:quadra1D}
+
+            Recalling that the \cref{eqn:GW-inner-prod-in-subsection} problem is invariant by translation, we assume that measures $\mu$ and $\nu$ below are centered. In the one-dimensional case $\Xx,\Yy\subset\RR$, the linearized GW problem \cref{eq:linearized} reads, with $\pi\opt$ an optimal correspondence plan:
+            \begin{equation}
+                \label{eq:gw-1d-cont}
+                \min_{\pi\in\Pi(\mu,\nu)} \int_{\Xx\times\Yy} (-x^2y^2-4mxy)\dd\pi(x,y)\,,\quad\text{where }m=\int_{\Xx\times\Yy} x'y'\dd\pi\opt(x',y')\,,
+            \end{equation}
+            and for any plan $\pi\in\Pi(\mu,\nu)$ (not necessarily optimal), we denote by $m(\pi)=\int xy\dd\pi(x,y)$ what we call the \emph{correlation} of $\pi$. The associated OT cost function $c_m(x,y)=-x^2y^2-4mxy$ only satisfies the subtwist condition when $m\neq0$ and the 2-twist condition when $m=0$, which does not allow to conclude on the deterministic structure of optimal correspondence plans. However, in the one-dimensional case one has at their disposal the useful \cref{prop:submod} on \cref{eq:submod}.
+            The linearized quadratic GW cost with parameter $m\geq0$ is submodular on the region $S=\{(x,y)\mid xy\geq -m \}$ and supermodular elsewhere (see \cref{fig:submod2} for an illustration); so we cannot directly apply this proposition. Still, it is reasonable to expect that optimal correspondence plans exhibit a monotone non-decreasing structure on $S$ (written $\nearrow$ in \cref{fig:submod2}) and a monotone non-increasing one elsewhere (written $\searrow$), and we can actually leverage this type of property to obtain the optimality of the monotone rearrangements in some particular cases (see \cref{subsec:quadra_1D_positive}).
+                \begin{figure}[!h]
+                    \centering
+                    \begin{subfigure}[t]{.49\textwidth}
+                        \centering
+                        \include{figures/submod_GW}
+                        \vspace{-5mm}
+                    \end{subfigure}
+                    \hfill
+                    \begin{subfigure}[t]{.49\textwidth}
+                        \centering
+                        \include{figures/submod_GW_neg}
+                        \vspace{-5mm}
+                    \end{subfigure}
+                    \caption{Submodularity region $S$ ($\nearrow$, in \textcolor{tabgreen}{light green}) and supermodularity region $\bar S$ ($\searrow$) for the linearized quadratic GW cost with parameter $m>0$ \capleft or $m<0$ \capright\!.}
+                    \label{fig:submod2}
+                \end{figure}
+
+            \noindent In view of the form of the regions of modularity in our particular case, we can state:
+            \begin{proposition}
+            Let $m\geq 0$, $S = \{(x,y)\mid xy\geq -m \}$ and denote by $\pi\opt$ an optimal transportation plan for the cost $C_m$.
+            Then, $[\pi\opt]_{|S}$ (the plan restricted to the submodularity region) is monotone non-decreasing.
+            \end{proposition}
+            \begin{proof}
+            In this proof, we use the fact that if $\pi\opt$ is optimal, then it is also optimal when restricted on a domain between the corresponding marginals.
+            In particular, the plan $[\pi\opt]_{|S}$ is necessarily optimal for the cost $c_m$ between its marginals. Consider $(x_0,y_0),(x_1,y_1) \in \supp([\pi\opt]_{|S})$ such that $x_0 < x_1$ and $y_0 > y_1$; this condition implies that the rectangle $R$ defined by the four coordinates $x_0,x_1,y_0,y_1$ is contained in $S$. As a consequence, the submodularity of the cost can be applied on $R$ to prove that $[\pi\opt]_{|R}$ is monotone non-decreasing, contradicting the configuration.
+            \end{proof}
+            Before going into further details on our complementary study, we recall the discrete formulation of \cref{eq:KP} in dimension one.
+            Given two sets $\{ x_{1},\dots,x_{N} \}$ and $\{ y_{1},\dots,y_{M} \}$ of $\mathbb{R}$ and two probability vectors $a$ and $b$, the \cref{eq:KP-disc} problem between the discrete measures $\mu=\sum_{i=1}^{N}a_{i}\delta_{x_{i}}$ and $\nu=\sum_{j=1}^{M}b_{j}\delta_{y_{j}}$ reads
+                    \begin{equation*}
+                        \min_{\pi\in U(a,b)}\ \langle C,\,\pi\rangle\,,
+                    \end{equation*}
+            where $C=(c(x_i,y_j))_{i,j}$ is the cost matrix and $\langle \cdot,\,\cdot\rangle$ is the Frobenius inner product.
+            In the case of the linearized problem \cref{eq:gw-1d-cont}, we denote by $\smash{C_{\GW(m)}}$ the cost matrix, that has coefficients $\smash{(C_{\GW(m)})_{i,j}=-x_i^2y_j^2-4m x_iy_j}$ with $m=\langle C_{xy},\, \pi\opt\rangle$ and $(C_{xy})_{i,j}=x_iy_j$.
+
+
+            In the following sections, we study the optimality of the monotone non-decreasing and non-increasing rearrangements $\pimon$ and $\piantimon$. It is worth noting that by submodularity of $x,y\mapsto -xy$, these two correspondence plans have respective correlations $m_\text{min}$ and $m_\text{max}$, where
+                    \begin{align}
+                        \label{eq:m-min-max}
+                        \begin{cases}
+                            m_\text{min}&= \min_{\pi}\ \langle C_{xy},\, \pi\rangle\\
+                            m_\text{max}&= \max_{\pi}\ \langle C_{xy},\, \pi\rangle
+                        \end{cases},\quad\text{with }(C_{xy})_{i,j}=x_iy_j\,,
+                    \end{align}
+            and that for any correspondence plan $\pi$, the value of its correlation $m(\pi)$ lies in the interval $[m_\text{min},m_\text{max}]$.
+
+            \noindent We provide in the following a complementary study of the quadratic cost in dimension one, namely
+            \begin{enumerate}[label=(\roman*),nolistsep]
+                \item a procedure to find counter-examples to the optimality of the monotone rearrangements;
+                \item empirical evidence for the tightness of \cref{theorem:quad-main};
+                \item a proof of the instability of having a monotone rearrangement as an optimal correspondence plan;
+                \item a new result on the optimality of the monotone rearrangements when the measures are composed of two distant parts.
+            \end{enumerate}
+            All experiments are reproducible and the code can be found on GitHub\footnote{link of the code: \href{https://github.com/theodumont/monge-gromov-wasserstein}{https://github.com/theodumont/monge-gromov-wasserstein}.}.
+            \subsection{Adversarial computation of non-monotone optimal correspondence plans}
+            \label{subsec:quadra1D_adversarial}
+            Theorem 4.1.1 of \cite{vayer2020contribution} claims that in the discrete case in dimension 1 with $N=M$ and $a=b=\mathbbm{1}_N$, the optimal solution of \cref{eq:QAP} is either the monotone non-decreasing rearrangement $\pimon$ or the monotone non-increasing one $\piantimon$ (or equivalently the identity $\sigma(i)=i$ or the anti-identity $\sigma(i)=N+1-i$); which seems to be the case with a high probability empirically when generating random discrete measures.
+            While this claim is true for $N=1,2$ and $3$,
+            a counter-example for $N\geq 7$ points has recently been exhibited in \cite{beinert2022assignment}. We further propose a procedure to automatically obtain additional counter-examples, demonstrating empirically that such adversarial distributions occupy a non-negligible place in the space of empirical measures.
+            We propose to move away from distributions of optimal plans $\pimon$ and $\piantimon$ by performing a gradient descent over the space of empirical distributions with $N$ points using an objective function that favors the strict sub-optimality of the monotone rearrangements; we now detail this procedure.
+
+            For $N\geq 1$, we consider the set of empirical distributions over $\mathcal{X}\times \mathcal{Y}=\RR\times\RR$ with $N$ points and uniform mass, \textit{i.e.}~of the form $\smash{\pi=\frac{1}{N}\sum_{i=1}^{N}\delta_{(x_{i},y_{i})}}$. Such plans $\pi$ can be seen as the identity mapping between vectors $X=(x_1,\dots,x_N)$ and $Y=(y_1,\dots,y_N)$, and we therefore note $\pi=\id(X,Y)$. Denoting by $c_{\GW}$ the functional that takes a correspondence plan and returns its cost on the GW problem, we then define $\mathcal{F}$ on $\RR^N\times\RR^N$ by
+            $$\mathcal{F}(X,Y)\defeq c_{\gw}(\pi)-\min \left\{ c_{\gw}(\pimon),\, c_{\gw}(\piantimon)\right\},$$
+            \vspace{-3mm}$$\text{where}\quad\begin{cases}
+                \pi=\id(X,Y)\\
+                \pimon\text{ and }\piantimon\text{ are the monotone rearrangements between }X\text{ and }Y .
+            \end{cases}$$
+            This quantifies how well the plan $\pi$ performs when compared to the best of the two monotone rearrangements. We generate $N$ points at random in $[0,1]^2$ and then perform a simple gradient descent over the positions of the points $(X,Y)=(x_{i},y_{i})_i$ following the objective
+            $$\min_{X,Y \in \RR^N}\ \Ff(X,Y)\,.$$
+            We include an early-stopping threshold $t$, since when $\Ff(\pi)$ becomes negative (\textit{i.e.}~we found an slightly adversarial example), the objective function often starts to decrease exponentially fast, exploiting the adversarial behaviour of the plan as much as it can. We found that choosing $t=-2$ gave good results in our experiments.
+            The procedure can be found in \cref{algorithm:gd} below. We implemented it using PyTorch's autodiff \cite{pytorch} and used \cite{blondel2020fast} to implement a differentiable sorting operator to compute the monotone rearrangements.
+            Adversarial plans $\pi_f=\id(X_f,Y_f)$ obtained by \cref{algorithm:gd} are not \textit{a priori} optimal for the GW cost between their marginals; but they have at least a better cost than the monotone rearrangements since $\Ff(X_f,Y_f)< 0$, proving the sub-optimality of the latter.
+
+
+
+            \begin{figure}[H]
+            \centering
+            \begin{minipage}{.8\linewidth}
+                \begin{algorithm}[H]
+                \caption{Simple gradient descent over the positions $(x_i)_i$ and $(y_i)_i$.}
+                \label{algorithm:gd}
+                \vspace{1mm}
+                \textbf{Parameters:}
+                \begin{itemize}[nolistsep]
+                    \item $N$: number of points of the distributions
+                    \item $N_\text{iter}$: maximum number of iterations
+                    \item $\eta$: step size
+                    \item $t$: early stopping threshold
+                \end{itemize}
+                \vspace{3mm}
+                \textbf{Algorithm:}
+                \begin{algorithmic}[1]
+                    \State $X\gets$ $N$ random values in $[0,1]$, then centered
+                    \State $Y\gets$ $N$ random values in $[0,1]$, then centered
+                    \For{$i\in\{1,\dots,N_\text{iter}\}$}
+                    \State $\pimon\gets\texttt{id(sort(}X\texttt{)},\texttt{sort(}Y\texttt{))}$ \Comment{\texttt{id} is the identity mapping}
+                    \State $\piantimon\gets\texttt{id(sort(}X\texttt{)},\texttt{reverse(sort(}Y\texttt{)))}$
+                    \State $\pi_{\phantom{\text{mon}}}\gets\texttt{id(}X,Y\texttt{)}$
+                    \State $\Ff(X,Y)\gets \texttt{GW(}\pi\texttt{)}-\texttt{min(GW(}\pimon\texttt{)},\texttt{GW(}\piantimon\texttt{))}$ \Comment{\texttt{GW} computes $c_{\GW}$}
+                    \State \textbf{if} $\Ff(X,Y)< t$ \textbf{then} stop \Comment{early stopping}
+                    \State $(X,Y)\gets (X,Y)-\eta\nabla\Ff(X,Y)$  \Comment{step of gradient descent}
+                    \EndFor
+                    \State return $\pi_f=\texttt{id(}X,Y\texttt{)}$
+                    \end{algorithmic}
+                    \vspace{3mm}
+                \textbf{Output:} a plan $\pi_f$ with better GW cost than $\pimon$ and $\piantimon$
+              \end{algorithm}
+            \end{minipage}
+            \end{figure}
+
+            On \Cref{fig:res-GD} is displayed an example of adversarial plans obtained following this procedure. It can be observed that during the descent, the plan $\pi$ has difficulties getting out of what seems to be a saddle point consisting in being the monotone rearrangements between its marginals. Moreover, it is worth noting that the marginals of our typical adversarial plans, such as the one of \cref{fig:res-GD}, are often similar to the counter-example proposed in \cite{beinert2022assignment}, where both measures have their mass concentrated near zero, except for one outlier for $\mu$ and two for $\nu$, one on each tail.
+
+            \begin{figure}[h]
+                \centering
+                \begin{subfigure}[b]{.33\linewidth}
+                    \centering
+                    \include{figures/GD-obj}
+                    \vspace{-6mm}
+                \end{subfigure}
+                \begin{subfigure}[b]{.33\linewidth}
+                    \centering
+                    \include{figures/GD-initial}
+                    \vspace{-6mm}
+                \end{subfigure}
+                \begin{subfigure}[b]{.33\linewidth}
+                    \centering
+                    \include{figures/GD-final}
+                    \vspace{-6mm}
+                \end{subfigure}
+                \caption{Gradient descent results with parameters $N=122$, $\eta=26$, $t=-2$. \capleft Evolution of the objective function $\Ff$. \capcenter Initial plan $\pi_0$, generated at random. \capright Final plan $\pi_f$ (iter.~66).}
+                \label{fig:res-GD}
+            \end{figure}
+
+            \newpage
+
+            Furthermore, examining the optimal correspondence plan for these adversarial examples allows to exhibit cases where it is not a map, providing empirical evidence for the following conjecture:
+                    \begin{conjecture}
+                        \label{conj:tight}
+                        \cref{theorem:quad-main} is tight, \textit{i.e.}~there exists $\mu$ and $\nu$ for which optimal correspondence plans for \cref{eqn:GW-quadratic-in-subsection} are not maps but rather a union of two graphs (either that of two maps or that of a map and an anti-map); and this even if $\mu$ has a density, classical OT assumption for the existence of an optimal transport map.
+                    \end{conjecture}
+            In order to approximate numerically the case of a measure which has density w.r.t.~the Lebesgue measure, we convolve our distributions $\mu=(X_f,\mathbbm{1}_N)$ and $\nu=(Y_f,\mathbbm{1}_N)$ with a Gaussian of standard deviation $\sigma$ and represent it in Eulerian coordinates; that is we evaluate the closed form density on a fine enough grid.
+            When $\sigma$ is large, the optimal correspondence plan for GW is probably induced by a monotone map, as it is the case very frequently empirically; on the contrary, if $\sigma$ is sufficiently small, \textit{i.e.}~when the distributions are very close to their sum-of-Diracs discrete analogous, the optimal correspondence plan should not be a monotone map, by construction of $\mu$ and $\nu$.
+
+                    \begin{remark}
+                        Because of the adversarial nature of $\pi_f$ for the sub-optimality of $\pimon$ and $\piantimon$, we know that when $\sigma$ is sufficiently small, the optimal correspondence plan is not a monotone rearrangement. Still, it could be the case that this optimal plan is a map, but not a monotone one, and there is \textit{a priori} no reason to believe that $\pi_f$ will agree with \cref{conj:tight}. Surprisingly, it sometimes does, as numerical experiments below suggest.
+                    \end{remark}
+
+                    In order to find the optimal correspondence plan $\pi\opt$ between $\mu$ and $\nu$, we leverage the fact that $\pi\opt$ is a solution of its associated linearized problem. Therefore, a minimizer of the $\GW$ functional is given by
+                    \begin{equation}
+                        \argmin\ \Big\{ \GW(\pi_{m}\opt)\ \big\vert\ \pi_m\opt \in \argmin_{\pi \in U(a,b)}\ \langle C_{\GW(m)},\,\pi\rangle \,,\, m \in [m_\text{min},m_\text{max}]\Big\}  \,,
+                    \end{equation}
+                    where $\smash{(C_{\GW(m)})_{i,j}=-x_i^2y_j^2-4m x_iy_j}$.
+                    We therefore compute both $m_\text{min}$ and $m_\text{max}$ by solving the linear programs in \cref{eq:m-min-max}, discretize the interval $[m_\text{min},m_\text{max}]$ with $N_{\Delta m}$ points, and solve the corresponding linear optimization problem for every value of the parameter $m$ and evaluate the $\GW$ cost on each optimal plan for the given parameter $m$. We then check if the optimal plan exhibits a bimap or a map/anti-map structure.
+                    The procedure is described in \cref{algorithm:bimap}.
+
+
+                \begin{figure}[h]
+                    \centering
+                    \begin{minipage}{.8\linewidth}
+                        \begin{algorithm}[H]
+                            \caption{Generating bimaps from adversarial examples.}
+                            \label{algorithm:bimap}
+                        \vspace{1mm}
+                        \textbf{Input:} an adversarial plan $\pi_f=\id(X_f,Y_f)$ obtained from \cref{algorithm:gd}
+
+                        \vspace{3mm}
+                        \noindent\textbf{Parameters:}
+                        \begin{itemize}[nolistsep]
+                            \item $\sigma$: standard deviation of convolution
+                            \item $N_{\Delta x}$: discretization precision
+                            \item $N_{\Delta m}$: discretization precision of the interval $[m_\text{min},m_\text{max}]$
+                        \end{itemize}
+                        \vspace{3mm}
+                        \textbf{Algorithm:}
+                        \begin{algorithmic}[1]
+                            \State $a\gets \texttt{convolution}(X_f,\sigma,N_{\Delta x})$
+                            \State $b\gets \texttt{convolution}(Y_f,\sigma,N_{\Delta x})$ \Comment{optional (see below)}
+                            \State $m_{\vphantom{\text{max}}\text{min}}\gets \min_{\pi\in U(a,b)}\ \langle C_{xy},\,\pi\rangle$ \Comment{solve linear programs}
+                            \State $m_{\vphantom{\text{min}}\text{max}}\gets \max_{\pi\in U(a,b)}\ \langle C_{xy},\,\pi\rangle$
+                            \State \texttt{scores} $\gets \texttt{[]}$
+                            \For{$m\in\{m_\text{min},\dots,m_\text{max}\}$} \Comment{with $N_{\Delta m}$ points}
+                                \State $\pi\opt_{m}\gets \argmin_{\pi\in U(a,b)}\ \langle C_{\GW(m)},\,\pi\rangle$ \Comment{solve linear program}
+                                \State append $\GW(\pi\opt_{m})$ to \texttt{scores}
+                            \EndFor
+                            \State $\pi\opt\gets\argmax_\pi$ \texttt{scores} \Comment{take best plan for GW}
+                            \State $b\gets$ ``$\pi\opt$ is a bimap''
+                            \State return $\pi\opt$, $b$
+                            \end{algorithmic}
+                            \vspace{3mm}
+                        \textbf{Outputs:}
+                        \begin{itemize}[nolistsep]
+                            \item $\pi\opt$: optimal plan for GW
+                            \item $b$: boolean asserting if $\pi\opt$ is a bimap
+                        \end{itemize}
+                      \end{algorithm}
+                    \end{minipage}
+                  \end{figure}
+
+                    We display the results on \cref{fig:res-bimap}, where we plot the optimal correspondence plan $\pi\opt$
+                    in two cases:
+                    \begin{enumerate}[label=(\alph*),nolistsep]
+                        \item starting from an adversarial plan with both marginals convolved as to simulate densities;
+                        \item starting from an adversarial plan with only the first marginal convolved and the second marginal being a sum-of-Diracs measure.
+                    \end{enumerate}
+                    To facilitate the reading, we draw a blue pixel at a location $x$ on the discretized $x$-axis (resp.~$y$ on the $y$-axis) each time $x$ (resp.~$y$) has two (disjoint) images (resp.~antecedents), making $\pi\opt$ a bimap (resp.~a bi-anti-map), or the union of a graph and an anti-graph.
+                    In both cases, we observe that $\pi\opt$ is not a map but a bimap instead, similarly to \cite[Sec.~4.5]{chiappori2010hedonic}. Note that in case (b), $\nu$ being atomic, there cannot be a map from $\nu$ to $\mu$, so in both (a) and (b) we numerically exhibit an instance where there is \textit{a priori} no map from neither $\mu$ to $\nu$ nor $\nu$ to $\mu$.
+                    We also plot the submodularity regions of the linearized GW cost function with parameter $m(\pi\opt)$ as an overlay and we observe that when the optimal plan gives mass to a region where the cost is submodular (resp.~supermodular), is has a monotone non-decreasing (resp.~non-increasing) behaviour in this region.
+
+                    \begin{figure}[h]
+                        \centering
+                        \begin{subfigure}[b]{.49\linewidth}
+                            \centering
+                            \include{figures/bimap_plan_double}
+                            \vspace{-6mm}
+                            \label{fig:res-bimap-a}
+                        \end{subfigure}
+                        \hfill
+                        \begin{subfigure}[b]{.49\linewidth}
+                            \centering
+                            \include{figures/bimap_plan_bis}
+                            \vspace{-6mm}
+                            \label{fig:res-bimap-b}
+                        \end{subfigure}
+                            \caption{Optimal correspondence plan (in log scale) obtained with our procedure, starting either from a plan with both marginals convolved \capleft or with only the first marginal convolved \capright; bimap and anti-bimap coordinates (\textcolor{tabblue}{blue}); submodularity regions (\textcolor{tabgreen!60}{light green}). Parameters: $\sigma=\smash{5.10^{-3}}$, $N_{\Delta x}=150$, $N_{\Delta m}=2000$.
+                            }
+                        \label{fig:res-bimap}
+                    \end{figure}
+                    \begin{remark}
+                        Although the region on which the optimal plan $\pi\opt$ is a bimap is of small size on \cref{fig:res-bimap} right, we cannot expect better due to the form of the adversarial example $\pi_f$. Indeed, the bimap behaviour is governed by the outliers of the distributions (see \cref{fig:res-GD}), as points in the right tail of $\mu$ are encouraged to split in half between points in the right and left tails of $\nu$. As the bimap region only spans the outlier region, it stays of small size when $\mu$ and $\nu$ have only few outliers.
+                    \end{remark}
+
+            \clearpage
+
+            \subsection{Empirical instability of the optimality of monotone rearrangements}
+            \label{subsec:quadra1D_instability}
+            The above study demonstrates that there exist probability measures $\mu$ and $\nu$ for which property
+                \begin{equation*}
+                    P(\mu,\nu)\text{ : }\quad \pimon \text{ or } \piantimon \text{ is an optimal correspondence plan between }\mu\text{ and }\nu
+                \end{equation*}
+                does not hold. However, as it is very likely in practice when generating empirical distributions at random, one could ask if property $P$ is at least \emph{stable}, \textit{i.e.}~if when we have $\mu_0$ and $\nu_0$ satisfying $P(\mu_0,\nu_0)$ there is a small ball around $\mu_0$ and $\nu_0$ (for a given distance, say Wasserstein 2) inside which property $P$ remains valid. A negative answer to this---besides, in the symmetric case---is given by the counter-example by \cite{beinert2022assignment} with an increasing number of points:
+                \begin{proposition}
+                    \label{theo:no-stab}
+                    There exists two \emph{symmetric} measures $\mu,\nu$ on $\RR$ and sequences $(\mu_n)_n$, $(\nu_n)_n$ that weakly* converge to $\mu,\nu$ such that optimal plans $\pi_n$ between $\mu_n$ and $\nu_n$ are never supported by a monotone map.
+                \end{proposition}
+                \begin{proof}
+                    We consider $\mu=\nu=\delta_0$ and the discrete measures $\mu_n=\frac{1}{n}\sum_{i=1}^n\delta_{x_i}$ and $\nu_n=\frac{1}{n}\sum_{i=1}^n\delta_{y_i}$ defined as follows for $n\geq7$:
+                    $$x_{i}\defeq \begin{cases}
+                    -1 & \text{for }i=1 \\
+                    (i-\frac{n+1}{2})\frac1{n^2} & \text{for }i=2,\dots,n-1 \\
+                    1 & \text{for }i=n
+                    \end{cases}\quad \text{and}\quad y_{i}\defeq \begin{cases}
+                    -1 & \text{for }i=1 \\
+                    -1+\frac1{n^2} & \text{for }i=2 \\
+                    (i-2)\frac1{n^2} & \text{for }i=3,\dots ,n
+                    \end{cases}$$
+                    which is simply the counter-example from \cite{beinert2022assignment} with $n$ points and $\epsilon_n=1/n^2$. Since $n\geq7$, $\epsilon_n<2/(n-3)$ and the identity or anti-identity mappings are not optimal between $\mu_n$ and $\nu_n$.
+                By direct computation,
+                $$\operatorname{W}_2^2(\delta_0,\mu_n)= O(2/n+\epsilon_n^2n^2)\xrightarrow[]{n\to\infty}0\,,$$
+                and the exact same goes for $\nu=\delta_0$ and $\nu_n$.
+                \end{proof}
+                One can actually obtain non-degenerate (although not symmetric anymore) examples of such measures $\mu,\nu$. We start from the counter-example given in \cite{beinert2022assignment} with $N=7$ points and $\varepsilon=10^{-2}$,
+                that we convolve with a Gaussian of standard deviation $\sigma$ as before. We then plot as a function of $m\in[m_\text{min},m_\text{max}]$ the (true) GW cost of a plan $\pi_m\opt$, optimal for the linearized GW problem $\pi\opt_m\in\argmin_{\pi}\ \langle C_{\operatorname{GW}(m)},\,\pi\rangle$. The minimum values of this graph are attained by the correlations of optimal correspondence plans, as explained in \Cref{subsec:quadra1D_adversarial}. Hence if $\sigma$ is small, this optimal plan is not a monotone rearrangement by construction and the minimum are not located on the boundary of the domain.
+                On the contrary, when $\sigma$ is large, the convolved measures stop being adversarial and the monotone rearrangements start being optimal again. In order to study the phase transition, we plot on \Cref{fig:no-stab} the landscape of $m\mapsto \GW(\pi\opt_m)$ while gradually increasing the value of $\sigma$.
+
+                \begin{figure}[h]
+                    \centering
+                    \begin{subfigure}[b]{.24\linewidth}
+                        \centering
+                        \include{figures/stab_1}
+                        \vspace{-6mm}
+                        \caption*{$\sigma_1=8.10^{-3}$}
+                    \end{subfigure}
+                    \begin{subfigure}[b]{.24\linewidth}
+                        \centering
+                        \include{figures/stab_25}
+                        \vspace{-6mm}
+                        \caption*{$\sigma_2=8.8.10^{-3}$}
+                    \end{subfigure}
+                    \begin{subfigure}[b]{.24\linewidth}
+                        \centering
+                        \include{figures/stab_4}
+                        \vspace{-6mm}
+                        \caption*{$\sigma_3=10^{-2}$}
+                    \end{subfigure}
+                    \begin{subfigure}[b]{.24\linewidth}
+                        \centering
+                        \include{figures/stab_5}
+                        \vspace{-6mm}
+                        \caption*{$\sigma_4=3.10^{-2}$}
+                    \end{subfigure}
+                    \caption{Evolution of the graph of $m\mapsto \GW(\pi\opt_m)$ when varying $\sigma$ on the counter-example of \cite{beinert2022assignment} with $N=7$ points and $\varepsilon=10^{-2}$. Parameters: $N_{\Delta x}=100$, $N_{\Delta m}=150$.}
+                    \label{fig:no-stab}
+                \end{figure}
+
+                Looking at \cref{fig:no-stab}, it is worth noting that there is an incentive for plans of correlation close to $m_\text{min}$ or $m_\text{max}$ to be the monotone rearrangements, as the horizontal portions of the plot suggest. More importantly, it can be observed that when $\sigma=\sigma_3$ or $\sigma_4$, the monotone rearrangements are optimal, as their correlations realize the minimum of $m\mapsto \GW(\pi\opt_m)$; unlike for $\sigma_1$ and $\sigma_2$, for which the minimum value of the plot is located near zero. Hence there exists a $\sigma_0\in(\sigma_2,\sigma_3)$ for which the convolved measures have both $\pimon$, $\piantimon$ and another $\pi_0$ as optimal correspondence plans; it is direct that property $P$ does not hold in the neighbourhood of these specific measures $\mu_0$ and $\nu_0$.
+
+                \subsection{A positive result for measures with two components}
+            \label{subsec:quadra_1D_positive}
+
+    \begin{center}
+        \textit{Disclaimer: This result is not mine but my supervisors'. It was discovered following discussions during which we tried to construct optimal plans that are double bimaps ($x\to y$ and $y\to x$). I state it here for completeness and because it is a new positive result on the optimality of monotone rearrangement in dimension 1.}
+    \end{center}
+            In the following, $\mu_1$, $\mu_2$, $\nu_1$ and $\nu_2$ are four probability measures supported on a compact interval $A \subset \RR$. Denote $\Delta = \mathrm{diam}(A)$, and fix $t \in (0,1)$ and $K > \Delta$. Let $\tau_K : x \mapsto x + K$ denote the translation by $K$, and $A+K = \tau_K(A) = \{x + K\mid x \in A\}$. Now, introduce the measures
+            \begin{equation}
+             \mu = (1-t) \mu_1 + t \tau_{K\pushonly} \mu_2 \quad \text{and}  \quad \nu = (1-t) \nu_1 + t \tau_{K\pushonly} \nu_2\,.
+             \end{equation}
+            Note that $\mu_1$ and $\tau_{K\pushonly} \mu_2$ (resp.~$\nu_1$ and $\tau_{K\pushonly}\nu_2$) have disjoint supports. We want to prove the following:
+
+            \begin{proposition}\label{prop:measure_separation}
+                For $K$ large enough, the unique optimal plan for the quadratic cost between  $\mu$ and $\nu$ is given by one of the two monotone maps (non-decreasing or non-increasing).
+            \end{proposition}
+
+            \begin{remark}
+            The hypothesis of the theorem illustrates that monotone maps are favored when $\mu$ and $\nu$ both contain a single or more outliers.
+            The proof of the theorem actually shows the importance of long range correspondences or global effect over the local correspondences on the plan. In other words, even though locally monotone maps may not be optimal, global correspondences favor them. Moreover, these global correspondences have proportionally more weight in the GW functional since the cost is the squared difference of the squared distances. In conclusion, pair of points which are at long distances tend to be put in correspondence. In turn, this correspondence, as shown in the proof, favors monotone matchings. Although non-quantitative, this argument gives some insight on the fact that a monotone map is often optimal.
+            \end{remark}
+            \noindent We first prove the following lemma:
+            \begin{lemma}\label{lemma:measure_separation}
+            In the setting described above, there exists $K_0>0$ such that if $K \geq K_0$,
+            every $\pi$ optimal plan for $\gw(\mu,\nu)$ can be decomposed as $\pi = \pi_1 + \pi_2$, where either:
+            \begin{enumerate}
+                \item $\pi_1$ is supported on $A \times A$ and $\pi_2$ on $(A + K) \times (A + K)$ (that is, we separately transport $\mu_1$ to $\nu_1$ and $\tau_{K\pushonly}\mu_2$ to $\tau_{K\pushonly}\nu_2$), or
+                \item $\pi_1$ is supported on $A \times (A+K)$ and $\pi_2$ on $A \times (A + K)$ (that is, we transport $\mu_1$ to $\tau_{K\pushonly}\nu_2$ and $\mu_2$ to $\tau_{K\pushonly}\nu_1$).
+            \end{enumerate}
+            Furthermore, whenever $t \neq \frac{1}{2}$, only the first point can occur.
+            \end{lemma}
+
+                \begin{figure}[h]
+                    \centering
+                    \input{figures/illu_gw_separated}
+                    \caption{Visual sketch of the proof of \cref{lemma:measure_separation}.}
+                    \label{FigPositiveResult}
+                \end{figure}
+
+
+            \begin{proof}
+            Consider first the case $t = \frac{1}{2}$.
+            To shorten the notations, we introduce the notations $A_1 = A$ and $A_2 = A+K$. We can now decompose any plan $\pi$ as $\pi_{11} + \pi_{12} + \pi_{21} + \pi_{22}$ where for instance $\pi_{12}$ denotes the restriction of the plan $\pi$ to the product $A_1 \times A_2$. Let us also denote by $r$ the mass of $\pi_{12}$, one has $0 \leq r\leq 1/2$ and by symmetry, one can choose that $r\leq 1/4$, otherwise we exchange $A_1$ and $A_2$ for the second measure since the cost is invariant to isometries. Remark that, due to marginal constraints, the total mass of $\pi_{11}$ and $\pi_{22}$ is $1/2 - r$ and the mass of $\pi_{21}$ is $r$. Therefore, it is possible to consider a coupling plan $\tilde \pi_{11}$ between the first marginal of $\pi_{12}$ and the second marginal of $\pi_{21}$, and similarly, let $\tilde \pi_{22}$ be a coupling plan between the first marginal of $\pi_{21}$ and the second marginal of $\pi_{12}$. We then define a competitor plan
+            $\tilde \pi  = \pi_{11} + \tilde \pi_{11} + \pi_{22} + \tilde \pi_{22}$. The first step is to get a lower bound on the term $\GW(\pi,\pi)$.
+            Slightly overloading the notations, we introduce
+            \begin{equation}\label{EqBilinearGW}
+            \gw(\pi,\gamma) = \int c \dd \pi \otimes \gamma\,.
+            \end{equation}
+            We expand $\GW$ by bilinearity
+            \begin{equation*}
+            \GW(\pi,\pi) = \sum_{i,j,i',j'}  \GW(\pi_{ij},\pi_{i'j'}) = \sum_{i,j} \GW(\pi_{ii},\pi_{jj}) + R\,,
+            \end{equation*}
+            where $R$ is the remainder that contains 12 terms from which one can identify two types. 8 terms are of the type $\GW(\pi_{12},\pi_{11}) \geq r(1/2-r)(K^2 - \Delta^2)^2$. Indeed, one compares pairs of points $(x,x')$ and $(y,y')$ for $(x,y) \in A_1 \times A_1$ and $(x',y') \in A_1 \times A_2$, therefore $(x - x')^2$ is upper bounded by $\Delta^2$ and $(y - y')^2$ lower bounded by $K^2$ and the bound above follows after integration against the corresponding measures.
+            The second type is
+            $\GW(\pi_{12},\pi_{21}) \geq 0$, there are $4$ of such terms. We thus have
+            \begin{equation*}
+            R \geq 8 r(1/2-r)(K^2 - \Delta^2)^2\,.
+            \end{equation*}
+            We now upper-bound the competitor. Similarly, one has
+            \begin{equation*}
+             \GW(\tilde\pi,\tilde\pi)  = \sum_{i,j} \GW(\pi_{ii},\pi_{jj}) + \tilde R\,
+            \end{equation*}
+            where $\tilde R = 2\GW(\tilde \pi_{11},\pi_{22} + \tilde \pi_{22}) +2 \GW(\tilde \pi_{22},\pi_{11} + \tilde \pi_{11}) + 2\GW(\pi_{11},\tilde \pi_{11}) + 2\GW(\pi_{22},\tilde \pi_{22})$. The two last terms can be upper bounded by $2r(1/2-r) \Delta^2$.
+            Indeed, one compares distance squared of couples of points in $A_1$ to couple of points in $A_1$, so it is upper bounded by $\Delta^2$.
+            Again by elementary inequalities (see \cref{FigPositiveResult}), the two first terms can be upper bounded by $r(2K\Delta + \Delta^2)^2$. Note that the total mass of the plan $\pi_{11} + \tilde \pi_{11}$ is $1/2$ which explains why $(1/2-r)$ does not appear.
+            Therefore, the difference between the two values of $\GW$ is
+            \begin{equation}\label{EqComparison}
+                \GW(\pi,\pi) - \GW(\tilde \pi,\tilde \pi) \geq r\left(8 (1/2-r)(K^2 - \Delta^2)^2 - 4 (1/2-r) \Delta^2  - 2(2K\Delta + \Delta^2)^2\right)\,.
+            \end{equation}
+            Then, since $1/2 - r\geq 1/4$ the limit in $K$ of the polynomial function on the r.h.s. of \Cref{EqComparison} is $+\infty$ uniformly in $r\in [0,\frac 14]$, and the result follows; there exists $K>0$ such that the polynomial function above is nonnegative, for instance $\max(0,K_0)$ where $K_0$ is the largest root.
+
+            The proof in the case $t > 1/2$ (the other is symmetric) is even simpler since $t- r > t-1/2$ and consequently, there is no choice in the matching of the two measures; it is determined by the corresponding masses. One can directly apply the argument above. \qedhere
+            \end{proof}
+
+            \noindent We now prove \cref{prop:measure_separation}.
+
+            \begin{proof}[Proof of \cref{prop:measure_separation}]
+            Thanks to \cref{lemma:measure_separation}, we know that we can restrict to transportation plans $\pi = \pi_1 + \pi_2$ where, up to flipping $\nu$, we can assume that $\pi_1$ is supported on $A \times A$ and $\pi_2$ on $(A+K) \times (A+K)$.\footnote{Note: this is where the choice is made, as in the proof of \cref{lemma:measure_separation}, between the increasing and the non-increasing matchings. Using this convention, the non-decreasing monotone map is shown to be optimal.}
+
+            Using again the bilinear form $\GW(\pi,\gamma)$ defined in \cref{EqBilinearGW},
+             the objective values reached by any transport plan $\pi = \pi_1 + \pi_2$ actually decomposes as
+            \[ \gw(\pi,\pi) = \gw(\pi_1,\pi_1) + 2\gw(\pi_1,\pi_2) + \gw(\pi_2,\pi_2)\,. \]
+            Now, assume that we have found $\pi_2\opt$ optimal. Let us minimize in $\pi_1$ the resulting quadratic problem:
+            \[ \min_{\pi_1}\ \gw(\pi_1,\pi_1) + 2\gw(\pi_1,\pi_2\opt)\,. \]
+            We know that if $\pi_1\opt$ is a minimizer of this quantity, it must also be a solution of the \emph{linear} problem
+            \[ \min_{\pi_1}\ \gw(\pi_1, \pi_1\opt) + \gw(\pi_1,\pi_2\opt)\,.\]
+            This minimization problem is exactly the optimal transportation problem for the cost
+            \begin{multline*} c(x,y) = \int_{A \times A} ((x-x')^2 - (y-y')^2)^2 \dd \pi_1\opt(x',y') \\+ 2 \int_{(A+K)^2} ((x-x'')^2 - (y-y'')^2)^2 \dd \pi_2\opt(x'',y'') \,.
+            \end{multline*}
+            Now, using the relation $((x-x'')^2 - (y-y'')^2)^2 = ((x-y)-(x''-y''))^2 ((x+y) - (x''+y''))^2$, and that $\pi_2\opt$ is a transportation plan between $\tau_{K\pushonly}\mu_2$ and $\tau_{K\pushonly} \nu_2$ so that we can make a change of variable, observe that
+            \begin{multline*} c(x,y) = \int_{A\times A} ((x-x')^2 - (y-y')^2)^2 \dd \pi_1\opt(x',y') \\+ \int_{A \times A} ((x-y)-(x''-y''))^2 ((x+y) - (x'' + y'' +2K))^2 \dd (\tau_{-K},\tau_{-K})\push\pi_2\opt(x'',y'')\,.
+            \end{multline*}
+            Now, observe that $\partial_{xy} c(x,y)$ is a polynomial function in $K,x,y$ whose dominant term in $K$ is simply $-2K^2$, and recall that $A$ is compact, so that this polynomial function is bounded in $x,y$. We conclude
+            \[ \partial_{xy} c(x,y) = -2 K^2 + O(K) < 0 \]
+            for $K$ large enough, for all $x,y \in A$.
+
+            The plan $\pi_1\opt$ is optimal for a submodular cost, and by \cref{prop:submod} must be the non-decreasing matching between $\mu_1$ and $\nu_1$. By symmetry, so is $\pi_2\opt$.
+            \end{proof}
+
+

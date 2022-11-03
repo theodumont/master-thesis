@@ -1,0 +1,51 @@
+\documentclass[10pt,openany,oneside]{book}
+\usepackage[bottom=3cm, top=3cm, left=3cm, right=3cm]{geometry}
+
+\input{tex/preambule}
+% \usepackage{eulervm}
+\usepackage{newpxtext,newpxmath}
+\AtBeginDocument{\addtocontents{toc}{\protect\thispagestyle{empty}}}
+
+
+
+\begin{document}
+\pagestyle{empty}
+% {
+% \hypersetup{linkcolor=black}
+% \listoftodos[List of todos]
+% }
+
+% {\let\newpage\relax\maketitle}
+\maketitle
+\setcounter{page}{-1}
+
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+\adjustmtc[1]
+% \listoftodos[Todo]
+}
+% \frontmatter
+
+\newpage
+\pagestyle{fancy}
+
+% \mainmatter
+% \input{parts/intro_stage}
+\input{parts/intro}
+% \mainmatter
+\input{parts/1_ot}
+\input{parts/2_contrib}
+\input{parts/concl}
+\input{parts/appendix}
+
+
+% bib
+\newpage
+% \bibliographystyle{apalike}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{alpha}
+\bibliography{biblio}
+
+
+\end{document}

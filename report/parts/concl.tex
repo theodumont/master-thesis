@@ -1,0 +1,25 @@
+
+\chapter*{Conclusion}\addcontentsline{toc}{chapter}{Conclusion}
+\section*{Summary}
+In this work, we showed the existence of deterministic optimal correspondence plans for the Gromov--Wasserstein problem in two settings: (i) with the inner product cost, where we showed that there always exists a Monge map, and (ii) with the quadratic cost, where we derived a condition on the rank of a certain matrix under which there exists either a map, a bimap, or a map/anti-map that is optimal for the GW problem. We also illustrated computationally in dimension 1 that the latter condition is tight, \textit{i.e.}~that there exists cases where the optimal plan is not a map. On a different note, we studied the optimality of the monotone non-decreasing and non-increasing plans for GW with quadratic cost in dimension 1, illustrating empirically that they are not always optimal (following \cite{beinert2022assignment}) and that having these plans as optimal correspondence plans is not stable by small perturbations of $\mu$ and $\nu$. We also provide a positive result for the optimality of the monotone plans when the measures are composed of two distant parts.
+
+\section*{Discussion and future work}
+\paragraph{Existence of deterministic transport plans.}
+Our general existence theorem (\cref{theo:fibers-main}) naturally applies to both quadratic and inner product costs. It could be the case that it is sufficiently general to be applied to other costs functions $c_\Xx$ and $c_\Yy$, for which the method that we used in this work could then prove the existence of deterministic transport plans.
+
+\paragraph{Optimality of the monotone rearrangements.} In dimension 1,
+\cite{beinert2022assignment} gave a counter-example to the fact that the quadratic assignment problem is solved by a monotone rearrangement that needs at least $N=7$ points. One could wonder if this property holds for $N\leq 6$: it is actually trivial for $N=1,2$, true for $N=3$ by combinatorial arguments. This leaves the cases $N=4,5,6$ open. Furthermore, the optimality of these plans can be observed empirically with a very high probability when generating distributions at random, and yet we dispose of no claim that could explain this. Ideally, we would like to give a condition on the distributions $\mu$ and $\nu$ under which one of $\pimon$ and $\piantimon$ is optimal; so far, only the symmetric case from \cite{sturm2012space} and our case of two-parts measures have been treated, and we believe that this result is much more general.
+
+The non-optimality of $\pimon$ and $\piantimon$ in the general case jeopardizes the well-posedness of the so-called \emph{sliced Gromov--Wasserstein distance} \cite{vayer2019sliced,vayer2020contribution}, that relies on the assumption that the GW distance can be efficiently computed in dimension 1. Designing a cost function $c_\Xx=c_\Yy=c$ for which $\pimon$ and $\piantimon$ are always optimal would allow this theory to be made valid with (supposedly) only a few tweaks.
+
+\paragraph{Computational aspects.} This work does not contain any computational concern, and our existence result does not give any insight on the complexity of the GW problems since it does not provide a close form for the map. In dimension 1 with the quadratic cost, we provide a method to exhibit an approximation of an optimal GW plan.
+
+
+
+\chapter*{Acknowledgements}\addcontentsline{toc}{chapter}{Acknowledgements}
+
+\subsection*{Sources of the figures}
+I would like to give the source (direct or only inspiration) of the figures in this work. The numbered limb system at the right of \cref{fig:subtwist} (and therefore \cref{fig:NLS2}) is inspired from \cite{ahmad2011optimal}; \cref{fig:types-disc} is taken from and \cref{fig:1d-sort} is inspired from T.~Vayer's PhD thesis \cite{vayer2020contribution}; the illustration on \cref{fig:gw-cont} of the GW distance in the discrete case is inspired from \cite{peyre2019computational}; the illustration of $c$-convexity of \cref{fig:c-convex} is from \cite{villani2009optimal}; finally, the tikz code that I adapted to produce \cref{fig:transport-plan-map} is a courtesy of L.~Chizat. All other figures are my own.
+
+\subsection*{Thanks}
+I would like to thank my two advisors François-Xavier Vialard and Théo Lacombe with whom I learned a lot about the beautiful field of optimal transport and more generally about mathematics, both on a theoretical and personal level, helping me to identify the areas of mathematics that I am most interested about and confirming my wish to continue in academic research. I also thank Gabriel Peyré for making me discover the computational aspects of this fascinating field of mathematics through his MVA course. Special thanks to Kayané, Julien and Siwan, who, through our mathematical discussions, made the temperature in the intern's room a little more bearable.

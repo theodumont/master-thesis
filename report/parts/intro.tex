@@ -1,0 +1,115 @@
+
+
+
+\chapter*{Introduction}\addcontentsline{toc}{chapter}{Introduction}
+\label{sec:intro}
+\section*{Optimal transport}
+The Optimal Transport (OT) problem traces back to 1781, with Gaspard Monge and his \textit{Mémoire sur la théorie des déblais et des remblais} \cite{monge1781memoire}. It can be described as the following: given two probability distributions $\mu$ and $\nu$, how can we transfer all the mass of $\mu$ to $\nu$ while minimizing the overall \emph{effort} to do so; the idea being originally to move dirt (\emph{déblais}) from one place to another (\emph{remblais}) in the most efficient way. Since then, it has matured a lot and has given birth to a prolific field of study. The interest of optimal transport, that, broadly speaking, uses \emph{transport plans} to go from a probability measure to another, lies in both its ability to provide correspondences between sets of points and its ability to induce a geometric notion of distance between probability distributions, both having an impressive amount of applications and connections with pure mathematics.
+
+Applications of optimal transport, to name a few, are vision (image registration and morphing \cite{haker2001optimal}, image retrieval \cite{rubner1998metric}), machine learning (domain adaptation \cite{courty2017joint}, signal processing \cite{kolouri2017optimal}, unsupervised learning \cite{genevay2018learning}, fairness \cite{gordaliza2019obtaining}), economics (equilibration of supply with demand \cite{chiappori2010hedonic}, structure of cities \cite{carlier2007equilibrium}, social welfare \cite{figalli2011multidimensional}), engineering (optimal shape / material design \cite{bouchitte2001characterization}, reflector antenna design \cite{glimm2003optical}), atmosphere and ocean dynamics (the semigeostrophic theory \cite{cullen2006mathematical}), biology \cite{xia2007formation,schiebinger2019optimal}, astrophysics \cite{frisch2002reconstruction} and statistics \cite{rachev1998r}. OT also proved very useful in pure mathematics, with connections to inequalities \cite{mccann1994convexity,maggi2005balls,figalli2010mass}, geometry \cite{loeper2009regularity,lott2009ricci}, nonlinear partial differential equations \cite{brenier1987decomposition}, and dynamical systems (weak KAM theory \cite{bernard2007optimal}; gradient flows \cite{ambrosio2005gradient}).
+
+\subsection*{Gromov--Wasserstein}
+However, optimal transport in its classical formulation is restricted to applications where there exists a direct way of comparing the samples of the data. It is therefore quite limited to the cases where the samples live in a same metric space, which prevents its use for a variety of machine learning tasks where the samples lie in different, seemingly not related, metric spaces or when a meaningful notion of distance between the samples can not be easily defined. The Gromov--Wasserstein (GW) problem \cite{memoli2011gromov} solves the issue of comparing probability measures whose supports dwell in different, \emph{incomparable} spaces by only considering comparisons \emph{within} each space and not \emph{between} them. Additionally, the GW problem mods isometries out, in the sense that it allows for the comparison of two shapes modulo isometries (rotations, translations), which proves very useful in contexts such as shape matching or shape analysis.
+This naturally finds many applications in machine learning: surfaces \cite{bronstein2006generalized} or graph matching \cite{xu2019scalable}, regression problems in quantum chemistry \cite{gilmer2017neural}, biology \cite{demetci2020gromov}, or natural language processing \cite{grave2019unsupervised,alvarez2018gromov}. Extensions of the GW problem such as \emph{unbalanced GW} \cite[Chap.~5]{sejourne2021unbalanced} also demonstrate direct applications to biology \cite{demetcci2022unsupervised}.
+
+\subsection*{Monge maps}
+A challenge in the field of optimal transport is to characterize the situations in which the optimal transport plan between two probability measures is a map. It is a theoretical challenge which can have fruitful consequences on the computational and algorithmic side: reduction of the optimization problem from plans to mappings and characterization of this mapping by optimality conditions, similarly to Brenier's theorem \cite{brenier1987decomposition} in optimal transport which gives the existence and uniqueness of the solution to the OT problem, this map being the gradient of a convex function.
+
+Conditions on the cost function that guarantee the existence (and sometimes uniqueness) of Monge maps exist in the literature for the classical optimal transport problem. However, this conditions are very specific to the \emph{linearity} of the OT problem, and there is no straightforward extension of them to the GW problem, which is \emph{quadratic}. Proving the existence of Monge maps for the Gromov--Wasserstein problem is therefore \textit{a priori} much more complicated than for the linear OT problem and only little literature exist \cite{sturm2012space,vayer2020contribution}.
+
+\section*{Contributions and outline}
+We start by defining some notions of optimal transport theory in \cref{chap:ot}: we recall some basic notions, the Gromov--Wasserstein problem and some important results on the existence and uniqueness of Monge maps for the linear OT problem. In \cref{chap:stage}, we detail our contributions to the field, starting with a summary of the current state-of-the-art and stating the main theorems of this work. In the appendix can be found some additional material, such as definitions (\cref{chap:additional-notions}) and the proofs of some of our claims that we did not put in the main corpus for the sake of clarity (\cref{chap:proofs}).
+
+\bigskip
+\noindent For $\mu, \nu\in \Pp(\RR^n)\times\Pp(\RR^d)$ of compact support with $\mu\ll\Ll^n$, we consider the GW problem with two different cost functions: the inner product cost \cref{eqn:GW-inner-prod} and the quadratic cost \cref{eqn:GW-quadratic}. The main contributions of this work are the two following theorems:
+\begin{enumerate}[label=(\roman*), nolistsep]
+\item \cref{eqn:GW-inner-prod} admits a map as a solution.\hfill(Th.~\ref{theorem:inner-main})
+\item \cref{eqn:GW-quadratic} either admits a map, a bimap or a map/anti-map as a solution.\hfill(Th.~\ref{theorem:quad-main})
+\end{enumerate}
+We also provide some insights on the tightness of (ii):
+\begin{enumerate}[label=(\roman*),start=3, nolistsep]
+\item There exists $\mu$ and $\nu$ for which no map is an optimal solution of \cref{eqn:GW-quadratic}.\hfill(Conj.~\ref{conj:tight})
+\end{enumerate}
+\bigskip
+On a different note, we study the optimality of the monotone non-decreasing or non-increasing plans $\pimon$ and $\piantimon$ for \cref{eqn:GW-quadratic}:
+\begin{enumerate}[label=(\roman*), start=4, nolistsep]
+\item There exists $\mu$ and $\nu$ for which neither $\pimon$ nor $\piantimon$ is optimal for \cref{eqn:GW-quadratic};\hfill(Alg.~\ref{algorithm:gd})\\
+and having $\pimon$ or $\piantimon$ as optimal is not stable by perturbations of $\mu$ and $\nu$, even in the symmetric case.\hfill(Prop.~\ref{theo:no-stab})
+\item If $\mu$ and $\nu$ are composed of two distant parts, $\pimon$ or $\piantimon$ is optimal for \cref{eqn:GW-quadratic}.\hfill(Prop.~\ref{prop:measure_separation})
+\end{enumerate}
+This last claim has been proven by my supervisors during the internship.
+\bigskip
+
+\noindent Details on these claims---motivations and what is at stake---can be found in \Cref{sec:contributions}. A preprint with our results can be found online\footnote{link: \href{https://arxiv.org/abs/2210.11945}{\texttt{https://arxiv.org/abs/2210.11945}}.}, and the code for our experiments is available on GitHub\footnote{link: \href{https://github.com/theodumont/monge-gromov-wasserstein}{\texttt{https://github.com/theodumont/monge-gromov-wasserstein}}.}.
+
+
+\chapter*{List of symbols}
+\textbf{Linear algebra}
+\begin{abbrv}
+\symbolentry{$\nabla f$, $\tilde{\nabla} f$, $\nabla^2f$}{gradient, approximate gradient (see \cref{def:approx-grad}), Hessian of the function $f$}
+\symbolentry{$Df$}{differential of the function $f$}
+\symbolentry{$\|\cdot\|_p^p$ or $|\cdot|^p$}{$p$-norm on $\RR^d$, often written $|\cdot|^p$ for clarity}
+\symbolentry{$\langle \cdot,\,\cdot\rangle_F$, $\|\cdot\|_F$}{Frobenius inner product $\tr(A^\top B)$ and associated norm}
+\symbolentry{$\langle \cdot,\,\cdot\rangle$}{depending on the context, standard scalar product on $\RR^d$ (also written $\cdot$), Frobenius inner product $\tr(A^\top B)$ or duality bracket $\langle x,\, x^* \rangle$}
+\end{abbrv}
+\textbf{Measure theory}
+\begin{abbrv}
+\symbolentry{$\Pp(\Xx)$}{set of probability measures on $\Xx$}
+\symbolentry{$\Pp_p(\Xx)$}{set of probability measures on $\Xx$ with finite $p$-moment}
+\symbolentry{$\hat{\Pp}_n(\Xx)$}{set of empirical probability measures on $\mathcal{X}$ with $n$ points: $\mu=\frac{1}{n}\sum_{i=1}^{n}\delta_{x_{i}}$}
+\symbolentry{$\Bb(\Xx)$}{Borel sets of $\Xx$}
+\symbolentry{$\mu,\nu$}{(often) measures on $\Xx$ and $\Yy$}
+\symbolentry{$\pi,\gamma$}{(often) measures on the product space $\Xx\times\Yy$ (couplings)}
+\symbolentry{$\Ll^d$}{Lebesgue measure on $\RR^d$}
+\symbolentry{$\operatorname{vol}_M$}{volume measure on $M$}
+\symbolentry{$\ll$}{absolute continuity (see \cref{def:ac})}
+\symbolentry{$\rho_\mu$}{density function of $\mu$}
+\symbolentry{$\supp(\mu)$}{support of the measure $\mu$ (see \cref{def:support})}
+\symbolentry{$\mu\llcorner A$}{restriction of $\mu$ to the set $A$ (see \cref{def:restriction})}
+\symbolentry{$T\push$}{pushforward operator induced by the function $T$}
+\symbolentry{$\mu\otimes\nu$}{product measure of the measures $\mu$ and $\nu$: $(\mu\otimes\nu)(A\times B)=\mu(A)\nu(B)$}
+\symbolentry{$(\id,T)\push\mu$}{pushforward of $\mu$ by $x\mapsto (x,T(x))$; equivalently, the measure $\mu(\mathrm dx)\otimes \delta_{T(x)}(\mathrm dy)$}
+\symbolentry{$A\mu$}{for $A$ a matrix and $\mu$ a measure, pushforward of $\mu$ by $A$}
+\end{abbrv}
+\textbf{Convex analysis}
+\begin{abbrv}
+\symbolentry{$\varphi^*$, $\varphi^c$}{Legendre transform and $c$-transform of $\varphi$ (see \cref{sec:cvx-analysis})}
+\symbolentry{$\partial$, $\partial_c$}{subdifferential and $c$-subdifferential operators (see \cref{sec:cvx-analysis})}
+\end{abbrv}
+\textbf{Optimal transport}
+\begin{abbrv}
+\symbolentry{$\Pi(\mu,\nu)$}{set of couplings of the measures $\mu$ and $\nu$ (see \cref{def:transport-plan})}
+\symbolentry{$\Pi_n$}{set of bistochastic matrices of size $n\times n$}
+\symbolentry{$\Pi\opt(\mu,\nu)$}{set of optimal couplings of the measures $\mu$ and $\nu$ (see \cref{def:transport-plan})}
+\symbolentry{$\W_p$}{$p$-Wasserstein distance between measures (see \cref{def:w})}
+\symbolentry{$\GW_p$}{$p$-Gromov--Wasserstein distance between mm-spaces (see \cref{def:gw})}
+\symbolentry{$\pimon$, $\Tmon$}{monotone non-decreasing transport plan, map (see \cref{def:monotone})}
+\symbolentry{$\piantimon$, $\Tantimon$}{monotone non-increasing transport plan, map (see \cref{def:monotone})}
+\end{abbrv}
+\textbf{Differential geometry}
+\begin{abbrv}
+\symbolentry{$M$}{(often) a manifold}
+\symbolentry{$\exp_p$}{Riemannian exponential map at $p\in M$ (see \cref{def:exp})}
+\end{abbrv}
+\textbf{Sets}
+\begin{abbrv}
+\symbolentry{$\bar\NN$, $\bar\RR$}{$\NN\cup\{+\infty\}$, $\RR\cup\{+\infty\}$}
+\symbolentry{$C^k$}{$k$-times continuously differentiable functions}
+\symbolentry{$L^p$}{functions $f$ such that $|f|^p$ is Lebesgue integrable}
+\symbolentry{$\mathfrak{S}(X)$, $\mathfrak{S}_n$}{set of permutations of a set $X$, of $[\![n]\!]$}
+\symbolentry{$P_\sigma$}{$n\times n$ matrix associated to a permutation $\sigma\in\mathfrak S_n$}
+\symbolentry{$|S|$ or $\card S$}{cardinality of a set $S$}
+\symbolentry{$\mathbbm{1}_S$}{indicator function of a set $S$}
+\symbolentry{$\operatorname{H}$}{Hausdorff distance between sets (see \cref{sec:gw-problem})}
+\symbolentry{$\operatorname{GH}$}{Gromov--Hausdorff distance between metric spaces (see \cref{sec:gw-problem})}
+\symbolentry{$\operatorname{diam}_p(\XX)$}{$p$-diameter of a metric measure space $\XX$ (see \cref{sec:gw-problem})}
+\end{abbrv}
+\textbf{Acronyms}
+\begin{abbrv}
+\symbolentry{OT}{optimal transport}
+\symbolentry{W, GW}{Wasserstein, Gromov--Wasserstein}
+\symbolentry{MP, KP}{Monge problem, Kantorovich problem}
+\symbolentry{AP, QAP}{assignment problem, quadratic assignment problem}
+\symbolentry{{a.e.}, {w.r.t.}}{almost everywhere, with respect to}
+\symbolentry{mm-space}{metric measure space}
+\end{abbrv}

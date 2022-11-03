@@ -1,0 +1,16 @@
+
+\begin{tikzpicture}[scale=.8]
+    % links
+    \draw (0,0) to (2,2);
+    \draw[dashed] (2,0) to (0,2);
+    % circles
+    \fill[draw=tabpurple, fill=tabpurple] (0,0) circle (3pt);
+    \fill[draw=tabpurple, fill=white] (0,2) circle (3pt);
+    \fill[draw=tabpurple, fill=white] (2,0) circle (3pt);
+    \fill[draw=tabpurple, fill=tabpurple] (2,2) circle (3pt);
+    % nodes
+    \draw (0,0) node [below left]  {$(x_1,y_1)$};
+    \draw (0,2) node [above left]  {$(x_1,y_2)$};
+    \draw (2,0) node [below right] {$(x_2,y_1)$};
+    \draw (2,2) node [above right] {$(x_2,y_2)$};
+\end{tikzpicture}

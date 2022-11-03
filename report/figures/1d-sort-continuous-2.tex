@@ -1,0 +1,30 @@
+\def\scalefont{0.5}
+\begin{tikzpicture}[
+    declare function={mu1=.45;},
+    declare function={mu2=.7;},
+    declare function={sigma1=.15;},
+    declare function={sigma2=0.07;},
+    % declare function={normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));},
+    scale=\scalefont,
+    ]
+    \begin{axis}[
+        grid = major,
+        axis lines=left,
+        % domain=0:1,
+        y domain=0:1.1,
+        % ticks=none,
+        samples=100,
+        axis line style = ultra thick,
+        ]
+        \addplot[tabred,no marks,ultra thick] table[col sep=comma,header=false,x index=0,y index=1] {figures/1d-cdf-mu.csv} node[midway, above left,scale=1/\scalefont] {$F_{\mu}$};
+        \addplot[tabblue,no marks,ultra thick] table[col sep=comma,header=false,x index=0,y index=1] {figures/1d-cdf-nu.csv} node[midway, right,scale=1/\scalefont] {$F_{\nu}$};
+
+        \def\x{1.421}
+        \def\y{1.688}
+        \def\fx{0.424}
+        \def\eps{0.007}
+        \draw[dashed, thick] (\x,\fx) -- (\x,0) node[above right] {$x$};
+        \draw[dashed, thick] (\y,\fx) -- (\y,0) node[above right] {$y$};
+        \draw[<->, thick] (\x,\fx+\eps) -- (\y,\fx+\eps);
+    \end{axis}
+\end{tikzpicture}

@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+    \def\height{1}
+    \def\total{6}
+    \def\shade{70}
+    \def\spaceLR{0.5}
+    % mu
+    \draw[->, thick] (-\spaceLR,0) -- (\spaceLR+\total,0) node[above,tabred] {$\mu$};
+    % nu
+    \draw[->, thick] (-\spaceLR,-\height) -- (\spaceLR+\total,-\height) node[above,tabblue] {$\nu$};
+    % pi
+    \draw[draw=none] (2,0) -- (3,-\height) node[midway, left] {$\pimon$};
+    % dots
+    \foreach \i\j in {1/0,2/3,3/4,6/5} {
+        \draw[thick] (\i,0) -- (\j,-\height);
+        \draw[fill=tabred!\shade, draw=none] (\i,0) circle (.18);
+        \draw[fill=tabblue!\shade, draw=none] (\j,-\height) circle (.18);
+    }
+    \draw (1,0) node[above left] {$x_0$};
+    \draw (2,0) node[above left] {$\dots$};
+    \draw (0,-\height) node[below right] {$y_0$};
+    \draw (3,-\height) node[below left] {$\dots$};
+    \draw (6,0) node[above left] {$x_N$};
+    \draw (5,-\height) node[below right] {$y_N$};
+\end{tikzpicture}

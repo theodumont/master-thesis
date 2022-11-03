@@ -1,0 +1,33 @@
+
+\begin{tikzpicture}[
+    declare function={mu1=.7;},
+    declare function={mu2=.4;},
+    declare function={sigma1=0.07;},
+    declare function={sigma2=.15;},
+    declare function={normal(\m,\s) = 1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));},
+    declare function={bivar(\ma,\sa,\mb,\sb) =  0.8/(2*pi*\sa*\sb) * exp(-((x-\ma)^2/\sa^2 + (y-\mb)^2/\sb^2))/2;}
+    ]
+\begin{axis}[
+    xtick=\empty,
+    ytick=\empty,
+    hide axis,
+    ztick=\empty,
+    view={65}{65}, %horizontal, vertical 55
+    enlargelimits=false, %dunno
+    domain=0:1,
+    y domain=0:1,
+    samples=50,%50
+    ]
+\addplot3 [surf,shader=flat] {bivar(mu1,sigma1,mu2,sigma2)};
+\addplot3 [fill=tabred!60,domain=0:1,samples=31, samples y=0, thick, smooth,opacity=0.8,draw=tabred]
+(x,0,{2*normal(mu1,sigma1)});
+\addplot3 [fill=tabblue!60,domain=0:1,samples=31, samples y=0, thick, smooth,opacity=0.8,draw=tabblue]
+(0,x,{2*normal(mu2,sigma2)});
+\addplot3 [gray,domain=0:0.44,samples=31, samples y=0, thick, smooth,dashed,opacity=0.5] (x,x,0);
+\addplot3 [gray,domain=0.63:0.9,samples=31, samples y=0, thick, smooth,dashed,opacity=0.5] (x,x,0);
+
+\node at (axis cs: 0,0.6,0.8) [pin=50:$\nu$] {};
+\node at (axis cs: 0.55,0,0.32) [pin=93:$\mu$] {};
+\node at (axis cs: .8,.5,1.32) [pin=0:$\pi$] {};
+\end{axis}
+\end{tikzpicture}

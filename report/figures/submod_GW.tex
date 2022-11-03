@@ -1,0 +1,50 @@
+\begin{tikzpicture}[scale=1]
+    % constants
+    \def\lim{0.7}
+    \def\C{0.1}
+    \def\eps{0.1}
+    \def\samples{50}
+    % plot
+    \begin{axis}[
+            axis x line=middle,
+            axis y line=middle,
+            xticklabels=\empty,
+            yticklabels=\empty,
+            xlabel={$x$},
+            ylabel={$y$},
+            xmin=-\lim-0.2,
+            ymin=-\lim,
+            xmax=\lim+0.2,
+            ymax=\lim,
+            axis on top,
+            ]
+
+        % grid
+        \draw[draw=none, name path=up] (-\lim-.2,\lim) -- (0,\lim);
+        \draw[draw=none, name path=upright] (0,\lim) -- (\lim+.2,\lim);
+        \draw[draw=none, name path=down] (0,-\lim) -- (\lim+.2,-\lim);
+        \draw[draw=none, name path=downleft] (-\lim-.2,-\lim) -- (0,-\lim);
+        \draw[draw=none, name path=axisleft] (-\lim-.2,0) -- (0,0);
+        \draw[draw=none, name path=axisright] (0,0) -- (\lim+.2,0);
+        \draw[draw=none, name path=axisleftA] (-\lim-.2,0) -- (0-\eps,0);
+        \draw[draw=none, name path=axisleftB] (0-\eps,0) -- (0,0);
+        \draw[draw=none, name path=axisrightA] (0+\eps,0) -- (\lim+.2,0);
+        \draw[draw=none, name path=axisrightB] (0,0) -- (0+\eps,0);
+        \draw[draw=none, name path=upB] (0-\eps,\lim) -- (0,\lim);
+        \draw[draw=none, name path=downB] (0,-\lim) -- (0+\eps,-\lim);
+        % hyperbole
+        \addplot[color=tabgreen, domain=-1:-\eps, samples=\samples, name path=S1, thick]{-\C/x};
+        \addplot[color=tabgreen, domain=\eps:1, samples=\samples, name path=S2, thick]{-\C/x};
+        \node[tabgreen] at (0.15,-\lim+0.1) [left] {$x\mapsto -m/x$};
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=axisleftA and S1];
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=axisright and upright];
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=downleft and axisleft];
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=S2 and axisrightA];
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=axisleftB and upB];
+        \addplot[fill=tabgreen!10, fill opacity=1] fill between[of=downB and axisrightB];
+        % nodes
+        \node[opacity=.5] at (0.5,0.5) {$\nearrow$};
+        \node[opacity=.5] at (-0.5,0.5) {$\searrow$};
+        \node[opacity=.5] at (0.5,-0.5) {$\searrow$};
+    \end{axis}
+\end{tikzpicture}

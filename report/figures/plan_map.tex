@@ -1,0 +1,40 @@
+\begin{tikzpicture}[
+    declare function={mu1=.7;},
+    declare function={mu2=.4;},
+    declare function={sigma1=0.07;},
+    declare function={sigma2=.15;},
+    declare function={normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));},
+    declare function={bivar(\ma,\sa,\mb,\sb)=
+        1/(2*pi*\sa*\sb) * exp(-((x-\ma)^2/\sa^2 + (y-\mb)^2/\sb^2))/2;},
+    declare function={ot(\e,\h,\ma,\sa,\mb,\sb)=\h*exp(-\e*(y-(.5+.5*tanh((x-.7)*10)))^2)*bivar(\ma,\sa,\mb,\sb)^(.2);},
+    declare function={map(\ma) = (0.53+.53*tanh((x-.75)*6));}
+        ]
+\def\shade{60};
+\begin{axis}[
+    xtick=\empty,
+    ytick=\empty,
+    hide axis,
+    ztick=\empty,
+    colormap name=whitetab,
+    view={65}{65}, %horizontal, vertical
+    enlargelimits=false,
+    grid=major,
+    domain=0:1,
+    y domain=0:1,
+    samples=50,
+]
+\addplot3 [gray,domain=0:0.48,samples=31, samples y=0, thick, smooth,dashed,opacity=0.5] (x,x,0);
+
+\addplot3 [name path=up,domain=0:0.93,samples=51, samples y=0, thick, smooth, draw=tabpurple] (x,{map(mu1)},{normal(mu1,sigma1)});
+\addplot3 [name path=down,gray,domain=0:0.93,samples=51, samples y=0, thick, smooth,thin, draw=tabpurple] (x,{map(mu1)},0);
+
+
+\addplot3 [fill=tabred!\shade,domain=0:1,samples=31, samples y=0, thick, smooth,opacity=.8,draw=tabred] (x,0,{2*normal(mu1,sigma1)});
+\addplot3 [fill=tabblue!\shade,domain=0:1,samples=31, samples y=0, thick, smooth,opacity=.8,draw=tabblue] (0,x,{2*normal(mu2,sigma2)});
+\addplot[tabpurple!\shade,opacity=.8] fill between [ of = down and up];
+
+\node at (axis cs: 0,0.6,0.8) [pin=50:$\nu$] {};
+\node at (axis cs: 0.55,0,0.32) [pin=93:$\mu$] {};
+\node at (axis cs: 0.75,0.55,0) [pin=-130:$\pi$] {};
+\end{axis}
+\end{tikzpicture}

@@ -1,0 +1,531 @@
+\Chapter{Notions of optimal transport theory}
+\label{chap:ot}
+Optimal transport (OT) is a long-standing mathematical problem that first arose in the late \textsc{XVIII}\textsuperscript{th} century \cite{monge1781memoire} and has matured a lot since then. A good introduction to this theory can be found in \cite{santambrogio2015optimal}, while the more mathematical and especially geometric aspects can be found in \cite{villani2009optimal}; the most complete document about the computational aspects of OT is \cite{peyre2019computational}. In this chapter, we put an emphasis on the tools we need for our study. After a quick introduction to the OT problems (\cref{sec:basics-ot}), we will see that in a certain number of cases, the optimal solution of the problem has a deterministic structure (\cref{sec:optimal-maps}). We will then define the Gromov--Wasserstein transportation problem (\cref{sec:gw}) for which we refer the reader to \cite{memoli2011gromov} for its first introduction and to \cite{sturm2012space} for an in-depth analysis of its mathematical properties.
+
+\section{Basics of optimal transport}
+    \label{sec:basics-ot}
+    \subsection{Monge and Kantorovich problems}
+
+        The OT problem traces back to 1781, with Gaspard Monge and his \textit{Mémoire sur la théorie des déblais et des remblais} \cite{monge1781memoire}. It can be described as the following: given two probability distributions $\mu$ and $\nu$, how can we transfer all the mass of $\mu$ to $\nu$ while minimizing the overall \emph{effort} to do so; the idea being originally to move dirt (\emph{déblais}) from one place to another (\emph{remblais}) in the most efficient way. Let us define these notions rigorously. Given two Polish spaces\footnote{a Polish space is a separable completely metrizable topological space.} $\mathcal{X}$ and $\mathcal{Y}$, a cost is a function $c:\mathcal{X}\times \mathcal{Y}\to \mathbb{R}\cup \{ +\infty \}$ which takes two points $x \in \mathcal{X}$ and $y \in\mathcal{Y}$ and outputs a value $c(x,y)$ evaluating how far is $x$ from $y$, quantifying the effort of moving $x$ to $y$. Let now $\mu \in\mathcal{P}(\mathcal{X})$ and $\nu \in\mathcal{P}(\mathcal{Y})$ two measures. Given a Borel measurable function $T:\mathcal{X}\to \mathcal{Y}$, we define the \emph{pushforward} of $\mu$ by $T$, written $T\push\mu$, by
+        \begin{equation}
+            \text{for all Borel set }A,\quad T\push\mu(A)\defeq \mu(T^{-1}(A))=\mu(\left\{ x \in \mathcal{X}\mid T(x)\in A\right\})\,,
+        \end{equation}
+        or equivalently by
+        \begin{equation}
+            \label{eq:pushforward-int}
+            \text{for all measurable function }f,\quad \int _{\mathcal{Y}}f(y)\, \mathrm d(T\push\mu)(y)=\int _{\mathcal{X}}f(T(x))\, \mathrm d\mu(x)\,.
+        \end{equation}
+        This simply means that we are ``pushing'' the probability measure $\mu$ using $T$ to obtain a probability measure on $\mathcal{Y}$. From a random variable perspective, this means that if $X\sim\mu$, then $T(X)\sim T\push\mu$. In the discrete case, \textit{i.e.}~when $\mu=\sum_{i=1}^Na_{i}\delta_{x_{i}}$, we simply get $T\push\mu=\sum_{i=1}^Na_{i}\delta_{T(x_{i})}$. Back to our \emph{déblais} and \emph{remblais} problem, we see now that sending $\mu$ onto $\nu$ can be restated as finding a map $T$ such that $T\push\mu=\nu$, and among all these maps, finding one that minimizes the total cost of sending every $x$ onto $T(x)$, namely $\int _{\mathcal{X}}c(x,T(x))\, \mathrm d\mu(x)$. Hence the following formulation of the Monge problem (MP):
+        \begin{defi}[Monge problem]
+            Given two probability measures $\mu \in\mathcal{P}(\mathcal{X})$ and $\nu \in\mathcal{P}(\mathcal{Y})$ and a cost function $c:\mathcal{X}\times \mathcal{Y}\to \mathbb{R}\cup \{ +\infty \}$, we consider the problem
+            \begin{equation}
+                \tag{MP}
+                \min_{T\push\mu=\nu} \int _{\mathcal{X}}c(x,T(x))\, \mathrm d\mu(x) \,.
+                \label{eq:MP}
+            \end{equation}
+            A map $T$ satisfying $T\push\mu=\nu$ is called a \emph{transport map}. If it realizes \cref{eq:MP}, it is called an \emph{optimal transport map}, or a \emph{Monge map}.
+        \end{defi}
+
+        Monge analyzed some questions on the geometric properties of the solution to this problem but did not really solve it, as the question of the existence of a minimizer was not even addressed. In the following 150 years, the optimal transport problem mainly remained French and little progress was made. Indeed, this formulation raises a certain number of problems. First, transport maps may fail to exist; see for instance \cref{fig:diracs}, where $\mu$ is composed of one dirac at $x$ and $\nu$ of two diracs at $y_1$ and $y_2$. Sending $\mu$ to $\nu$ requires to ``split'' $\delta_x$ in half, which cannot be done by a map.
+        \begin{figure}[!h]
+            \centering
+            \input{figures/diracs}
+            \caption{Optimal transport between $\delta_x$ and $\frac12(\delta_{y_1}+\delta_{y_2})$.}
+            \label{fig:diracs}
+        \end{figure}
+
+        \noindent Another issue arises when one tries to make the condition $T\push\mu=\nu$ more explicit: considering $\mu$ and $\nu$ with densities $f$ and $g$ w.r.t.~the Lebesgue measure, condition \cref{eq:pushforward-int} becomes (if $f$, $g$ and $T$ are nice enough) the partial differential equation
+        \begin{equation}
+            g(T(x))\ |\!\det(DT(x))|=f(x)\,,
+        \end{equation}
+        which is highly non-linear in $T$, a major issue preventing from an easy analysis of the Monge problem.
+
+        In order to get rid of these difficulties, Kantorovich relaxed the Monge problem \cite{kantorovich1942translocation} using the notion of transport plans, that we define now.
+        \begin{defi}[Transport plan]
+            Let $\mu \in\mathcal{P}(\mathcal{X})$ and $\nu \in\mathcal{P}(\mathcal{Y})$. A \emph{transport plan} (or \emph{coupling}) between $\mu$ and $\nu$ is a (probability) measure $\pi \in\mathcal{P}(\mathcal{X}\times \mathcal{Y})$ of marginals $\mu$ and $\nu$, \textit{i.e.}~noting $P^1$ and $P^{2}$ the projections on $\mathcal{X}$ and $\mathcal{Y}$ respectively, the set of transport plans $\Pi(\mu,\nu)$ is
+            \begin{equation}
+                \Pi(\mu,\nu)\defeq\left\{ \pi \in \mathcal{P}(\mathcal{X}\times \mathcal{Y})\mid P^1\push\pi=\mu,P^{2}\push\pi=\nu \right\}\,,
+                \label{eq:plans}
+            \end{equation}
+            or equivalently $\Pi(\mu,\nu)=\left\{ \pi \in \mathcal{P}(\mathcal{X}\times \mathcal{Y})\mid \forall A\subset \mathcal{X},\forall B\subset \mathcal{Y}, \pi(A\times \mathcal{Y})=\mu(A),\pi(\mathcal{X}\times B)=\nu(B) \right\}$. See \cref{fig:transport-plan-map} for an illustration.
+            \label{def:transport-plan}
+        \end{defi}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}[b]{.49\linewidth}
+                \centering
+                \input{figures/plan_plan}
+                \label{fig:transport-plan}
+            \end{subfigure}
+            \begin{subfigure}[b]{.49\linewidth}
+                \centering
+                \input{figures/plan_map}
+                \label{fig:transport-map}
+            \end{subfigure}
+            \caption{Transport plans are probability measures on $\mathcal{X}\times \mathcal{Y}$. \capleft $\pi$ is the product measure $\mu\otimes\nu$. \capright $\pi$ is induced by a map.}
+            \label{fig:transport-plan-map}
+        \end{figure}
+        This notation introduced, we are ready to write the Kantorovich formulation of the optimal transport problem:
+        \begin{defi}[Kantorovich problem]
+            Given two probability measures $\mu \in\mathcal{P}(\mathcal{X})$ and $\nu \in\mathcal{P}(\mathcal{Y})$ and a cost function $c:\mathcal{X}\times \mathcal{Y}\to \mathbb{R}\cup \{ +\infty \}$, we consider the problem
+            \begin{equation}
+                \tag{KP}
+                \min_{\pi \in \Pi(\mu,\nu)} \int _{\mathcal{X}\times \mathcal{Y}}c(x,y)\, \mathrm d\pi(x,y) \,.
+                \label{eq:KP}
+            \end{equation}
+            A transport plan $\pi$ realizing \cref{eq:KP} is called an \emph{optimal transport plan}, or \emph{optimal coupling}. We denote by $\Pi\opt(\mu,\nu)$ the set of all optimal couplings between $\mu$ and $\nu$.
+        \end{defi}
+        \begin{remark}
+            The quantity $\pi(x, y)$ can be understood as the proportion of mass of $\mu$ originally located in $x$ which is transported to $y$. The marginal constraint states that for all $y$, the total mass of $\mu$ transported to $y$ must equal $\nu(y)$, and conversely that the total mass coming from a position $x$ must equal $\mu(x)$.
+            We already see the benefits of this relaxation: the new problem is linear in $\pi$, $\Pi(\mu,\nu)$ is always non-empty, since it always contains the product measure $\mu\otimes\nu$, and by arguments of compactness there always exists a minimizer of \cref{eq:KP}.
+        \end{remark}
+
+        This formulation is indeed a relaxation: from a transport map $T$, one can construct a transport plan by simply considering $(\id,T)\push\mu$, which has the right marginals. A crucial interrogation is whether this useful relaxation is \emph{tight} or not: is the optimal of \cref{eq:KP} optimal for \cref{eq:MP} (\textit{i.e.}~is it a map)? Under some assumptions on the cost $c$ (\textit{e.g.}~if $c(x,y)=|x-y|^p$ in $\mathbb{R}^d$) and on the measure $\mu$ (\textit{e.g.}~if $\mu\ll\Ll^d$), it is indeed the case, as illustrated by Brenier's theorem (\cref{theorem:brenier}). \Cref{sec:optimal-maps} gives more details on these specific situations that are of particular interest to us.
+
+    \subsection{Wasserstein distances}
+        An interesting application of optimal transport with the cost $c(x,y)=|x-y|^p$ in $\mathbb{R}^d$ is that it allows to define a distance over the space of probability measures:
+        \begin{defi}[Wasserstein distance]
+            \label{def:w}
+            Let $\Omega \subset \mathbb{R}^d$ and $p\geq 1$. Let $\mu,\nu \in\mathcal{P}(\Omega)$ with finite $p$-moment, that is $\int_{\Omega}|x|^p\, \mathrm d\mu+\int_{\Omega}|y|^p\, \mathrm d\nu<+\infty$. The $p$\emph{-Wasserstein distance} between $\mu$ and $\nu$ is defined by
+            \begin{equation}
+                \operatorname{W}_{p}(\mu,\nu)=\left( \min_{\pi \in \Pi(\mu,\nu)}\int _{\Omega \times \Omega}|x-y|^p\, \mathrm d\pi(x,y)   \right)^{1/p}.
+            \end{equation}
+        \end{defi}
+        \begin{proposition}
+            $\operatorname{W}_{p}$ defines a distance over $\mathcal{P}_{p}(\Omega)$, the set of probability measures with finite $p$-moment.
+        \end{proposition}
+        \begin{proof}
+            See \cite[Ch.~5.1]{santambrogio2015optimal}.
+        \end{proof}
+        The set $\mathcal{P}_{p}(\Omega)$ equipped with the distance $\operatorname{W}_p$ is called the \emph{Wasserstein space}, noted $\WW_p(\Omega)$. It satisfies a lot of very interesting and useful properties, such as the fact that $\operatorname{W}_p$ metrizes the weak* convergence, but we do not need them for our study and will therefore refer the reader to \cite{santambrogio2015optimal} for more information on this matter.
+        \begin{remark}
+            All of the above stays valid in a Polish space $\Omega$ by replacing the usual $p$-norm $|\cdot|^p$ on $\mathbb{R}^d$ by the distance function $d(x,y)^p$.
+        \end{remark}
+        \begin{remark}[Why Wasserstein?]
+            One could wonder why we use the Wasserstein distance to evaluate the similarity between probability measures, as it requires solving an optimization problem and as we already have other means to do so such as the KL divergence or the standard $L^2$ difference, both straightforward to use. The thing is that they rely on measuring $\mu(x)-\nu(x)$, \textit{i.e.}~how the measures differ at any given point $x$ without working at ``ground level'' like OT does. As an illustration, let us consider two dirac measures $\delta_{x}$ and $\delta_{y}$. Their $L^1$ distance is 0 when $x=y$ and 2 otherwise, independently of the values of $x$ and $y$; their $p$-Wasserstein distance however behaves like $|x-y|^p$. This will prove useful in many applications such as computer vision: two images can have very different values pixel-wise but still be very similar in terms of Wasserstein distance, which can be of major interest regarding our goals.
+        \end{remark}
+        \begin{remark}[$\infty$-Wasserstein distance]
+            The natural limit of \cref{def:w} when $p\to\infty$ is the following:
+            \begin{equation}
+                \operatorname{W}_{\infty}(\mu,\nu)= \adjustlimits\min_{\pi \in \Pi(\mu,\nu)}\sup_{(x,y)\in\supp\pi} \|x-y\|_\infty\,.
+                \label{eq:w-infty}
+            \end{equation}
+            In this work, we will only use this notion to draw a parallel with the Hausdorff distance in \cref{sec:gw-problem}.
+        \end{remark}
+
+
+    \subsection{Discrete case}
+        \label{sec:disc-ot}
+
+        Given two sets $\left\{ x_{1},\dots,x_N \right\}$ and $\left\{ y_{1},\dots,y_M \right\}$ of $\mathbb{R}^d$ and two probability vectors\footnote{that satisfies $a_{i}\geq 0$ for all $i\in[\![N]\!]$ and $\sum_{i=1}^Na_{i}=1$.} $a$ and $b$, we consider the two discrete probability measures $\mu=\sum_{i=1}^Na_{i}\delta_{x_{i}}$ and $\nu=\sum_{j=1}^Mb_{j}\delta_{y_{j}}$. The set of couplings between $\mu$ and $\nu$ is the \emph{transport polytope}
+        $$U(a,b)\defeq \left\{ P\in\RR_+^{N\times M}\mid P\mathbbm{1}_M=a, P^\top\mathbbm{1}_N=b\right\}\,,$$
+        where $P\mathbbm{1}_M\defeq( \sum_{j}P_{i,j})_{i}\in\mathbb{R}^N$ and $P^\top\mathbbm{1}_N\defeq( \sum_{i}P_{i,j})_{j}\in\mathbb{R}^m$,
+        namely the set of probability matrices of ``marginals'' $\mu$ and $\nu$, equivalent of the set of transport plans in the continuous case. Given a cost matrix $C=(c(x_i,y_j))_{i,j}$ (equivalent of the cost function $c$ in the continuous case), the Kantorovich problem \cref{eq:KP} reads
+        \begin{equation}
+            \tag{$\hat{\text{KP}}$}
+            \min_{P\in U(a,b)}\ \langle C,\,P\rangle\,,
+            \label{eq:KP-disc}
+        \end{equation}
+        where $\langle \cdot,\,\cdot\rangle$ is the Frobenius inner product between matrices $\langle A,\,B\rangle\defeq\tr(A^\top B)=\sum_{i,j} A_{i,j} B_{i,j}$. In the case where $N=M$ and $a=b=\mathbbm{1}_N/N$, the set of couplings $U(a,b)$ is the set of bistochastic matrices\footnote{square matrices of nonnegative real numbers, each of whose rows and columns sum to 1.} $\Pi_N$ (up to a factor $n$). A fundamental theorem of linear programming states that the minimum of a linear objective in a nonempty polyhedron, if finite, is reached at an extremal point of the polyhedron, and Birkhoff's theorem states that the extremal points of $\Pi_N$ are the permutation matrices, hence the following result:
+        \begin{proposition}[Tight relaxation for discrete KP]
+            If $N=M$ and $a=b=\mathbbm{1}_N/N$, there exists a solution $P_{\sigma\opt}$ of \cref{eq:KP-disc} that is the permutation matrix associated to a permutation $\sigma\opt$.
+            Hence in this case, the relaxation of \cref{eq:KP-disc} to the following \emph{assignment problem} (AP)
+            \begin{equation}
+                \tag{AP}
+                \min_{\sigma \in \mathfrak{S}_N}\ \langle C,\,P_\sigma\rangle=\frac1n\sum_{i=1}^NC_{i,\sigma(i)}
+                \label{eq:AP}
+            \end{equation}
+            is tight. \cref{eq:AP} is the equivalent of the Monge problem \cref{eq:MP} in the discrete case.
+        \end{proposition}
+
+
+\section{Solutions of OT: maps and monotonicity}
+    \label{sec:optimal-maps}
+    \subsection{Deterministic structure of optimal plans}
+            \label{sec:deterministic-plans}
+        In many cases, it is very convenient to dispose of an optimal transport problem for which the optimal transport plan is unique, and even more when it is induced by a transport map, as it can have fruitful consequences on the computational and algorithmic side: it reduces the optimization problem from plans to mappings and can also make explicit a characterization of this mapping by optimality conditions. Brenier's theorem, stated below, is the most well-known of such cases where the optimal plan is a map.
+        \begin{theorem}[Brenier's theorem]
+            \label{theorem:brenier}
+            Let $\mathcal{X}=\mathcal{Y}=\mathbb{R}^d$, $\mu,\nu \in\mathcal{P}(\mathbb{R}^d)$ such that the optimal cost between $\mu$ and $\nu$ is finite and $c(x,y)=|x-y|^{2}$. If $\mu\ll \mathcal{L}^d$, then there exists a unique\footnotemark\ solution to \cref{eq:KP} and it is induced by a map $T$. This map is characterized by being the unique gradient of a convex function $T=\nabla f$ such that $(\nabla f)\push\mu=\nu$.
+        \end{theorem}
+        \footnotetext{by ``unique'', we mean ``unique up to a set of $\mu$-measure zero''.}
+        This is very useful in practice: if one finds a function $f$ whose gradient sends $\mu$ to $\nu$, then it is the only solution of \cref{eq:KP}, as illustrated in the following example.
+        \begin{example}[OT in the Gaussian case]
+            Let $\mu=\mathcal{N}(m_1, s_1^2)$ and $\nu=\mathcal{N}(m_2, s_2^2)$ be two Gaussians in $\mathbb{R}$. Then one can check that
+            $$T:x\mapsto\frac{s_2}{s_1}(x-m_1)+m_2$$
+            satisfies $T\push \mu=\nu$ and is the the derivative of the convex function
+            $f(x)=\frac{s_2}{2 s_1}(x-m_1)^2+m_2 x$. By Brenier's theorem, $T$ is therefore the unique optimal transport for the cost $c(x-y)=|x-y|^2$, and the associated Wasserstein distance is, after computation $W_2^2(\mu,\nu)=(m_1-m_2)^2+(s_1-s_2)^2$. The same can be done when $\mu=\mathcal{N}(m_1, \Sigma_1)$ and $\nu=\mathcal{N}(m_2, \Sigma_2)$ are Gaussians of $\mathbb{R}^d$, where the optimal map is
+            $$T:x\mapsto A(x-m_1)+m_2\,,$$
+            with $A=\Sigma_1^{-\frac12}(\Sigma_1^{\frac12} \Sigma_2 \Sigma_1^{\frac12})^{\frac12} \Sigma_1^{-\frac12}$.
+        \end{example}
+        For the sake of completeness, we state here a version of Brenier's theorem in the context of complete Riemannian manifolds with the squared distance:
+        \begin{proposition}[\hspace{1sp}{\cite[Thm.~10.41]{villani2009optimal}}]
+            \label{prop:quad-cost-manifold-villani}
+            Let $M$ be a Riemannian manifold, and $c(x, y)=d(x, y)^{2}$. Let $\mu, \nu\in\Pp(M)$ such that the optimal cost between $\mu$ and $\nu$ is finite. If $\mu\ll\operatorname{vol}_M$, then there is a unique solution of the Monge problem between $\mu$ and $\nu$ and it can be written as
+            $$y=T(x)=\exp _{x}(\tilde{\nabla} f(x))\,,$$
+            where $f$ is some $d^{2} / 2$-convex function. The approximate gradient can be replaced by a true gradient if any of the following conditions is satisfied:
+            \begin{enumerate}[label=(\alph*)]
+                \item $\mu$ and $\nu$ are compactly supported;
+                \item $M$ has nonnegative sectional curvature\footnotemark;
+                \item $\nu$ is compactly supported and $M$ has asymptotically nonnegative curvature.
+            \end{enumerate}
+        \end{proposition}
+        \footnotetext{see \cref{sec:alexandrov}.}
+
+        Brenier's theorem can be extended in a few directions. The condition that $\mu$ has a density can be weakened to the fact that it does not give mass to sets of Hausdorff dimension smaller than $d-1$ (\textit{e.g.}~hypersurfaces), and $c$ can actually be a bit more general, as long as it satisfies the \emph{twist condition}, that we define now together with its variants.
+        In the following, let $\Xx=\Yy$ be complete Riemannian manifolds and let $c:\Xx\times\Yy\to \mathbb{R}$ be a continuous cost function. We refer to \cite{mccann2011five,chiappori2010hedonic,villani2009optimal} for more information on the twist condition, to \cite{ahmad2011optimal,mccann2012glimpse} on the subtwist condition and to \cite{moameni2016characterization} on the $m$-twist and generalized twist conditions.
+        \begin{proposition}[Twist]
+            \label{prop:twist}
+            We say that $c$ satisfies the \emph{twist condition} if $c$ is differentiable w.r.t.~$x$ and
+            \begin{equation}
+                \tag{Twist}
+                \text{for all }x_0\in\mathcal X,\quad  y\mapsto \nabla_x c(x_0,y)\in T_{x_0}\Xx \text{ is injective.}
+                \label{eq:twist}
+            \end{equation}
+            Suppose that $c$ satisfies \cref{eq:twist} and assume that any $c$-concave function is differentiable $\mu$-a.e.~on its domain. If $\mu$ and $\nu$ have finite transport cost, then \cref{eq:KP} admits a unique optimal transport plan $\pi\opt$ and it is induced by a map which is the gradient of a $c$-convex function $f:\Xx\to\mathbb{R}$:
+            $$\pi\opt=(\id,c\text{-}\exp_x(\nabla f))\push\mu\,.$$
+        \end{proposition}
+        \begin{remark}
+            Following \cite{mccann2011five,villani2009optimal}, we recall that the $c$-\emph{exponential map} is defined on the image of $-\nabla_xc$ by the formula $c$-$\exp_x(p)=(\nabla_x c)^{-1}(x,-p)$, \textit{i.e.}~$c$-$\exp_x(p)$ is the unique $y$ such that $\nabla_xc(x,y)+p=0$. This notion particularizes into the usual Riemannian exponential map when $c=d^2/2$.
+        \end{remark}
+        \begin{proof}
+            We refer to \cite[Chap.~10]{villani2009optimal} as well as \cite[Sec.~1.3]{santambrogio2015optimal} for an intuition behind this property, although it relies on the dual formulation of optimal transport, which we do not discuss in this work.
+        \end{proof}
+        \begin{remark}
+            Costs of the form $c(x,y)=h(x-y)$ with $h$ strictly convex, and in particular the costs $c(x,y)=|x-y|^p$ for $p>1$, do satisfy the twist condition.
+        \end{remark}
+        This formulation of the twist condition is equivalent to the fact that for all $y_1\neq y_2\in\mathcal Y$, the function $x\in\mathcal X\mapsto c(x,y_1)-c(x,y_2)$ has no critical point. Remark that on a compact manifold, if the cost is $C^1$, this condition can never be satisfied. Note also  that the squared Riemannian distance is not $C^1$ everywhere and one can still prove the existence of Monge map; see \Cref{prop:quad-cost-manifold-villani}. This justifies the introduction of two weaker notions, that turn out to remain sufficient to obtain some (but less) structure  on the optimal plans:
+        \begin{proposition}[Subtwist]
+            \label{prop:subtwist}
+            We say that $c$ satisfies the \emph{subtwist condition} if
+            \begin{equation}
+                \tag{Subtwist}
+                \text{for all } y_1\neq y_2\in\mathcal Y,\quad x\in \mathcal X\mapsto c(x,y_1)-c(x,y_2)\quad \text{ has at most 2 critical points.}
+                \label{eq:subtwist}
+            \end{equation}
+            Suppose that $c$ satisfies \cref{eq:subtwist} and assume that any $c$-concave function is differentiable $\mu$-a.e~on its domain. If $\mu$ and $\nu$ have finite transport cost, then \cref{eq:KP} admits a unique optimal transport plan $\pi\opt$ and it is induced by the union of a map and an anti-map:
+            \begin{equation*}
+                \pi\opt=(\id , G)\push \bar\mu+(H, \id)\push(\nu-G\push \bar\mu)
+            \end{equation*}
+            for some (Borel) measurable maps $G:\Xx\to\Yy$ and $H: \Yy\to\Xx$ and non-negative measure $\bar\mu \leq \mu$ such that $\nu-G\push \bar\mu$ vanishes on the range of $G$.
+        \end{proposition}
+        \begin{proof}
+            The proof relies on the notion of \emph{numbered limb systems} (NLS), which is formally the alternation of maps $f_{2k}$ and anti-maps $f_{2k+1}$ with conditions on their domains and ranges, introduced in \cite{hestir1995supports} and applied to optimal transport by \cite{ahmad2011optimal,chiappori2010hedonic} where it is shown that in such a case, the support of the optimal transport plan is included in a numbered limb system with at most two limbs. See \cref{def:nls} for the definition of NLS and \cite{ahmad2011optimal} for the proof of \cref{prop:subtwist}.
+        \end{proof}
+        \begin{figure}[!h]
+            \centering
+            \begin{subfigure}[b]{.49\linewidth}
+                \centering
+                \def\svgwidth{\linewidth}
+                \import{./figures/}{2map-antimap.pdf_tex}
+                \label{fig:subtwist-map-antimap}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{.49\linewidth}
+                \centering
+                \input{figures/nls}
+                \label{fig:subtwist-nls}
+                \vspace{1.2cm}
+            \end{subfigure}
+            \vspace{-3mm}
+            \caption{Optimal plans for a subtwisted cost. \capleft A map/anti-map structure (\textit{i.e.}~a numbered limb system with two limbs). \capright Representation of a numbered limb system with $N$ limbs. The subsets $I_k$ are represented connected for visual convenience but do not need to be.}
+            \label{fig:subtwist}
+        \end{figure}
+        \begin{proposition}[$m$-twist]
+            \label{prop:mtwist}
+            We say that $c$ satisfies a \emph{$m$-twist} (resp.~\emph{generalized twist}) \emph{condition} if $c$ is differentiable w.r.t.~$x$ and
+            \begin{equation}
+                \tag{$m$-twist}
+                \text{for all } x_{0} \in \Xx,y_{0} \in \Yy\text{, the set} \left\{y \mid \nabla_x c(x_{0}, y)=\nabla_x c(x_{0}, y_{0})\right\}\text{ has at most } m \text{ elements}
+                \label{eq:mtwist}
+            \end{equation}
+            (resp.~is a finite subset of $\Yy$). Suppose that $c$ is bounded, satisfies \cref{eq:mtwist} and assume that any $c$-concave function is differentiable $\mu$-almost surely on its domain. If $\mu$ has not atom and $\mu$ and $\nu$ have finite transport cost, then each optimal plan $\pi\opt$ of \cref{eq:KP} is supported on the graphs of $k\in[\![m]\!]$ (resp.~in $\NN\cup\{\infty\}$) measurable maps, \textit{i.e.}~there exists non-negative functions $\alpha_i:\Xx\to[0,1]$ and (Borel) measurable maps $T_i:\Xx\to\Yy$ such that
+            $$\pi\opt=\sum_{i=1}^{k} \alpha_{i}(\id, T_i)\push \mu\,,$$
+            in the sense $\pi\opt(S)=\sum_{i=1}^k\int_\Xx\alpha_i(x)\mathbbm{1}_S(x,T_i(x))\dd\mu$ for any Borel $S\subset \Xx\times\Yy$.
+        \end{proposition}
+
+        \begin{remark}
+            Notice that although the $m$-twist condition is a generalization of the twist condition (which is the 1-twist condition\footnote{$y_0$ is always in the set.}), it is not a generalization of the subtwist condition. To make things more clear, it can be useful to reformulate both twist and subtwist conditions in the following way:
+            \begin{alignat*}{3}
+                & \cref{eq:twist}:  \quad &  &  \text{for all }y_{1}\neq y_{2}\in \mathcal{Y}, \quad &  &   \card\left\{ x \in \mathcal{X}\mid \nabla_{x}c(x,y_{1})=\nabla_{x}c(x,y_{2}) \right\}=0\\
+                & \cref{eq:subtwist}: \quad  &  &  \text{for all }y_{1}\neq y_{2}\in \mathcal{Y},\quad  &  &   \card\left\{ x \in \mathcal{X}\mid \nabla_{x}c(x,y_{1})=\nabla_{x}c(x,y_{2}) \right\}\leq 2\\
+                & \cref{eq:mtwist}: \quad  &  &  \text{for all }x_{0},y_{0}\in \mathcal{X}\times\mathcal{Y}, \quad &  &   \card\left\{ y \in \mathcal{Y}\mid \nabla_{x}c(x_{0},y)=\nabla_{x}c(x_{0},y_{0}) \right\}\leq m\,.
+            \end{alignat*}
+        \end{remark}
+        \begin{remark}
+            Following \cite[Rem.~10.33]{villani2009optimal}, when measures $\mu$ and $\nu$ have compact support and $\mu$ has a density---which are assumptions that we make in the following---, all conditions of \cref{prop:twist,prop:subtwist,prop:mtwist} are satisfied.
+        \end{remark}
+        \Cref{fig:diagram-uniqueness} illustrates the relationships between these notions as well as some others that concern the monotonicity of the optimal transport maps, that we tackle now.
+
+    \subsection{Monotonicity of the optimal map}
+    \label{sec:monotonicity}
+        We will now see that in the one-dimensional real case and under some assumptions on the cost function $c$, there exists an optimal map, which is monotone non-decreasing. Given a probability distribution $\mu \in\mathcal{P}(\mathbb{R})$, we define its \emph{cumulative distribution function} (CDF) $F_{\mu}:\mathbb{R}\cup \{ +\infty \}\to[0,1]$ by
+        \begin{equation*}
+            F_{\mu}(x)=\mu((-\infty,x])\,.
+        \end{equation*}
+        The CDF cannot always be inverted as it is not always strictly increasing, but we can define its pseudo-inverse $F_{\mu}^{[-1]}:[0,1]\to \mathbb{R}\cup \{ +\infty \}$, which is the \emph{quantile function} of $\mu$, as
+        \begin{equation*}
+            F_{\mu}^{[-1]}(r)=\inf\left\{ x \in \mathbb{R}\mid F_{\mu}(x)\geq r \right\}  \,.
+        \end{equation*}
+        This will prove very useful since we now have the following proposition:
+        \begin{proposition}[Monotone plan, monotone map]
+            \label{def:monotone}
+            For any $\mu,\nu \in\mathcal{P}(\mathbb{R})$, we have that $(F_{\mu}^{[-1]})\push(\mathcal{L}^1\llcorner [0,1])=\mu$, which means that $\pimon\defeq(F_{\mu}^{[-1]},F_{\nu}^{[-1]})\push(\mathcal{L}^1\llcorner[0,1])$ is a transport plan between $\mu$ and $\nu$, that we call the \emph{monotone non-decreasing transport plan}. If $\mu$ is atomless, then the map $\Tmon\defeq F_{\nu}^{-1}\circ F_{\mu}$ is well-defined, monotone, and sends $\mu$ to $\nu$. We call it the \emph{monotone non-decreasing map}.
+        \end{proposition}
+        \begin{proof}
+            See \cite[Sec.~2.1]{santambrogio2015optimal}.
+        \end{proof}
+        Intuitively, the monotone non-decreasing plan sends the ``beginning'' of $\mu$ on the ``beginning'' of $\nu$, and so on, matching the quantiles with each other (see \cref{fig:1d-sort}, right).
+        We define similarly the \emph{monotone non-increasing plan} (resp.~map) $\piantimon$ (resp.~$\Tantimon$), that sends the ``beginning'' of $\mu$ on the ``end'' of $\nu$
+        Now, under some assumptions on the cost function $c$, these plans will be optimal, as stated in the following proposition \cite{carlier2008remarks,santambrogio2015optimal}:
+        \begin{proposition}[Submodularity]
+            \label{prop:submod}
+            Let $\Xx,\Yy\subset\RR$. We say that a function $c:\Xx\times\Yy\to\mathbb{R}\cup \{ +\infty \}$ is \emph{(strictly) submodular} if
+            \begin{equation*}
+                \text{for all } y_1< y_2\in\Yy,\quad x\in\Xx\mapsto c(x,y_1)-c(x,y_2)\quad \text{is (strictly) increasing.}
+            \end{equation*}
+            If $c$ is twice-differentiable, this writes
+            \begin{equation}
+                \tag{Submod}
+                \text{for all } x,y\in\Xx\times\Yy,\quad \partial_{xy}c(x,y)\leq0\,.
+                \label{eq:submod}
+            \end{equation}
+            Let $\mu,\nu \in\mathcal{P}(\mathbb{R})$ of finite transport cost. If $c$ satisfies \cref{eq:submod}, then $\pimon$ is an optimal plan for \cref{eq:KP}, with uniqueness if the submodularity is strict. If $\mu$ is atomless, this optimal plan is induced by the optimal map $\Tmon$. Similarly, \emph{supermodularity} is defined with the reversed inequality and induces the optimality of $\piantimon$ and $\Tantimon$.
+        \end{proposition}
+        \begin{remark}
+            Let $x_1\leq x_2$ and $y_1\leq y_2$. Intuitively, the submodularity of $c$ says that the ``monotone non-decreasing'' couple of affectations $(x_1\leftrightarrow y_1),(x_2\leftrightarrow y_2)$ has a better (smaller) transport cost than the ``monotone non-increasing'' one $(x_1\leftrightarrow y_2),(x_2\leftrightarrow y_1)$ (see \cref{fig:submod}).
+            A more general definition of submodular functions can be found in \cref{sec:submod-general}.
+        \end{remark}
+        \begin{figure}[H]
+            \centering
+            \input{figures/submod}
+            \caption{Submodularity and monotonicity of the optimal transport plan.}
+            \label{fig:submod}
+        \end{figure}
+        \begin{remark}[OT in 1d is sorting]
+            This means that in some cases where the cost function is nice and the measures are discrete---\textit{e.g.}~when using the quadratic cost $|x-y|^2$ on empirical data, very common in various applications---, solving the OT problem resolves to sorting the data points in increasing order $x_1\leq \dots\leq x_N$ and $y_1\leq \dots\leq y_N$ and matching $x_1$ with $y_1$, $x_2$ with $y_2$, \textit{etc} (see \cref{fig:1d-sort}, left).
+            \begin{figure}[!h]
+                \centering
+                \begin{subfigure}{.49\textwidth}
+                    \input{figures/1d-sort-discrete}
+                \end{subfigure}
+                \begin{subfigure}{.49\textwidth}
+                    \begin{subfigure}{.49\textwidth}
+                        \input{figures/1d-sort-continuous-1}
+                    \end{subfigure}
+                    \begin{subfigure}{.49\textwidth}
+                        \input{figures/1d-sort-continuous-2}
+                    \end{subfigure}
+                \end{subfigure}
+                \caption[Optimal transport in 1D resolves to sorting.]{Optimal transport in 1D resolves to sorting. \capleft Optimal plan between two discrete probability measures with $n$ uniform weights. \capright In the general case, the optimal plan associates horizontally the points w.r.t.~the cumulative distributions.}
+                \label{fig:1d-sort}
+            \end{figure}
+        \end{remark}
+        This property is \emph{highly specific to the one-dimensional case}! One could indeed expect to obtain similar monotonicity results when assuming a similar property on $c$ defined on $\Xx,\Yy\subset\RR^d$, say for instance $\det \nabla^2_{xy}c(x,y)>0$, but in such a case, we only have the following weaker proposition \cite{mccann2012rectifiability}:
+        \begin{proposition}[Non-degeneracy]
+            Let $\Xx,\Yy\subset\RR^d$. We say that a twice-differentiable function $c:\Xx\times\Yy\to\mathbb{R}\cup \{ +\infty \}$ satisfies the \emph{non-degeneracy condition} if
+            \begin{equation}
+                \tag{Non-deg}
+                \text{for all } x,y\in \mathcal X\times \mathcal Y,\quad \det \nabla^2_{xy}c(x,y)\neq0\,.
+                \label{eq:non-deg}
+            \end{equation}
+            Suppose that $c$ is $C^2$, satisfies \cref{eq:non-deg}, and that $\mu$ and $\nu$ are compactly supported. Then any solution of \cref{eq:KP} is supported by a $d$-dimensional Lipschitz submanifold (while its support is \textit{a priori} $2d$-dimensional).
+        \end{proposition}
+        \begin{remark}
+            In such a case, we do not have the uniqueness of the solution of KP; see \cite{mccann2012rectifiability}.
+        \end{remark}
+
+        All the properties above which relate to the cost function are linked; for the sake of clarity, we report these dependencies on a diagram that can be seen on \cref{fig:diagram-uniqueness}.
+        \begin{figure}[!h]
+            \centering
+            \input{figures/diagram-uniqueness}
+            \caption[Links between the conditions for the deterministic structure of optimal plans and their uniqueness.]{Links between the conditions for the deterministic structure of optimal plans and their uniqueness for a cost function $c$ between measures $\mu,\nu\in\Pp(\RR^n)$. \fbox{Boxed} plans are unique, \dbox{dashed-boxed} plans are unique up a condition. Each implication ($\Rightarrow$) has its own conditions on $c$ and $\mu$; see propositions above for reference.}
+            \label{fig:diagram-uniqueness}
+        \end{figure}
+
+
+\newpage
+\section{Gromov--Wasserstein}
+    \label{sec:gw}
+    This section aims at presenting the Gromov--Wasserstein (GW) problem, its basic properties and how it allows to get rid of some limitations of the classical OT problem. We refer the reader to \cite{memoli2011gromov} where GW is introduced and to \cite{sturm2012space} where its mathematical properties, in particular its geodesic structure and gradient flows, are analyzed.
+
+    \subsection{The GW problem}
+        \label{sec:gw-problem}
+        In numerous applications, modeling data as a metric measure (mm) space\footnote{see \cref{def:mms}.} is very natural: the data is then represented by a space on which there is a metric and a probability measure. For instance, a cloud of points in the Euclidean space can be represented as a mm-space with the empirical measure and the standard distance between points in $\RR^d$. When comparing two mm-spaces (\textit{e.g.}~in the context of shape analysis and shape matching), we often want to do it while modding translations and rotations out, since they do not change the intrinsic geometry and structure of the data. The idea of GW consists in using the metric and the probability measure of both ambient spaces $\Xx$ and $\Yy$ to define the correspondence between them modulo isometries: intuitively, one wants to rotate and translate both spaces in order to find a correspondence that associates nearby points in $\Xx$ to nearby points in $\Yy$. The Gromov--Wasserstein (GW) problem, initially introduced in \cite{memoli2011gromov}, can be seen as an extension of the Gromov--Hausdorff distance \cite{gromov1999metric}, to the context of measure spaces $(\Xx,\mu)$ equipped with a cost function $c_\Xx : \Xx \times \Xx \to \RR$ (typically, $c_\Xx$ can be a distance on $\Xx$); see also \cite{sturm2006geometry} for a similar extension.
+Given $(\Xx,\mu)$ and $(\Yy,\nu)$ equipped with costs $c_\Xx$, $c_\Yy$ respectively, and random variables $X,X' \sim \mu$ and $Y,Y' \sim \nu$, the GW problem seeks a correspondence (\textit{i.e.}~a joint law) between $\mu$ and $\nu$ that would make the distribution $c_\Xx(X,X')$ as close as possible to $c_\Yy(Y,Y')$, in a $L^p$ sense.
+
+        In the following, we build up some notions that will justify the theoretical introduction of the GW distance, by extending the parallel between comparing sets (Hausdorff dist.) and measures (Wasserstein dist.) to comparing metric spaces (Gromov--Hausdorff dist.) and metric measure spaces (Gromov--Wasserstein dist.), as done in \cite{memoli2011gromov}.
+
+
+        \paragraph{Hausdorff distance.} Let $A$ and $B$ be two sets in a metric space $(\Zz,d)$. The \emph{Hausdorff distance} between $A$ and $B$ is defined by
+        \begin{equation*}
+            \operatorname{H}_\Zz(A, B) \defeq \max \left\{\adjustlimits\sup _{a \in A} \inf _{b \in B} d(a, b),\ \adjustlimits\sup _{b \in B} \inf _{a \in A} d(a, b)\right\}\,,
+        \end{equation*}
+        and $\operatorname{H}_\Zz$ defines a distance between compact sets of $\Zz$. Following \cite{memoli2011gromov} and \cite{peyre2019computational}, we remark that we can define the Hausdorff distance between sets in a similar fashion to the Wasserstein distance between measures. Replacing the measures couplings \cref{eq:plans} by \emph{set couplings}, or \emph{correspondences},
+        $$\Rr(A,B)\defeq \left\{R\subset A\times B\mid P^1(R)=A,P^{2}(R)=B \right\}\,,$$
+        one has that
+        \begin{equation}
+            \operatorname{H}_\Zz(A, B) = \adjustlimits\inf_{R\in \Rr(A,B)}\sup_{(a,b)\in R} d(a,b)\,,
+            \label{eq:h-corres}
+        \end{equation}
+        \begin{remark}
+            \label{rem:sup-integration}
+            This formulation is similar to the Kantorovich problem \cref{eq:KP} with a supremum instead of an integration, related to the $\infty$-Wasserstein distance \cref{eq:w-infty}.
+        \end{remark}
+
+        \paragraph{Gromov--Hausdorff distance.} The \emph{Gromov--Hausdorff (GH) distance} \cite{gromov1999metric} is a way of measuring how close two metric spaces $(\Xx,d_\Xx)$ and $(\Yy,d_\Yy)$ are to being isometric to each other. It reads:
+        \begin{equation}
+            \tag{GH}
+            \operatorname{GH}(\Xx,\Yy)\defeq \inf_{\Zz,f,g} \operatorname{H}_\Zz(f(\Xx),g(\Yy))\,,
+        \end{equation}
+        where the infimum is taken on metric spaces $\Zz$ and $f:\Xx\to\Zz$ and $g:\Yy\to\Zz$ isometric embeddings (distance-preserving transformations) into $\Zz$. One can show that GH defines a distance between compact metrics spaces up to isometries (bijective distance-preserving transformation). Similarly to \cref{eq:h-corres}, we can rewrite the GH distance using set couplings:
+        \begin{equation}
+            \operatorname{GH}(\Xx,\Yy)=\frac12 \adjustlimits\inf_{R\in\Rr(\Xx,\Yy)}\sup_{(x,y),(x',y')\in R} |d_\Xx(x,x')-d_\Yy(y,y')|\,.
+            \label{eq:GH}
+        \end{equation}
+        Motivated by \Cref{rem:sup-integration}, one could try to replace the maximization by an integration, which turns out to define the Gromov--Wasserstein distance, that we introduce now.
+
+        \paragraph{Gromov--Wasserstein distance.} Given two mm-spaces $\mathbb{X}=(\mathcal{X},d_{\mathcal{X}},\mu_{\mathcal{X}})$ and $\mathbb{Y}=(\mathcal{Y},d_{\mathcal{Y}},\mu_{\mathcal{Y}})$, the \emph{Gromov--Wasserstein (GW) distance} between $\mathbb{X}$ and $\mathbb{Y}$ is defined as the $L^p$-analogue of \cref{eq:GH}:
+        \begin{align*}
+            \GW_p(\mathbb{X},\mathbb{Y})=\inf_{\pi \in \Pi(\mu_\Xx,\mu_\Yy)} \left( \int _{\mathcal{X}\times \mathcal{Y}}\int _{\mathcal{X}\times \mathcal{Y}}|d_{\mathcal{X}}(x,x')-d_{\mathcal{Y}}(y,y')|^p \, \mathrm d\pi(x,y)\, \mathrm d\pi(x',y')\right)^{1/p}.
+        \end{align*}
+
+        In the Gromov--Wasserstein framework, there is no notion of transport, but rather a notion of \emph{correspondence}. The goal is to find a correspondence, a matching plan between the two spaces $\mathbb{X}$ and $\mathbb{Y}$, which minimizes the \emph{distortion} between the pairwise distances of couples of points. The most important property of the GW distance is the following:
+        \begin{proposition}
+            Let $\mathbb{X}=(\mathcal{X},d_{\mathcal{X}},\mu_{\mathcal{X}})$ and $\mathbb{Y}=(\mathcal{Y},d_{\mathcal{Y}},\mu_{\mathcal{Y}})$ be two mm-spaces. Then $\GW(\mathbb{X},\mathbb{Y})=0$ if and only if $\mathbb{X}$ and $\mathbb{Y}$ are \emph{strongly isomorphic}, \textit{i.e.}~if there exists an isometry $\varphi:\Xx\to\Yy$ such that $\varphi\push\mu_{\mathcal{X}}=\mu_{\mathcal{Y}}$.
+        \end{proposition}
+        This property allows one to endow the space of metric measure spaces with a distance defined by GW, as long as the finiteness of GW is ensured; defining the \emph{$p$-diameter} of a mm-space $\mathbb{X}=(\mathcal{X},d_{\mathcal{X}},\mu_{\mathcal{X}})$ as $\operatorname{diam}_p(\mathbb{X})\defeq ( \iint d_{\mathcal{X}}(x,x')^p\, \mathrm d\mu_{\mathcal{X}}\, \mathrm d\mu_{\mathcal{X}} )^{1/p}$, we have:
+        \begin{proposition}[GW is a distance]
+            $\GW_p$ is a distance on the space of finite $p$-diameter mm-spaces quotiented by the strong isomorphisms.
+        \end{proposition}
+        As a bonus, the GW problem has the advantage of allowing for the comparison of measures living in different spaces. Indeed, the classical OT problem \cref{eq:KP} presupposes that one has at their disposal a function $c$ that takes an element $x$ of $\Xx$ and an element $y$ of $\Yy$, and outputs a ``distance'' corresponding to the cost of sending $x$ on $y$. When $\mathcal{X}$ and $\mathcal{Y}$ contain radically different objects, such as images, graphs, \textit{etc}, it can be quite difficult to find a relevant function $c$ of this sort. The Gromov--Wasserstein (GW) problem solves the issue of comparing probability measures whose supports dwell in different, \emph{incomparable} spaces by only considering comparisons \emph{within} each space and not \emph{between} them. Similarly to the linear OT problem where $c:\Xx\times\Yy\to\RR$ can be any function (not necessarily a distance), we consider the following problem:
+        \begin{defi}[generalized GW]\label{def:gw}
+            Let $\mathcal{X}$ and $\mathcal{Y}$ be Polish spaces and $p\geq 1$. Given two probability measures $\mu \in\mathcal{P}(\mathcal{X})$ and $\nu \in\mathcal{P}(\mathcal{Y})$, two continuous functions $c_{\mathcal{X}}:\mathcal{X}\times \mathcal{X}\to \mathbb{R}$ and $c_{\mathcal{Y}}:\mathcal{Y}\times \mathcal{Y}\to \mathbb{R}$, the (generalized) $p$\emph{-Gromov--Wasserstein problem} aims at finding
+            \begin{align*}
+                \tag{GW}
+                \operatorname{GW}_p(\mu,\nu)=\inf_{\pi \in \Pi(\mu,\nu)} \left( \int _{\mathcal{X}\times \mathcal{Y}}\int _{\mathcal{X}\times \mathcal{Y}}|c_{\mathcal{X}}(x,x')-c_{\mathcal{Y}}(y,y')|^p \, \mathrm d\pi(x,y)\, \mathrm d\pi(x',y')\right)^{1/p}.
+                \label{eq:gw}
+            \end{align*}
+            A correspondence plan $\pi$ realizing \cref{eq:gw} is called an \emph{optimal correspondence plan}. If it is induced by a map, we call this map a \emph{Monge map}, with a slight overloading of the OT designation.
+        \end{defi}
+        \begin{figure}[!h]
+            \centering
+            \input{figures/gw-cont}
+            \caption{The Gromov--Wasserstein distance compares distances between couples of points within $\Xx$ and $\Yy$ (continuous case).}
+            \label{fig:gw-cont}
+        \end{figure}
+        From a random variable perspective, given $(\Xx,\mu)$ and $(\Yy,\nu)$ equipped with costs $c_\Xx$, $c_\Yy$ respectively, and random variables $X,X' \sim \mu$ and $Y,Y' \sim \nu$, the GW problem seeks a correspondence (\textit{i.e.}~a joint law) between $\mu$ and $\nu$ that would make the distribution $c_\Xx(X,X')$ as close as possible to $c_\Yy(Y,Y')$, in a $L^p$ sense.
+
+        As for the linear OT problem, \cref{eq:gw} always admits a solution. This can be shown using the compactness of $\Pi(\mu,\nu)$ and the lower semi-continuity of $\pi\mapsto\iint L\dd\pi\dd\pi$ for the weak convergence, given by the l.s.c. of $L:(x,x',y,y')\mapsto |c_{\mathcal{X}}(x,x')-c_{\mathcal{Y}}(y,y')|^p$ itself \cite{vayer2020contribution}.
+        \begin{remark}[GW with arbitrary cost functions]
+            \label{rem:arbitrary-costs}
+            When considering arbitrary continuous $c_\Xx$ and $c_\Yy$ (provided the finiteness or their $p$-moment w.r.t.~$\mu_\Xx\otimes\mu_\Xx$ and $\mu_\Yy\otimes\mu_\Yy$ respectively), we are \textit{a priori} losing the property that GW defines a distance between strong isomorphism classes of mm-spaces, and even its invariance by isometries. However, we still have the following properties, summarized in Theorem 2.2.1 of \cite{vayer2020contribution} and whose proofs can be found in \cite{sturm2012space,chowdhury2019gromov}:
+            \begin{enumerate}[label=(\roman*)]
+                \item $\operatorname{GW}_p$ is symmetric, positive and satisfies the triangle inequality;
+                \item for any $q\geq 1$ and $c_\Xx=d_\Xx^q$ and $c_\Yy=d_\Yy^q$, $\operatorname{GW}_p(\mu_\Xx,\mu_\Yy)=0$ if and only if $(\Xx,c_\Xx,\mu_\Xx)$ and $(\Yy,c_\Yy,\mu_\Yy)$ are ``strongly isomorphic'';
+                \item for arbitrary $c_\Xx$ and $c_\Yy$, $\operatorname{GW}_p(\mu_\Xx,\mu_\Yy)=0$ if and only if $(\Xx,c_\Xx,\mu_\Xx)$ and $(\Yy,c_\Yy,\mu_\Yy)$ are \emph{weakly isomorphic}, \textit{i.e.}~if there exists $(\Zz,c_\Zz,m)$ with $\supp(m)=\Zz$ and ``strong isomorphisms''\footnotemark\ $\varphi:\Zz\to\Xx$ and $\psi:\Zz\to\Yy$.
+            \end{enumerate}
+            Hence for arbitrary $c_\Xx$ and $c_\Yy$, we still have that $\operatorname{GW}_p$ defines a distance on the space $$\NN_p=\{(\Xx,c_\Xx,\mu_\Xx)\mid \operatorname{diam}_p(\Xx,c_\Xx,\mu_\Xx)<\infty\}\,,$$ where $\Xx$ is a Polish space, $\mu\in\Pp(\Xx)$ and $c_\Xx$ a continuous function, quotiented by the weak isomorphisms.
+        \end{remark}
+        \footnotetext{with quotation marks since $c_\Xx$ and $c_\Yy$ do not give $\Xx$ and $\Yy$ a metric space structure.}
+
+
+
+        \subsection{Discrete case}
+        \label{sec:discrete-gw}
+        We consider two discrete probability measures $\mu=\sum_{i=1}^Na_{i}\delta_{x_{i}}$ and $\nu=\sum_{j=1}^Mb_{j}\delta_{y_{j}}$. In the GW problem, we will not have at our disposal a similarity matric $C$ like in \Cref{sec:disc-ot}, but rather two matrices $D^\Xx$ and $D^\Yy$ that measure similarities \emph{within} $\Xx$ and $\Yy$, \textit{i.e.}~between elements of $\Xx$ and between elements of $\Yy$. The Gromov--Wasserstein problem \cref{eq:gw} is then:
+        \begin{equation}
+            \tag{$\hat{\text{GW}}$}
+            \min_{P\in U(a,b)} \sum_{i,j,i',j'}|D^\Xx_{i,i'}-D^\Yy_{j,j'}|^pP_{i,j}P_{i',j'}\,.
+            \label{eq:GW-disc}
+        \end{equation}
+        Similar to the linear OT case, one could ask whether the optimum of this problem is attained by a permutation $\sigma$ in the case where $N=M$ and $a=b=\mathbbm{1}_N/N$, \textit{i.e.}~if \cref{eq:GW-disc} is a tight relaxation of:
+        \begin{equation}
+            \tag{QAP}
+            \min_{\sigma\in \mathfrak{S}_N}\ \sum_{i,j}|D^\Xx_{i,\sigma(i)}-D^\Yy_{j,\sigma(j)}|^p\,.
+            \label{eq:QAP}
+        \end{equation}
+        Theorem 4.1.2 from \cite{vayer2020contribution} gives this result in the case where $p=2$ and $D^\Xx$, $D^\Yy$ are squared distance matrices but we can actually state a more general result, given in \cite{maron2018probably}:
+        \begin{proposition}[Tight relaxation for discrete GW]
+            \label{prop:tight-relax-gw}
+            In the case $N=M$, $a=b=\mathbbm{1}_N/N$ and $p=2$, if we can write
+            $$D_{i,i'}^\Xx=h_1(x_i-x_{i'})\quad \text{and}\quad D_{j,j'}^\Yy=h_2(x_j-x_{j'})$$
+            where $h_1$ and $h_2$ are conditionally negative (or positive) definite functions (see \cref{rem:cnd} below), then there exists a solution $P_{\sigma\opt}$ of \cref{eq:GW-disc} that is the permutation matrix associated to a permutation $\sigma\opt$.
+        \end{proposition}
+        \begin{defi}[Conditionally negative definite function]
+            \label{rem:cnd}
+            A function $h:\Xx\to\RR$ is said to be \emph{conditionally negative definite} if for all $N\geq 1$, $x_1,\ldots,x_N \in \Xx$ and $\omega_1,\ldots,\omega_N \in \RR$ such that $\sum_{i=1}^N \omega_i = 0$, we have $\sum_{1\leq i,j\leq N}\omega_i\omega_j h(x_i-x_j) \leq 0$.
+        \end{defi}
+        In particular, $x\mapsto |x|_2$ and $x\mapsto |x|^2_2$ are conditionally negative definite functions, which allows one to obtain the tightness of the relaxation of \cref{eq:GW-disc} with (squared) Euclidean norm.
+    \begin{remark}[Link with QAP]
+        Notice that we denoted by \cref{eq:QAP} the restriction of \cref{eq:GW-disc} to the set of permutation matrices in the case where $N=M$ and $a=b=\mathbbm{1}_N/N$. This is a slight abuse of notation, since in full generality this discrete GW formulation differs from the so-called \emph{Quadratic Assignment Problem (QAP)} \cite{koopmans1957assignment}; but when $p=2$, a connection between the two can be drawn. The QAP reads:
+        \begin{defi}[Quadratic Assignment Problem]
+            Given a weight matrix $W$ and a distance matric $D$ of size $n\times n$, the \emph{Quadratic Assignment Problem (QAP)} consists in finding a permutation $\sigma\in \mathfrak S_N$ (an \emph{assignment}) that solves:
+            \begin{equation}
+                \label{eq:true-QAP}
+                \min_{\sigma\in \mathfrak S_N}\ \sum_{i,j=1}^N W_{i,j} D_{\si(i), \si(j)}\,.
+            \end{equation}
+            In matrix notation, this reads $$\min _{\sigma \in \mathfrak S_N}\ \tr(W P_\si D P_\si^\top)\,.$$
+        \end{defi}
+    In the case where $N=M$ and $a=b=\mathbbm{1}_N/N$, $U(a,b)$ is the set of bistochastic matrices $\Pi_N$ (up to a factor $n$). It is then claimed in \cite{alvarez2019towards} that \cref{eq:GW-disc} with $p=2$ is equivalent to the problem
+    \begin{equation}
+        \label{eq:intermed-pb}
+        \max_{P\in \Pi_N}\ \|APB^\top\|_{F}^{2}
+    \end{equation}
+    for some matrices $A$ and $B$ (and this even when $n\neq m$ and $a$ and $b$ are arbitrary). Then,
+    $$\|APB^\top\|_{F}^{2}=\tr(BP^\top A^\top APB^\top)=\tr(A^\top APB^\top BP^\top)\,,$$
+    where $\|\cdot\|_F$ is the Frobenius norm. Hence problem \cref{eq:intermed-pb} can be recast into the relaxation of QAP to $\Pi_N$ with distance and weight matrices $W\defeq -A^\top A$ and $D \defeq B^\top B$, and it is therefore the same for \cref{eq:GW-disc} with $p=2$.
+    The QAP is known as NP-hard to solve for arbitrary inputs. To the best of our knowledge, the NP-hardness of \cref{eq:GW-disc} itself or of its restriction on $\mathfrak S_N$ has not been proved in the literature; but it is to expect. In the following, we will abuse notations and denote by QAP the \cref{eq:GW-disc} problem restricted to $\mathfrak S_N$. \Cref{fig:qap-relaxations} illustrates the relationship between all the problems mentioned in this remark as well as the abuse of notation we will use in this report.
+    \end{remark}
+        \begin{figure}[!h]
+            \centering
+            \input{figures/QAPrelaxations}
+            \caption{Relations between the GW problems and the QAP problem when optimizing either on $\mathfrak S_N$ or on $\Pi_N$.}
+            \label{fig:qap-relaxations}
+        \end{figure}
+
+        \subsection{Relation with the OT problem: a tight relaxation}
+        \label{subsec:intro_GW_and_OT}
+        The minimization problem in \cref{eq:gw} can be interpreted as the minimization of the map $\pi \mapsto F(\pi,\pi) \defeq \iint k \dd \pi\! \otimes\! \pi$ where $k((x,y),(x',y')) = |c_\Xx(x,x') - c_\Yy(y,y')|^2$, and $F$ is thus a symmetric bilinear map.
+        By first order optimality condition, if $\pi\opt$ minimizes \cref{eq:gw}, then it also minimizes $\pi \mapsto 2 F(\pi, \pi\opt)$.
+        If we let $C_{\pi\opt}(x,y) = \int_{\Xx \times \Yy} k((x,y),(x',y')) \dd \pi\opt(x', y')$, we obtain the linear problem
+        \begin{equation}
+            \min_{\pi \in \Pi(\mu,\nu)} \int_{\Xx \times \Yy} C_{\pi\opt}(x,y) \dd \pi(x,y)\,,
+            \label{eq:linearized}
+        \end{equation}
+        which is nothing but the \cref{eq:KP} problem induced by the cost $C_{\pi\opt}$ on $\Xx \times \Yy$.
+        Therefore, we obtain that any optimal \emph{correspondence} plan for \cref{eq:gw} with costs $c_\Xx, c_\Yy$ must be an optimal \emph{transportation} plan for \cref{eq:KP} with cost $C_{\pi\opt}$.
+        A crucial point, proved in \cite[Thm.~3]{sejourne2021unbalanced} as a generalization of \cite{konno1976maximization}, is that if $k$ is symmetric negative on the set of (signed) measures on $\Xx \times \Yy$ with null marginals, that is $\iint k \dd \alpha \otimes\alpha \leq 0$ for all such $\alpha$, then the converse implication holds: any solution $\gamma\opt \in \Pi(\mu,\nu)$ of the OT problem with cost $C_{\pi\opt}$ is also a solution of the GW problem, that is $F(\pi\opt,\pi\opt) = F(\gamma\opt,\gamma\opt) = F(\pi\opt,\gamma\opt)$.
+        Since the solutions of \cref{eq:gw} are in this case in correspondence with the solutions of an OT problem, the tools and knowledge from optimal transportation can be used to derive existence and structure of optimal maps.
+
+        In the following, we will be considering the GW problem in $\RR^n$ and $\RR^d$ in two different settings:
+        \begin{enumerate}[label=(\roman*),noitemsep]
+            \item the \emph{inner product case}, where $c_\Xx$ and $c_\Yy$ are the inner products on $\RR^n$ and $\RR^d$ respectively (both denoted by $\langle \cdot, \cdot \rangle$):
+                \begin{equation*}
+                    \tag{GW-IP}
+                    \min _{\pi \in \Pi(\mu, \nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left|\langle x,\, x'\rangle-\langle y,\, y'\rangle\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,;
+                    \label{eqn:GW-inner-prod-before}
+                \end{equation*}
+                \item the \emph{quadratic case}, where $c_\Xx$ and $c_{\Yy}$ are the squared Euclidean distance on $\RR^n$ and $\RR^d$ respectively:
+                \begin{equation*}
+                    \tag{GW-Q}
+                    \min _{\pi \in \Pi(\mu, \nu)} \int_{\Xx\times\Yy}\int_{\Xx\times\Yy}\left||x-x'|^2-|y-y'|^2\right|^{2} \dd\pi(x, y) \dd\pi(x', y')\,.
+                    \label{eqn:GW-quadratic-before}
+                \end{equation*}
+            \end{enumerate}
+        This linearization holds in particular for these two problems of interest: if $\alpha$ denotes a signed measure on $\Xx \times \Yy \subset \RR^n \times \RR^d$ with null marginals, observe that
+        \begin{align*}
+            &\hspace{-5mm}\int \left| |x-x'|^2 - |y-y'|^2\right|^2 \dd \alpha(x,y) \dd \alpha(x',y') \\
+            &= \underbrace{\int |x-x'|^2 \dd \alpha\! \otimes\! \alpha}_{=\ 0} + \underbrace{\int |y-y'|^2 \dd \alpha\! \otimes\! \alpha}_{=\ 0} \ -\ 2 \int |x-x'|^2 |y-y'|^2 \dd \alpha\! \otimes\! \alpha \\
+            & = -2 \int (|x|^2 - 2 \langle x, x' \rangle + |x|^2)(|y|^2 - 2 \langle y , y' \rangle + |y'|^2) \dd \alpha\! \otimes\! \alpha\,.
+        \end{align*}
+
+        Developing the remaining factor involve nine terms, but given that $\alpha$ has zero marginals (in particular, zero mass), we obtain that $\int |x|^2 |y|^2 \dd \alpha\! \otimes \!\alpha = 0$ (and similarly for the terms involving $|x'|^2 |y'|^2$, $|x|^2|y'|^2$ and $|x'|^2|y|^2$), and also that $\int |x|^2 \langle y,y' \rangle \dd \alpha\! \otimes\! \alpha = 0$ (and similarly for the other terms).
+        Eventually, the only remaining term is
+        \begin{equation}
+            - 8 \int \langle x, x' \rangle \langle y,y' \rangle \dd \alpha \!\otimes\! \alpha \nonumber
+            =  - 8 \left\| \int x \otimes y \dd \alpha(x,y) \right\|_F^2 \leq 0\,, \label{EqCorrelation1}
+        \end{equation}
+        where $x \otimes y \in \RR^{n \times d}$ is the matrix $(x_i y_j)_{i,j}$, where $x = (x_1,\dots,x_n)$ and $y = (y_1,\dots, y_d)$, and $\| \cdot \|_F$ denotes the Froebenius norm of a matrix.
+        The negativity of this term ensures that solutions of \cref{eqn:GW-quadratic-before} are exactly the solutions of an OT problem.
+        Computations for \cref{eqn:GW-inner-prod-before} are similar---actually, they immediately boil down to the same last two equalities.

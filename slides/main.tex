@@ -159,7 +159,7 @@
                                            &                &  twist          \\\hline
                     $|x-y|^2$              & in $\RR^n$     &  $\checkmark$          \\
                     $\langle x,\,y\rangle$ & in $\RR^n$     &  $\checkmark$          \\
-                    $\langle x,\,y\rangle$ & on $\SS^{n-1}$ &  $\cdot$
+                    $\langle x,\,y\rangle$ & on $ S^{n-1}$ &  $\cdot$
                     \end{tabular}
                 \end{table}
                 \item other formulation:
@@ -196,7 +196,7 @@
                     \raggedright
                     \begin{tabular}{ll|cc}
                                            &                &  twist        & subtwist  \\\hline
-                    $\langle x,\,y\rangle$ & on $\SS^{n-1}$ &  $\cdot$      & $\checkmark$
+                    $\langle x,\,y\rangle$ & on $ S^{n-1}$ &  $\cdot$      & $\checkmark$
                     \end{tabular}
                 \end{table}
         \end{column}
@@ -381,7 +381,7 @@
                 \label{eqn:GW-inner-prod}
             \end{equation}
             \begin{itemize}
-                \item \textit{e.g.} on a $d$-dimensional sphere $\SS^{d-1}$
+                \item \textit{e.g.} on a $d$-dimensional sphere $ S^{d-1}$
             \end{itemize}
             \item the \emph{quadratic case}, where $c_\Xx=c_\Yy=|\cdot|^2$:
             \begin{equation}
@@ -418,7 +418,7 @@
     Let $\mu, \nu\in \Pp(\RR^n)$ of \emph{compact support}. Suppose $\mu\ll\Ll^n$.
     \begin{enumerate}
         \item \textbf{Theorem:} The \cref{eqn:GW-inner-prod} problem admits a \emph{map} as a solution.
-        \item \textbf{Theorem:} The \cref{eqn:GW-quadratic} problem either admits a \emph{map}, a \emph{bimap} or a \emph{map/anti-map} as a solution.
+        \item \textbf{Theorem:} The \cref{eqn:GW-quadratic} problem either admits a \emph{map} or a \emph{bimap} as a solution.
         \item \textbf{Conjecture:} The second claim is \emph{tight}: there exists cases where optimal solutions of \cref{eqn:GW-quadratic} are \emph{not maps}.
     \end{enumerate}
     Optimality of the monotone rearrangements $\pimon$ and $\piantimon$ in 1D for \cref{eqn:GW-quadratic}:
@@ -548,13 +548,14 @@
     \begin{table}[h]
         \centering
         \begin{tabular}{lccc}
-        $\rk M\opt$ & $= n$ & $= n-1$    & $\leq n-2$ \\ \hline
-        twist         & $\cdot$      & $\cdot$           & $\cdot$           \\
-        subtwist      & $\checkmark$   & $\cdot$           &   $\cdot$         \\
-        2-twist       & $\cdot$      & $\checkmark$        &  $\cdot$         \\
-        $m$-twist, $m\geq3$ & $\cdot$      & $\cdot$        &  $\cdot$\\\pause
+        $\rk M\opt$         & $= n$            & $= n-1$    & $\leq n-2$ \\ \hline
+        twist               & $\cdot$          & $\cdot$           & $\cdot$           \\
+        subtwist            & $\checkmark$     & $\cdot$           &   $\cdot$         \\
+        2-twist             & $\checkmark$     & $\checkmark$        &  $\cdot$         \\
+        $m$-twist, $m\geq3$ & $\cdot$          & $\cdot$        &  $\cdot$\\\pause
                             & $\big\Downarrow$ & $\big\Downarrow$ &  $\big\Downarrow$\\
-                            & map/anti-map & bimap &  ...
+                            & map/anti-map     & bimap &  ... \\
+                            & \& bimap         &       &
         \end{tabular}
     \end{table}
 \end{frame}
@@ -562,7 +563,7 @@
     \begin{block}{Theorem: quadratic cost}
     Let $\mu, \nu\in \Pp(\RR^n)$ \light{of compact support. Suppose that $\mu$ has a density.} Let $\pi\opt$ be an optimal plan and $M\opt\defeq\int y' x'^\top \dd\pi\opt(x', y')$. Then:
     \begin{itemize}
-        \item[$\checkmark$] if $\rk M\opt=n$, there is an optimal \emph{map/anti-map},
+        \item[$\checkmark$] if $\rk M\opt=n$, there is an optimal \emph{bimap} with one map being \emph{one-to-one},
         \item[$\checkmark$] if $\rk M\opt=n-1$, there is an optimal \emph{bimap},
         \item[(!!)] if $\rk M\opt\leq n-2$, \emph{there is an optimal map}!
     \end{itemize}
@@ -590,12 +591,12 @@
                 with $n: x\mapsto |x_{\perp}|^2$ and $\phi: x\mapsto (x_{H},|x_{\perp}|^2)$.
             \item \emph{apply key lemma!} \begin{itemize}
                 \item $B$ is $\RR^h\times\RR^+$
-                \item the fibers are spheres $\SS^{n-h-1}$
+                \item the fibers are spheres $ S^{n-h-1}$
                 \item $\tilde c$ is {twisted} on $\RR^h\times\RR^+$
             \end{itemize}
             \vfill
         \item[$\Rightarrow$] optimal map + structure!
-        $$\text{for } x\approx (u,v) \in \RR^h\times\RR^+\times\SS^{n-h-1},\quad T(u,v)=\left(\tilde c\text{-}\exp_{u}(\nabla f(u)), \exp_{v}(\nabla g_{u}(v))\right).$$
+        $$\text{for } x\approx (u,v) \in \RR^h\times\RR^+\times S^{n-h-1},\quad T(u,v)=\left(\tilde c\text{-}\exp_{u}(\nabla f(u)), \exp_{v}(\nabla g_{u}(v))\right).$$
         \hfill\square
         \end{enumerate}
     \end{center}
@@ -860,7 +861,7 @@
     \textbf{Contributions}
     \begin{enumerate}
         \item \textbf{Thm:} always a \emph{map} for \cref{eqn:GW-inner-prod}
-        \item \textbf{Thm:} a \emph{map}, \emph{bimap} or \emph{map/anti-map} for \cref{eqn:GW-quadratic}
+        \item \textbf{Thm:} a \emph{map} or \emph{bimap} for \cref{eqn:GW-quadratic}
         \item \textbf{Conj:} this second claim is \emph{tight}
         \item \textbf{Algo:} \emph{non-optimality} of monotone + \emph{instability} for \cref{eqn:GW-quadratic}
         \item (\textbf{Thm:} monotone rearrangement optimal for \cref{eqn:GW-quadratic} between measures composed of \emph{two distant parts})
